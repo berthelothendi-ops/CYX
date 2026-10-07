@@ -1,0 +1,3315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cyber Hack - Protocole Hardcore v2</title>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            margin: 15px 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        #ecran-titre {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b0f19;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #ecran-selection-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b0f19;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .btn-mode-choix {
+            background-color: #121826;
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .btn-mode-choix:hover {
+            background-color: #00ffcc;
+            color: #0b0f19;
+        }
+
+        #ecran-fin {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1003;
+        }
+
+        #ecran-credits {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1003;
+        }
+
+        #ecran-niveaux {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1003;
+        }
+
+        #modal-parametres {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .conteneur-parametres {
+            background-color: #121826;
+            border: 2px solid #00ffcc;
+            padding: 25px;
+            width: 320px;
+            max-width: 90vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
+            border-radius: 6px;
+            text-align: center;
+        }
+        .conteneur-parametres select {
+            background-color: #0b0f19;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            padding: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+        .btn-modal-action {
+            background-color: #00ffcc;
+            color: #0b0f19;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .btn-modal-action:hover {
+            background-color: #fff;
+            box-shadow: 0 0 10px #fff;
+        }
+
+        #hud {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 5px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: bold;
+            background: #121826;
+            padding: 6px 12px;
+            box-sizing: border-box;
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+            position: relative;
+        }
+
+        .hud-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-hud-icone {
+            background: none;
+            border: none;
+            color: #00ffcc;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+        .btn-hud-icone:hover {
+            transform: scale(1.2);
+        }
+        #btn-parametres:hover {
+            transform: rotate(90deg);
+        }
+
+        /* Panneau de commandes console */
+        #panneau-commande {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 10px auto;
+            display: none;
+            background: #121826;
+            border: 2px solid #ff0055;
+            padding: 8px;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+            text-align: center;
+        }
+        #input-commande {
+            background-color: #0b0f19;
+            color: #00ffcc;
+            border: 1px solid #ff0055;
+            padding: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            width: 60%;
+            outline: none;
+            border-radius: 3px;
+        }
+        #btn-valider-cmd {
+            background-color: #ff0055;
+            color: #ffffff;
+            border: none;
+            padding: 6px 14px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-left: 6px;
+            transition: 0.2s;
+        }
+        #btn-valider-cmd:hover {
+            background-color: #fff;
+            color: #ff0055;
+            box-shadow: 0 0 8px #ff0055;
+        }
+
+        #arene-scale-wrapper {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+        }
+
+        #arene {
+            width: 100%;
+            max-width: 800px;
+            height: 320px;
+            background-color: #121826;
+            border: 2px solid #00ffcc;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+            transition: background-image 0.5s ease, border-color 0.5s ease;
+            box-sizing: border-box;
+        }
+        
+        .phase-1-bg {
+            background-color: #0b132b;
+            background-image: 
+                radial-gradient(circle, rgba(0,255,204,0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,204,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-color: #00ffcc;
+        }
+        .phase-2-bg {
+            background-color: #11071f;
+            background-image: 
+                linear-gradient(0deg, rgba(157,0,255,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(157,0,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            border-color: #9d00ff;
+        }
+        .phase-3-bg {
+            background-color: #2b0b0b;
+            background-image: 
+                radial-gradient(circle, rgba(255,0,85,0.2) 2px, transparent 2px),
+                linear-gradient(45deg, rgba(255,0,0,0.08) 2px, transparent 2px);
+            background-size: 25px 25px;
+            border-color: #ff0055;
+        }
+        .phase-4-bg {
+            background-color: #1a1500;
+            background-image:
+                radial-gradient(circle, rgba(255,204,0,0.25) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 18px 18px;
+            border-color: #ffcc00;
+        }
+
+        #monde {
+            position: absolute;
+            width: 7000px;
+            height: 100%;
+            left: 0px;
+            top: 0px;
+        }
+        .cyber-block {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            cursor: pointer;
+        }
+
+        .fenetre-info { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(11, 15, 25, 0.93); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .fenetre-info .conteneur-parametres { width: 460px; text-align: left; }
+        .fenetre-info h2 { margin: 0 0 4px 0; text-align: center; }
+        .fenetre-info .sous-titre { color: #8892b0; font-size: 11px; text-align: center; margin: 0 0 14px 0; }
+        .fenetre-info h3 { color: #ffaa00; font-size: 12px; letter-spacing: 2px; margin: 16px 0 6px 0; border-bottom: 1px dashed rgba(255, 170, 0, 0.4); padding-bottom: 3px; }
+        .ligne-touche { display: flex; align-items: center; gap: 10px; padding: 6px 4px; border-radius: 4px; }
+        .ligne-touche:hover { background-color: rgba(0, 255, 204, 0.07); }
+        .ligne-touche .touches { flex: 0 0 128px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+        .ligne-touche .desc { font-size: 12px; color: #ccd6f6; line-height: 1.35; }
+        .ligne-touche .desc small { display: block; color: #6b7a99; font-size: 10px; font-style: italic; }
+        .touche { display: inline-block; min-width: 26px; padding: 4px 7px; text-align: center; font-size: 12px; font-weight: bold; color: #00ffcc; background: linear-gradient(180deg, #1c2540, #121826); border: 1px solid #00ffcc; border-bottom-width: 4px; border-radius: 5px; transition: transform 0.08s, box-shadow 0.08s, background 0.08s; }
+        .touche.active { transform: translateY(3px); border-bottom-width: 1px; background: #00ffcc; color: #0b0f19; box-shadow: 0 0 16px #00ffcc; }
+        .fenetre-info .ligne-cmd { cursor: pointer; }
+        .fenetre-info .ligne-cmd .touche { color: #ffaa00; border-color: #ffaa00; white-space: nowrap; }
+        .fenetre-info .ligne-cmd.cachee .touche { color: #ff0055; border-color: #ff0055; }
+        .badge-cache { font-size: 9px; color: #ff0055; border: 1px solid #ff0055; border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: middle; }
+
+        .cyber-block.mur-zone {
+            cursor: default;
+            border-radius: 0;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 0 10px var(--mur), inset 0 0 8px rgba(255, 255, 255, 0.35);
+            background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 2px, transparent 2px),
+                              repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0 2px, transparent 2px 6px);
+            animation: pulseMur 2.2s ease-in-out infinite;
+        }
+        @keyframes pulseMur {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.4); }
+        }
+
+        .cyber-mob {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        #panneau-inventaire {
+            position: absolute;
+            display: none;
+            width: 130px;
+            height: 320px;
+            background-color: #121826;
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            padding: 8px;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ffcc;
+            font-size: 10px;
+            text-align: center;
+            overflow-y: scroll;
+            z-index: 500;
+        }
+        #panneau-skins {
+            position: absolute;
+            display: none;
+            width: 130px;
+            height: 320px;
+            background-color: #121826;
+            border: 2px solid #ff0055;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+            padding: 8px;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+            color: #ff0055;
+            font-size: 10px;
+            text-align: center;
+            overflow-y: scroll;
+            z-index: 500;
+        }
+
+        #panneau-inventaire::-webkit-scrollbar, #panneau-skins::-webkit-scrollbar {
+            width: 8px;
+        }
+        #panneau-inventaire::-webkit-scrollbar-thumb {
+            background-color: #00ffcc;
+            border-radius: 2px;
+        }
+        #panneau-skins::-webkit-scrollbar-thumb {
+            background-color: #ff0055;
+            border-radius: 2px;
+        }
+
+        #compteur-global-container {
+            position: absolute;
+            display: none;
+            width: 130px;
+            background-color: #121826;
+            border: 2px solid #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+            padding: 6px;
+            box-sizing: border-box;
+            color: #ffaa00;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 3px;
+            z-index: 500;
+        }
+        .item-inventaire {
+            width: 22px;
+            height: 22px;
+            margin: 6px auto;
+            border: 2px solid #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            position: relative;
+        }
+        .skin-item {
+            width: 22px;
+            height: 22px;
+            margin: 8px auto;
+            border: 2px solid #ff0055;
+            cursor: pointer;
+            position: relative;
+            border-radius: 2px;
+            box-shadow: 0 0 6px #ff0055;
+        }
+        .badge-lock {
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            font-size: 8px;
+            background: #0b0f19;
+            border-radius: 50%;
+            padding: 1px;
+        }
+        .btn-action-panel {
+            position: absolute;
+            display: none;
+            width: 130px;
+            height: 32px;
+            background-color: #ff0055;
+            color: #ffffff;
+            border: 2px solid #fff;
+            padding: 6px;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+            border-radius: 3px;
+            z-index: 500;
+        }
+
+        #controles-tactiles {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+            z-index: 100;
+        }
+        #joystick-zone {
+            position: absolute;
+            left: 20px;
+            bottom: 10px;
+            width: 90px;
+            height: 90px;
+            background: rgba(0, 255, 204, 0.1);
+            border: 2px solid rgba(0, 255, 204, 0.4);
+            border-radius: 50%;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #joystick-stick {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 255, 204, 0.6);
+            border-radius: 50%;
+            position: absolute;
+        }
+        #bouton-saut-tactile {
+            position: absolute;
+            right: 25px;
+            bottom: 15px;
+            width: 75px;
+            height: 75px;
+            background: rgba(255, 0, 85, 0.3);
+            border: 2px solid #ff0055;
+            color: #ff0055;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
+        }
+
+        /* --- RÉDUCTION VISUELLE DU JEU SUR MOBILE ---
+           L'arène garde ses coordonnées internes intactes (800x320) pour ne rien
+           casser dans la logique du jeu ; seul son RENDU est réduit via un zoom
+           visuel (transform: scale), et le conteneur parent récupère l'espace
+           vertical ainsi économisé pour laisser de la place à l'inventaire et
+           aux boutons d'action. */
+        @media (max-width: 900px) {
+            #arene-scale-wrapper {
+                height: 176px; /* 320px * 0.55, hauteur réellement réservée */
+                overflow: hidden;
+                position: relative;
+                margin-bottom: 8px;
+            }
+            #arene {
+                transform: scale(0.55);
+                transform-origin: top center;
+            }
+            #joystick-zone {
+                width: 110px;
+                height: 110px;
+            }
+            #joystick-stick {
+                width: 50px;
+                height: 50px;
+            }
+            #bouton-saut-tactile {
+                width: 85px;
+                height: 85px;
+                font-size: 15px;
+            }
+            /* Les panneaux boutique gardaient une hauteur fixe de 320px quelle que
+               soit la taille de l'écran : sur un mobile en paysage (souvent 350-400px
+               de haut au total), le panneau dépassait l'écran par le haut ET le bas.
+               On plafonne maintenant leur hauteur à une fraction de l'écran réel. */
+            #panneau-inventaire, #panneau-skins {
+                height: auto;
+                max-height: 65vh;
+            }
+            /* Les boutons RESET MAP / GÉNÉRER MAP débordaient en bas de l'écran,
+               en concurrence avec le joystick et le bouton de saut. On les rend plus
+               compacts et on les déplace en haut de l'écran, loin des contrôles. */
+            .btn-action-panel {
+                width: 100px;
+                height: 26px;
+                font-size: 8px;
+                padding: 4px;
+            }
+        }
+
+        /* =====================  DISPOSITION MOBILE (classe posée par le JS)  =====================
+           Portrait  : inventaire + skins en barres horizontales défilables en bas de l'écran.
+           Paysage   : inventaire à droite, skins à gauche (colonnes), boutons d'action en bas.
+           L'arène est mise à l'échelle pour remplir l'écran (voir disposerMobile()). */
+        body.ui-mobile { margin: 6px 4px; }
+        body.ui-mobile #titre-principal { font-size: 15px !important; margin: 0 0 2px 0 !important; }
+        body.ui-mobile #indicateur-mode { font-size: 9px !important; margin-bottom: 3px !important; }
+        body.ui-mobile #arene-scale-wrapper { overflow: hidden; position: relative; margin: 0 0 4px 0; max-width: none; }
+        body.ui-mobile #arene { width: 800px; max-width: none; transform-origin: top left; margin: 0; }
+        body.ui-mobile #panneau-inventaire, body.ui-mobile #panneau-skins { max-height: none; z-index: 900; }
+        body.ui-mobile .btn-action-panel, body.ui-mobile #compteur-global-container { z-index: 900; padding: 2px; font-size: 8px; line-height: 1.1; white-space: normal; }
+        body.ui-mobile .item-inventaire, body.ui-mobile .skin-item { width: 34px; height: 34px; font-size: 13px; }
+        body.ui-portrait #panneau-inventaire, body.ui-portrait #panneau-skins {
+            white-space: nowrap; overflow-x: auto; overflow-y: hidden; padding: 4px 8px;
+            border-width: 2px 0 0 0; -webkit-overflow-scrolling: touch;
+        }
+        body.ui-portrait #panneau-inventaire br, body.ui-portrait #panneau-skins br { display: none; }
+        body.ui-portrait #panneau-inventaire > span, body.ui-portrait #panneau-skins > span {
+            display: inline-block; vertical-align: middle; font-size: 8px; max-width: 58px; white-space: normal; line-height: 1.1; margin-right: 6px;
+        }
+        body.ui-portrait .item-inventaire, body.ui-portrait .skin-item { display: inline-flex; vertical-align: middle; margin: 4px 6px; }
+        body.ui-portrait #panneau-inventaire > div[style*="border-bottom"] {
+            display: inline-block; width: 0; height: 34px; vertical-align: middle;
+            border-bottom: none !important; border-left: 1px solid #00ffcc; margin: 0 6px !important;
+        }
+        body.ui-paysage #panneau-inventaire, body.ui-paysage #panneau-skins { padding: 4px 2px; }
+        body.ui-paysage #panneau-inventaire > span, body.ui-paysage #panneau-skins > span { font-size: 8px; }
+        /* Contrôles tactiles : plus lisibles, sans sélection de texte ni menu contextuel */
+        #controles-tactiles, #controles-tactiles * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: none; -webkit-tap-highlight-color: transparent; }
+        #joystick-zone::before, #joystick-zone::after { position: absolute; top: 50%; transform: translateY(-50%); font-size: 14px; color: rgba(0, 255, 204, 0.55); pointer-events: none; }
+        #joystick-zone::before { content: "◀"; left: 8px; }
+        #joystick-zone::after { content: "▶"; right: 8px; }
+        #bouton-saut-tactile.appuye { background: rgba(255, 0, 85, 0.7); color: #fff; transform: scale(0.94); }
+    </style>
+</head>
+<body>
+
+    <div id="ecran-titre">
+        <h1 id="titre-jeu-texte" style="color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.6); font-size: 32px;">CYBER_HACK // PROTOCOL</h1>
+        <p style="color: #8892b0; margin-bottom: 30px;">Un jeu de plateforme sur le thème de la cybersécurité</p>
+        <button class="btn-mode-choix" onclick="fermerEcranTitre()">▶ JOUER</button>
+        <button class="btn-mode-choix" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 15px rgba(255,170,0,0.3); padding:10px 22px; font-size:13px;" onclick="ouvrirFenetreTouches()">⌨️ TOUCHES &amp; COMMANDES</button>
+    </div>
+
+    <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
+    <div id="fenetre-touches" class="fenetre-info" onclick="if(event.target===this) fermerFenetreTouches()">
+        <div class="conteneur-parametres">
+            <h2 style="color:#00ffcc;">⌨️ TOUCHES &amp; CONTRÔLES</h2>
+            <p class="sous-titre">Appuie sur une touche : elle s'enfonce ci-dessous. Essaie, c'est satisfaisant.</p>
+            <h3>🎮 DÉPLACEMENT</h3>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="q">Q</span><span class="touche" data-k="d">D</span></div><div class="desc">Aller à gauche / à droite<small>Clavier AZERTY : le côté gauche du clavier, comme un vrai hacker.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="z">Z</span><span class="touche" data-k=" ">ESPACE</span></div><div class="desc">Sauter<small>Plus tu relâches tard, plus tu regrettes le piège en dessous. Inactif en mode création.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="mobile">📱</span></div><div class="desc">Mode mobile<small>Joystick + bouton de saut à l'écran.</small></div></div>
+            <h3>🛠️ CRÉATION DE NIVEAU</h3>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="e">E</span></div><div class="desc">Activer / quitter le mode création<small>Le monde se fige, tu deviens architecte.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="mouse">🖱️ Clic</span></div><div class="desc">Poser un bloc<small>Sur la case sous le curseur.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="mouse">🖱️ Glisser</span></div><div class="desc">Poser une ligne de blocs<small>Garde le clic enfoncé et trace. Aucune case n'est sautée.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="mouse">🗑️ Glisser</span></div><div class="desc">Effacer en traînant<small>Avec l'outil Supprimer : blocs et mobs disparaissent sur ton passage.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="control">CTRL</span><span class="touche" data-k="z">Z</span></div><div class="desc">Annuler le dernier trait<small>Jusqu'à 50 actions en arrière. Le droit à l'erreur, enfin.</small></div></div>
+            <h3>🚪 DIVERS</h3>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="escape">ÉCHAP</span></div><div class="desc">Quitter un niveau personnalisé<small>Retour direct à la génération aléatoire infinie.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche">💻</span></div><div class="desc">Console de commandes<small>Bouton en haut de l'écran. Entrée pour exécuter.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche">💽</span><span class="touche">🔒</span></div><div class="desc">Mode Histoire<small>Ramasse les fragments de chaque zone : le mur se dissout et la suite s'ouvre.</small></div></div>
+            <button class="btn-modal-action" style="margin-top:16px;" onclick="fermerFenetreTouches()">FERMER</button>
+        </div>
+    </div>
+
+    <!-- Fenêtre secrète /admin : toutes les commandes, même cachées -->
+    <div id="fenetre-admin" class="fenetre-info" onclick="if(event.target===this) fermerFenetreAdmin()">
+        <div class="conteneur-parametres" style="border-color:#ff0055; box-shadow:0 0 25px rgba(255,0,85,0.4);">
+            <h2 style="color:#ff0055;">🕵️ CONSOLE ADMIN</h2>
+            <p class="sous-titre">Toutes les commandes, y compris celles que personne n'est censé connaître. Clique sur une ligne pour la préremplir.</p>
+            <div id="liste-commandes-admin"></div>
+            <button class="btn-modal-action" style="margin-top:16px;" onclick="fermerFenetreAdmin()">FERMER</button>
+        </div>
+    </div>
+
+    <div id="ecran-fin">
+        <div class="conteneur-parametres" style="max-width: 480px;">
+            <h2 style="color: #ffcc00; margin-top: 0;">🏆 PROTOCOLE TERMINÉ</h2>
+            <p id="texte-fin" style="color: #8892b0; text-align: left; line-height: 1.6; font-size: 14px;">
+                Reconnaissance. Intrusion. Exfiltration. Chaque pare-feu franchi, chaque backdoor installée, chaque trace effacée t'a mené jusqu'ici : le cœur du système.<br><br>
+                Tu as débloqué la totalité de l'arsenal — chaque bloc, chaque skin, chaque sentinelle. Le protocole CYBER_HACK est officiellement neutralisé.<br><br>
+                Aucune trace de ton passage ne subsiste. Le réseau t'appartient.
+            </p>
+            <button class="btn-modal-action" onclick="fermerEcranFin()">FERMER</button>
+        </div>
+    </div>
+
+    <div id="ecran-credits">
+        <div class="conteneur-parametres" style="max-width: 480px;">
+            <h2 style="color: #00ffcc; margin-top: 0;">🎬 CRÉDITS</h2>
+            <p id="texte-credits" style="color: #8892b0; text-align: left; line-height: 1.6; font-size: 14px;"></p>
+            <button class="btn-modal-action" onclick="fermerCredits()">FERMER</button>
+        </div>
+    </div>
+
+    <div id="ecran-niveaux">
+        <div class="conteneur-parametres" style="max-width: 420px; max-height: 80vh; overflow-y: auto;">
+            <h2 style="color: #00ffcc; margin-top: 0;">🛠️ NIVEAUX</h2>
+            <p style="color: #8892b0; font-size: 11px; margin-top: -8px;">Astuce : une fois dans un niveau, appuie sur <b>Échap</b> pour le quitter et revenir en génération aléatoire.</p>
+            <div id="liste-niveaux"></div>
+            <button class="btn-modal-action" id="btn-creer-niveau" onclick="creerNouveauNiveau()" style="display:none; background-color:#00ffcc; color:#0b0f19;">➕ CRÉER UN NIVEAU</button>
+            <button class="btn-modal-action" onclick="fermerEcranNiveaux()">FERMER</button>
+        </div>
+    </div>
+
+    <!-- Modale d'information (remplace alert() natif, souvent bloqué sur mobile/webview) -->
+    <div id="modal-info" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(11,15,25,0.9); display:none; align-items:center; justify-content:center; z-index:1005;">
+        <div class="conteneur-parametres" style="max-width: 400px;">
+            <p id="texte-modal-info" style="color: #ffcc00; font-size: 15px; line-height: 1.5;"></p>
+            <button class="btn-modal-action" onclick="fermerModalInfo()">OK</button>
+        </div>
+    </div>
+
+    <!-- Modale de confirmation (remplace confirm() natif) -->
+    <div id="modal-confirmation" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(11,15,25,0.9); display:none; align-items:center; justify-content:center; z-index:1005;">
+        <div class="conteneur-parametres" style="max-width: 400px;">
+            <p id="texte-modal-confirmation" style="color: #ff0055; font-size: 15px; line-height: 1.5;"></p>
+            <button class="btn-modal-action" id="btn-confirmation-oui" style="background-color:#ff0055;">OUI</button>
+            <button class="btn-modal-action" onclick="fermerModalConfirmation()">ANNULER</button>
+        </div>
+    </div>
+
+    <!-- Modale de saisie numérique (remplace prompt() natif, même risque de blocage
+         que alert()/confirm() sur mobile/webview) -->
+    <div id="modal-nombre" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(11,15,25,0.9); display:none; align-items:center; justify-content:center; z-index:1005;">
+        <div class="conteneur-parametres" style="max-width: 360px;">
+            <p id="texte-modal-nombre" style="color: #00ffcc; font-size: 15px; line-height: 1.5;"></p>
+            <input type="number" id="input-modal-nombre" style="width:100%; padding:8px; margin:10px 0; background-color:#0b0f19; color:#00ffcc; border:2px solid #00ffcc; border-radius:4px; font-family:'Courier New',monospace; font-size:16px; text-align:center; box-sizing:border-box;">
+            <button class="btn-modal-action" id="btn-nombre-valider" style="background-color:#00ffcc; color:#0b0f19;">VALIDER</button>
+        </div>
+    </div>
+
+    <!-- Modale DEV : taille du niveau + distance entre les zones (niveau en cours d'édition) -->
+    <div id="modal-taille-zones" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(11,15,25,0.9); display:none; align-items:center; justify-content:center; z-index:1005;">
+        <div class="conteneur-parametres" style="max-width: 400px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color: #ffaa00; margin-top: 0;">📐 TAILLE &amp; ZONES</h2>
+            <p style="color: #8892b0; font-size: 11px; margin-top: -8px;">Valeurs en <b>blocs</b> (1 bloc = 20 px). Ne concerne que le niveau en cours d'édition.</p>
+            <label style="color:#00ffcc; font-size:12px; display:block; text-align:left;">Taille totale du niveau</label>
+            <input type="number" id="tz-largeur" step="1" onkeydown="event.stopPropagation()" oninput="majResumeTailleZones()" style="width:100%; padding:8px; margin:4px 0 10px 0; background-color:#0b0f19; color:#00ffcc; border:2px solid #00ffcc; border-radius:4px; font-family:'Courier New',monospace; font-size:16px; text-align:center; box-sizing:border-box;">
+            <label style="color:#00ffcc; font-size:12px; display:block; text-align:left;">Début ZONE 2 — 🔓 INTRUSION</label>
+            <input type="number" id="tz-z2" step="1" onkeydown="event.stopPropagation()" oninput="majResumeTailleZones()" style="width:100%; padding:8px; margin:4px 0 10px 0; background-color:#0b0f19; color:#00ffcc; border:2px solid #00ffcc; border-radius:4px; font-family:'Courier New',monospace; font-size:16px; text-align:center; box-sizing:border-box;">
+            <label style="color:#00ffcc; font-size:12px; display:block; text-align:left;">Début ZONE 3 — 🚨 EXFILTRATION</label>
+            <input type="number" id="tz-z3" step="1" onkeydown="event.stopPropagation()" oninput="majResumeTailleZones()" style="width:100%; padding:8px; margin:4px 0 10px 0; background-color:#0b0f19; color:#00ffcc; border:2px solid #00ffcc; border-radius:4px; font-family:'Courier New',monospace; font-size:16px; text-align:center; box-sizing:border-box;">
+            <label style="color:#00ffcc; font-size:12px; display:block; text-align:left;">Début ZONE 4 — 💾 BACKDOOR ACTIF</label>
+            <input type="number" id="tz-z4" step="1" onkeydown="event.stopPropagation()" oninput="majResumeTailleZones()" style="width:100%; padding:8px; margin:4px 0 10px 0; background-color:#0b0f19; color:#00ffcc; border:2px solid #00ffcc; border-radius:4px; font-family:'Courier New',monospace; font-size:16px; text-align:center; box-sizing:border-box;">
+            <p id="tz-resume" style="color:#8892b0; font-size:11px; line-height:1.5; min-height:32px;"></p>
+            <button class="btn-modal-action" style="background-color:#ffaa00; color:#0b0f19;" onclick="appliquerTailleZones()">APPLIQUER</button>
+            <button class="btn-modal-action" onclick="valeursParDefautTailleZones()">VALEURS PAR DÉFAUT</button>
+            <button class="btn-modal-action" onclick="fermerModalTailleZones()">FERMER</button>
+        </div>
+    </div>
+
+    <!-- Mini-tâche interactive du Mode Histoire (façon "tâche" à la Among Us) :
+         le jeu se fige complètement tant que cette fenêtre est ouverte. -->
+    <div id="ecran-tache" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(11,15,25,0.95); display:none; align-items:center; justify-content:center; z-index:1006;">
+        <div class="conteneur-parametres" style="max-width: 340px;">
+            <h2 style="color: #00ffcc; margin-top: 0;">🔐 PIRATAGE EN COURS</h2>
+            <p style="color: #8892b0; font-size: 12px;">Clique les cases dans l'ordre croissant.</p>
+            <p id="texte-chrono-tache" style="color: #ffaa00; font-size: 20px; font-weight: bold;">⏱️ 6</p>
+            <div id="grille-tache" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0;"></div>
+            <p id="texte-statut-tache" style="color: #8892b0; font-size: 12px; min-height: 16px;"></p>
+        </div>
+    </div>
+
+    <div id="ecran-selection-mode">
+        <h1 id="sel-titre" style="color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.5);">CYBER_HACK // CHOIX DU MODE</h1>
+        <p id="sel-desc" style="color: #8892b0; margin-bottom: 20px;">Sélectionne ton support pour configurer l'interface :</p>
+        <button id="sel-btn-pc" class="btn-mode-choix" onclick="choisirMode('pc')">💻 MODE PC (Clavier)</button>
+        <button id="sel-btn-mobile" class="btn-mode-choix" onclick="choisirMode('mobile')">📱 MODE MOBILE (Tactile & Joystick)</button>
+    </div>
+
+    <div id="modal-parametres">
+        <div class="conteneur-parametres">
+            <h2 id="txt-titre-parametres" style="color: #00ffcc; margin-top: 0;">PARAMÈTRES</h2>
+            <label id="txt-label-langue" for="select-langue" style="color: #8892b0; font-size: 12px; display: block; text-align: left;">Langue du Jeu :</label>
+            <select id="select-langue" onchange="changerLangue(this.value)">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="ja">日本語 (Japanese)</option>
+            </select>
+            <button class="btn-modal-action" onclick="rechargerPage()" id="btn-recharger-txt" style="background-color: #ffaa00; color: #0b0f19;">🔄 RECHARGER LA PAGE</button>
+            <button class="btn-modal-action" onclick="ouvrirEcranTitre()" id="btn-revoir-titre-txt">🎬 VOIR L'ÉCRAN TITRE</button>
+            <p style="color: #8892b0; font-size: 10px; margin: 10px 0 4px 0; text-align: left;">Niveaux créés par le développeur, à essayer librement :</p>
+            <button class="btn-modal-action" onclick="afficherEcranNiveaux()" style="background-color:#8892b0; color:#0b0f19;">🛠️ NIVEAUX</button>
+            <button class="btn-modal-action" id="btn-voir-fin" onclick="afficherEcranFin()" style="display:none; background-color:#ffcc00; color:#0b0f19;">🏆 VOIR LA FIN</button>
+            <button class="btn-modal-action" id="btn-voir-credits" onclick="afficherCredits()" style="display:none; background-color:#00ffcc; color:#0b0f19;">🎬 CRÉDITS</button>
+            <button class="btn-modal-action" onclick="reinitialisationTotaleJeu()" style="background-color: #ff0000; color: #fff;">🗑️ SUPPRIMER TOUTES LES SAUVEGARDES (HARD RESET)</button>
+            <button class="btn-modal-action" onclick="fermerParametres()" id="btn-fermer-txt">RETOUR AU JEU</button>
+        </div>
+    </div>
+
+    <h1 id="titre-principal" style="font-size: 22px; margin-bottom: 5px;">CYBER_HACK // PROTOCOL</h1>
+    <div id="indicateur-mode" style="margin-bottom: 6px; font-size: 13px; color: #ff0055;">
+        MODE JEU - Appuie sur 'E' ou sur le sac à dos pour le Mode Créatif
+    </div>
+
+    <div id="hud">
+        <span id="hud-chrono">⏱️ 00:00</span>
+        <span id="hud-pieces">🪙 0 / 0</span>
+        <span id="hud-morts">💀 Morts : 0</span>
+        <span id="hud-phase">🔍 RECONNAISSANCE</span>
+        <span id="hud-niveau-perso" style="display:none; color:#ffaa00;">🛠️ NIVEAU DEV — Échap pour quitter</span>
+        <div class="hud-actions">
+            <button id="btn-commande-toggle" class="btn-hud-icone" onclick="basculerConsoleCommande()" title="Console de Commandes">💻</button>
+            <button id="btn-histoire-toggle" class="btn-hud-icone" onclick="basculerModeHistoire()" title="Mode Histoire / Normal">📖</button>
+            <button id="btn-creatif-toggle" class="btn-hud-icone" onclick="basculerModeCreatif()" title="Mode Créatif / Inventaire">🎒</button>
+            <button id="btn-parametres" class="btn-hud-icone" onclick="ouvrirParametres()" title="Paramètres">⚙️</button>
+        </div>
+    </div>
+
+    <div id="panneau-commande">
+        <input type="text" id="input-commande">
+        <button id="btn-valider-cmd" onclick="executerCommande()">EXÉCUTER</button>
+    </div>
+
+    <div id="arene-scale-wrapper">
+        <div id="arene" class="phase-1-bg">
+            <div id="monde"></div>
+        </div>
+    </div>
+
+    <div id="compteur-global-container">
+        BANQUE<br>🪙 <span id="valeur-banque">0</span>
+    </div>
+
+    <div id="panneau-skins">
+        <span id="txt-boutique-skins">BOUTIQUE SKINS</span><br><span style="font-size: 7px; color: #ffaa00;">(Rareté & Style)</span><br><br>
+    </div>
+
+    <div id="panneau-inventaire">
+        <span id="txt-boutique-objets">INVENTAIRE</span><br><span style="font-size: 7px; color: #ffaa00;">Outils & Blocs</span><br><br>
+    </div>
+
+    <button id="btn-reset" class="btn-action-panel">🔄 RESET MAP</button>
+    <button id="btn-generation" class="btn-action-panel" style="background-color: #00ffcc; color: #0b0f19; border-color: #00ffcc; box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);">⚡ GÉNÉRER MAP</button>
+    <button id="btn-taille-zones" class="btn-action-panel" onclick="ouvrirModalTailleZones()" style="background-color: #ffaa00; color: #0b0f19; border-color: #ffaa00; box-shadow: 0 0 15px rgba(255, 170, 0, 0.4);">📐 TAILLE &amp; ZONES</button>
+
+    <div id="controles-tactiles">
+        <div id="joystick-zone">
+            <div id="joystick-stick"></div>
+        </div>
+        <div id="bouton-saut-tactile">SAUT</div>
+    </div>
+
+    <script>
+        const traductions = {
+            fr: {
+                titreJeu: "CYBER_HACK // PROTOCOL",
+                selTitre: "CYBER_HACK // CHOIX DU MODE",
+                selDesc: "Sélectionne ton support pour configurer l'interface :",
+                selBtnPc: "💻 MODE PC (Clavier)",
+                selBtnMobile: "📱 MODE MOBILE (Tactile & Joystick)",
+                titreParametres: "PARAMÈTRES",
+                labelLangue: "Langue du Jeu :",
+                btnRecharger: "🔄 RECHARGER LA PAGE",
+                btnFermer: "RETOUR AU JEU",
+                modeJeuTexte: "MODE JEU - Appuie sur 'E' ou le sac à dos pour le Mode Créatif",
+                modeMobileTexte: "MODE MOBILE TACTILE ACTIF",
+                morts: "Morts",
+                banque: "BANQUE",
+                boutiqueSkins: "BOUTIQUE SKINS",
+                boutiqueObjets: "INVENTAIRE",
+                btnReset: "🔄 RESET MAP",
+                btnGen: "⚡ GÉNÉRER MAP",
+                btnSaut: "SAUT",
+                alertePrix: (prix) => `Il te faut ${prix} 🪙 pour débloquer cet élément !`,
+                alerteSkin: (prix) => `Il te faut ${prix} 🪙 pour débloquer ce skin !`
+            },
+            en: {
+                titreJeu: "CYBER_HACK // PROTOCOL",
+                selTitre: "CYBER_HACK // MODE SELECTION",
+                selDesc: "Select your device to configure the interface:",
+                selBtnPc: "💻 PC MODE (Keyboard)",
+                selBtnMobile: "📱 MOBILE MODE (Touch & Joystick)",
+                titreParametres: "SETTINGS",
+                labelLangue: "Game Language:",
+                btnRecharger: "🔄 RELOAD PAGE",
+                btnFermer: "RESUME GAME",
+                modeJeuTexte: "GAME MODE - Press 'E' or backpack for Creative Mode",
+                modeMobileTexte: "TOUCH MOBILE MODE ACTIVE",
+                morts: "Deaths",
+                banque: "BANK",
+                boutiqueSkins: "SKINS SHOP",
+                boutiqueObjets: "INVENTORY",
+                btnReset: "🔄 RESET MAP",
+                btnGen: "⚡ GENERATE MAP",
+                btnSaut: "JUMP",
+                alertePrix: (prix) => `You need ${prix} 🪙 to unlock this item!`,
+                alerteSkin: (prix) => `You need ${prix} 🪙 to unlock this skin!`
+            },
+            de: {
+                titreJeu: "CYBER_HACK // PROTOKOLL",
+                selTitre: "CYBER_HACK // MODUS-AUSWAHL",
+                selDesc: "Wähle dein Gerät zur Konfiguration der Benutzeroberfläche:",
+                selBtnPc: "💻 PC-MODUS (Tastatur)",
+                selBtnMobile: "📱 MOBILER MODUS (Touch & Joystick)",
+                titreParametres: "EINSTELLUNGEN",
+                labelLangue: "Spielsprache:",
+                btnRecharger: "🔄 SEITE NEU LADEN",
+                btnFermer: "ZURÜCK ZUM SPIEL",
+                modeJeuTexte: "SPIELMODUS - Drücke 'E' oder Rucksack für Kreativmodus",
+                modeMobileTexte: "MOBILER TOUCH-MODUS AKTIV",
+                morts: "Tode",
+                banque: "BANK",
+                boutiqueSkins: "SKIN-SHOP",
+                boutiqueObjets: "INVENTAR",
+                btnReset: "🔄 RESET MAP",
+                btnGen: "⚡ MAP GENERIEREN",
+                btnSaut: "SPRUNG",
+                alertePrix: (prix) => `Du brauchst ${prix} 🪙, um dieses Element freizuschalten!`,
+                alerteSkin: (prix) => `Du brauchst ${prix} 🪙, um diesen Skin freizuschalten!`
+            },
+            ja: {
+                titreJeu: "CYBER_HACK // プロトコル",
+                selTitre: "CYBER_HACK // モード選択",
+                selDesc: "インターフェースを設定するデバイスを選択してください：",
+                selBtnPc: "💻 PCモード (キーボード)",
+                selBtnMobile: "📱 モバイルモード (タッチ & ジョイスティック)",
+                titreParametres: "設定",
+                labelLangue: "ゲーム言語:",
+                btnRecharger: "🔄 ページを再読み込み",
+                btnFermer: "ゲームに戻る",
+                modeJeuTexte: "ゲームモード - 'E' またはリュックサックでクリエイティブ",
+                modeMobileTexte: "タッチモバイルモード有効",
+                morts: "死亡数",
+                banque: "バンク",
+                boutiqueSkins: "スキンショップ",
+                boutiqueObjets: "インベントリ",
+                btnReset: "🔄 マップリセット",
+                btnGen: "⚡ マップ生成",
+                btnSaut: "ジャンプ",
+                alertePrix: (prix) => `このアイテムのロックを解除するには ${prix} 🪙 必要です！`,
+                alerteSkin: (prix) => `このスキンのロックを解除するには ${prix} 🪙 必要です！`
+            }
+        };
+
+        let langueActuelle = localStorage.getItem("cyber_hack_langue") || "fr";
+        document.getElementById("select-langue").value = langueActuelle;
+
+        // Crédits personnalisés (commande cachée /title) — texte affiché dans l'écran
+        // Crédits (débloqué dans les Paramètres une fois la boutique achetée à 100%).
+        // Persiste même après un Hard Reset.
+        // Crédits ÉCRITS EN DUR dans le code source : contrairement aux achats/sauvegardes
+        // (localStorage, propres à chaque joueur), cette valeur est identique pour TOUT LE
+        // MONDE qui ouvre ce fichier, et ne peut donc jamais être affectée par un Hard
+        // Reset (elle n'est même pas stockée dans le localStorage).
+        // Pour un changement PERMANENT et visible par tous les joueurs, il faut modifier
+        // directement cette ligne dans le code (ou demander à Claude de le faire).
+        const CREDITS_PAR_DEFAUT = "Développé avec l'aide de Claude (Anthropic).";
+        let creditsPersonnalises = CREDITS_PAR_DEFAUT;
+
+        function appliquerTraductions() {
+            let t = traductions[langueActuelle];
+            document.getElementById("titre-principal").innerText = t.titreJeu;
+            let titreEcran = document.getElementById("titre-jeu-texte");
+            if (titreEcran) titreEcran.innerText = t.titreJeu;
+            let credits = document.getElementById("texte-credits");
+            if (credits) credits.innerText = creditsPersonnalises;
+            document.getElementById("sel-titre").innerText = t.selTitre;
+            document.getElementById("sel-desc").innerText = t.selDesc;
+            document.getElementById("sel-btn-pc").innerText = t.selBtnPc;
+            document.getElementById("sel-btn-mobile").innerText = t.selBtnMobile;
+            document.getElementById("txt-titre-parametres").innerText = t.titreParametres;
+            document.getElementById("txt-label-langue").innerText = t.labelLangue;
+            document.getElementById("btn-recharger-txt").innerText = t.btnRecharger;
+            document.getElementById("btn-fermer-txt").innerText = t.btnFermer;
+            document.getElementById("txt-boutique-skins").innerText = t.boutiqueSkins;
+            document.getElementById("txt-boutique-objets").innerText = t.boutiqueObjets;
+            if (!modeConstructionActif && modeActuel !== 'mobile') {
+                indicateurMode.innerText = t.modeJeuTexte;
+            } else if (modeActuel === 'mobile') {
+                indicateurMode.innerText = t.modeMobileTexte;
+            }
+            btnReset.innerText = t.btnReset;
+            btnGeneration.innerText = t.btnGen;
+            document.getElementById("bouton-saut-tactile").innerText = t.btnSaut;
+        }
+
+        function changerLangue(langue) {
+            langueActuelle = langue;
+            localStorage.setItem("cyber_hack_langue", langue);
+            appliquerTraductions();
+        }
+
+        function rechargerPage() {
+            location.reload();
+        }
+
+        function ouvrirParametres() {
+            document.getElementById("modal-parametres").style.display = "flex";
+        }
+
+        function fermerParametres() {
+            document.getElementById("modal-parametres").style.display = "none";
+        }
+
+        // --- Écran Titre ---
+        function fermerEcranTitre() {
+            document.getElementById("ecran-titre").style.display = "none";
+        }
+        function ouvrirEcranTitre() {
+            document.getElementById("ecran-titre").style.display = "flex";
+        }
+
+        // --- Remplacement de alert()/confirm() natifs (souvent bloqués ou invisibles
+        // sur mobile, dans une webview d'appli, ou en PWA) par des modales stylées
+        // intégrées au jeu, garanties de toujours s'afficher. ---
+        function afficherAlerte(message) {
+            document.getElementById("texte-modal-info").innerText = message;
+            document.getElementById("modal-info").style.display = "flex";
+        }
+        function fermerModalInfo() {
+            document.getElementById("modal-info").style.display = "none";
+        }
+
+        function demanderConfirmation(message, callbackSiOui) {
+            document.getElementById("texte-modal-confirmation").innerText = message;
+            let btnOui = document.getElementById("btn-confirmation-oui");
+            // Réassigné à chaque appel pour éviter d'empiler les anciens callbacks
+            btnOui.onclick = function() {
+                fermerModalConfirmation();
+                callbackSiOui();
+            };
+            document.getElementById("modal-confirmation").style.display = "flex";
+        }
+        // --- Mini-tâche interactive du Mode Histoire ---
+        // tacheActive gèle complètement le jeu (vérifié tout en haut de update()) :
+        // impossible de bouger/sauter/tomber tant que la tâche est ouverte, comme
+        // une tâche à la Among Us où on ne peut pas "jouer en arrière-plan".
+        let tacheActive = false;
+        let tacheMinuteur = null;
+
+        function lancerTachePiratage(callbackSucces) {
+            tacheActive = true;
+            let grille = document.getElementById("grille-tache");
+            let statut = document.getElementById("texte-statut-tache");
+            let chrono = document.getElementById("texte-chrono-tache");
+            grille.innerHTML = "";
+            statut.innerText = "";
+
+            let ordre = [1, 2, 3, 4, 5, 6];
+            // Mélange (Fisher-Yates) pour un ordre d'affichage aléatoire
+            for (let i = ordre.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [ordre[i], ordre[j]] = [ordre[j], ordre[i]];
+            }
+
+            let prochainAttendu = 1;
+            let tempsRestant = 6;
+
+            ordre.forEach(num => {
+                let btn = document.createElement("button");
+                btn.innerText = num;
+                btn.style.cssText = "padding:18px 0; font-size:18px; font-weight:bold; background-color:#0b0f19; color:#00ffcc; border:2px solid #00ffcc; border-radius:4px; cursor:pointer; font-family:'Courier New',monospace;";
+                btn.onclick = function() {
+                    if (!tacheActive) return;
+                    if (num === prochainAttendu) {
+                        btn.style.backgroundColor = "#00ffcc";
+                        btn.style.color = "#0b0f19";
+                        btn.disabled = true;
+                        prochainAttendu++;
+                        if (prochainAttendu > 6) {
+                            terminerTache(true, callbackSucces);
+                        }
+                    } else {
+                        statut.innerText = "❌ Mauvais ordre, réessaie !";
+                        statut.style.color = "#ff0055";
+                    }
+                };
+                grille.appendChild(btn);
+            });
+
+            clearInterval(tacheMinuteur);
+            tacheMinuteur = setInterval(function() {
+                tempsRestant--;
+                chrono.innerText = "⏱️ " + tempsRestant;
+                if (tempsRestant <= 0) {
+                    terminerTache(false, callbackSucces);
+                }
+            }, 1000);
+
+            document.getElementById("ecran-tache").style.display = "flex";
+        }
+
+        function terminerTache(reussi, callbackSucces) {
+            clearInterval(tacheMinuteur);
+            if (reussi) {
+                document.getElementById("ecran-tache").style.display = "none";
+                tacheActive = false;
+                callbackSucces();
+            } else {
+                // Échec : on relance immédiatement une nouvelle tentative, sans
+                // pénalité — l'objectif reste juste de réussir la tâche.
+                document.getElementById("texte-statut-tache").innerText = "⏱️ Temps écoulé, nouvelle tentative...";
+                document.getElementById("texte-statut-tache").style.color = "#ffaa00";
+                setTimeout(function() { lancerTachePiratage(callbackSucces); }, 1200);
+            }
+        }
+
+        function fermerModalConfirmation() {
+            document.getElementById("modal-confirmation").style.display = "none";
+        }
+
+        // Demande un nombre entier (borné entre 1 et max) via une modale personnalisée.
+        // callbackValeur reçoit le nombre validé (déjà bordé/arrondi).
+        function demanderNombre(message, valeurDefaut, max, callbackValeur) {
+            document.getElementById("texte-modal-nombre").innerText = message;
+            let input = document.getElementById("input-modal-nombre");
+            input.value = valeurDefaut;
+            input.min = 1;
+            input.max = max;
+            let btn = document.getElementById("btn-nombre-valider");
+            btn.onclick = function() {
+                let val = parseInt(input.value);
+                if (isNaN(val)) val = valeurDefaut;
+                val = Math.max(1, Math.min(max, val));
+                document.getElementById("modal-nombre").style.display = "none";
+                callbackValeur(val);
+            };
+            document.getElementById("modal-nombre").style.display = "flex";
+            input.focus();
+        }
+
+        // --- Écran de Fin (débloqué quand 100% de la boutique est achetée) ---
+        function afficherEcranFin() {
+            document.getElementById("ecran-fin").style.display = "flex";
+        }
+        function fermerEcranFin() {
+            document.getElementById("ecran-fin").style.display = "none";
+        }
+
+        // --- Écran Crédits (débloqué en même temps que l'écran de fin) ---
+        function afficherCredits() {
+            document.getElementById("ecran-credits").style.display = "flex";
+        }
+        function fermerCredits() {
+            document.getElementById("ecran-credits").style.display = "none";
+        }
+
+        // ============================================================
+        // ÉDITEUR DE NIVEAUX (niveaux "développeur")
+        // - Sauvegardé en localStorage, dans une clé JAMAIS effacée par le Hard
+        //   Reset (comme les crédits) : ce sont des données de conception, pas
+        //   une sauvegarde de progression joueur.
+        // - Tout le monde peut charger et JOUER un niveau depuis le bouton
+        //   "🛠️ NIVEAUX" des Paramètres.
+        // - Seule la personne qui connaît la commande cachée /editeur peut
+        //   CRÉER, ÉDITER ou SUPPRIMER un niveau. Un joueur qui n'a pas ce mode
+        //   peut très bien entrer en mode créatif et bricoler pendant qu'il
+        //   teste un niveau (le mode créatif reste un outil de jeu normal) —
+        //   mais tant que niveauEnEditionId est null (ce qui est TOUJOURS le cas
+        //   pour lui), rien de ce qu'il fait n'est jamais réécrit dans la
+        //   sauvegarde du niveau.
+        // ============================================================
+        let niveauEnEditionId = null; // non-null UNIQUEMENT quand le dev édite via /editeur
+        // true dès qu'un niveau de l'éditeur est chargé (test OU édition), false en
+        // génération procédurale infinie normale. Empêche le bloc "Fin de Niveau"
+        // de relancer automatiquement une nouvelle map procédurale par-dessus un
+        // niveau personnalisé en cours de test/édition.
+        let modeNiveauPersonnaliseActif = false;
+
+        // --- Mode Histoire : une épreuve par thème/zone de la génération procédurale.
+        // Une fois l'objectif atteint, on continue à jouer normalement jusqu'à la
+        // prochaine zone — aucun blocage, juste un fil conducteur thématique.
+        let modeHistoireActif = false;
+        let zoneHistoireActuelle = -1;
+        let progressionZoneActuelle = 0;
+        // Chaque zone a un NOMBRE de fragments à récupérer (cible) et plusieurs
+        // missions possibles : une est tirée au sort à chaque nouvelle carte.
+        // Les 🪙 donnent de l'argent mais ne comptent plus pour les missions.
+        const epreuvesHistoire = [
+            { nom: "🔍 RECONNAISSANCE", cible: 3, missions: [
+                { icone: "📡", texte: "Cartographie le réseau : capte les balises", fin: "Réseau cartographié" },
+                { icone: "🔎", texte: "Repère les ports ouverts du serveur", fin: "Ports ouverts identifiés" },
+                { icone: "🗂️", texte: "Collecte les métadonnées de la cible", fin: "Métadonnées collectées" } ] },
+            { nom: "🔓 INTRUSION", cible: 3, missions: [
+                { icone: "🔑", texte: "Récupère les identifiants volés", fin: "Accès administrateur obtenu" },
+                { icone: "🧩", texte: "Assemble les morceaux du mot de passe", fin: "Mot de passe reconstitué" },
+                { icone: "🛡️", texte: "Désactive les modules du pare-feu", fin: "Pare-feu contourné" } ] },
+            { nom: "🚨 EXFILTRATION", cible: 4, missions: [
+                { icone: "📦", texte: "Récupère les paquets exfiltrés", fin: "Données exfiltrées" },
+                { icone: "🧹", texte: "Efface les traces dans les journaux", fin: "Traces effacées" },
+                { icone: "🔐", texte: "Chiffre les fichiers volés avant l'alerte", fin: "Fichiers chiffrés" } ] },
+            { nom: "💾 BACKDOOR ACTIF", cible: 2, missions: [
+                { icone: "💾", texte: "Installe les composants de la backdoor", fin: "Backdoor installée" },
+                { icone: "📶", texte: "Réactive les relais de communication", fin: "Relais réactivés" },
+                { icone: "⚙️", texte: "Compile le payload final", fin: "Payload compilé" } ] }
+        ];
+        let missionChoisie = [0, 0, 0, 0];
+        let progressionZones = [0, 0, 0, 0];
+        let missionsFaites = [false, false, false, false];
+        let dernierMessageVerrou = 0;
+        let mursZone = [[], [], []]; // blocs du mur de chaque frontière de zone
+        let mursEnFonte = [false, false, false];
+
+        function reinitialiserHistoire() {
+            missionChoisie = epreuvesHistoire.map(e => Math.floor(Math.random() * e.missions.length));
+            progressionZones = [0, 0, 0, 0];
+            missionsFaites = [false, false, false, false];
+            mursZone = [[], [], []];
+            mursEnFonte = [false, false, false];
+        }
+
+        function basculerModeHistoire() {
+            modeHistoireActif = !modeHistoireActif;
+            zoneHistoireActuelle = -1; // force le réaffichage de l'épreuve en cours
+            progressionZoneActuelle = 0;
+            let btn = document.getElementById("btn-histoire-toggle");
+            if (btn) {
+                btn.style.backgroundColor = modeHistoireActif ? "#00ffcc" : "";
+                btn.style.color = modeHistoireActif ? "#0b0f19" : "";
+            }
+            afficherAlerte(modeHistoireActif ? "📖 Mode Histoire activé : récupère les 💽 fragments de chaque zone pour débloquer la suivante." : "🎮 Retour au Mode Normal.");
+            if (!modeNiveauPersonnaliseActif && typeof genererMapProcedurale === "function") genererMapProcedurale();
+        }
+        let modeDevNiveauxDeverrouille = localStorage.getItem("cyber_hack_dev_unlocked") === "true";
+
+        function blocsParDefautNiveau() {
+            const couleursDefaut = ["#00ffcc", "#ff0055", "#00ff66", "#ffaa00", "#9d00ff", "#3a4454"];
+            let couleur = couleursDefaut[Math.floor(Math.random() * couleursDefaut.length)];
+            let blocs = [];
+            for (let i = 0; i < 5; i++) {
+                blocs.push({ x: 20 + i * 20, y: 240, type: "solide", couleur: couleur, symbole: "", valeur: 1 });
+            }
+            return blocs;
+        }
+
+        let niveauxPersonnalises = [];
+        try { niveauxPersonnalises = JSON.parse(localStorage.getItem("cyber_hack_niveaux_dev")) || []; } catch (e) { niveauxPersonnalises = []; }
+        if (!Array.isArray(niveauxPersonnalises) || niveauxPersonnalises.length === 0) {
+            // Premier lancement : un niveau par défaut, identique à ce que fait
+            // le bouton RESET MAP (5 blocs sous le spawn, couleur aléatoire).
+            niveauxPersonnalises = [{ nom: "Niveau 1", spawnX: 60, spawnY: 180, blocs: blocsParDefautNiveau(), mobs: [] }];
+        }
+
+        function sauvegarderNiveauxListe() {
+            localStorage.setItem("cyber_hack_niveaux_dev", JSON.stringify(niveauxPersonnalises));
+        }
+
+        // Resynchronise l'état ACTUEL du monde (tous les blocs/mobs posés en jeu)
+        // dans le niveau en cours d'édition, et sauvegarde. Appelée après chaque
+        // pose/suppression tant que niveauEnEditionId n'est pas null.
+        function sauvegarderNiveauEnCours() {
+            if (niveauEnEditionId === null || !niveauxPersonnalises[niveauEnEditionId]) return;
+            niveauxPersonnalises[niveauEnEditionId].blocs = blocsMonde.map(b => ({
+                x: b.x, y: b.y, type: b.type, couleur: b.couleur, symbole: b.symbole, valeur: b.valeur
+            }));
+            niveauxPersonnalises[niveauEnEditionId].mobs = mobsMonde.map(m => ({
+                xMin: m.xMin, xMax: m.xMax, y: m.y, vitesse: m.vitesse, symbole: m.elementDom.innerText
+            }));
+            sauvegarderNiveauxListe();
+        }
+
+        function rendreListeNiveaux() {
+            let liste = document.getElementById("liste-niveaux");
+            liste.innerHTML = "";
+            niveauxPersonnalises.forEach((niveau, index) => {
+                let ligne = document.createElement("div");
+                ligne.style.cssText = "display:flex; align-items:center; gap:6px; margin-bottom:8px; background:#0b0f19; padding:6px; border-radius:4px; border:1px solid rgba(0,255,204,0.25);";
+
+                let nomSpan = document.createElement("span");
+                nomSpan.innerText = niveau.nom;
+                nomSpan.style.cssText = "color:#00ffcc; font-size:12px; flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;";
+                ligne.appendChild(nomSpan);
+
+                let btnJouer = document.createElement("button");
+                btnJouer.innerText = "▶";
+                btnJouer.title = "Jouer";
+                btnJouer.style.cssText = "background:#00ffcc; color:#0b0f19; border:none; border-radius:3px; padding:5px 9px; cursor:pointer; font-weight:bold;";
+                btnJouer.onclick = () => chargerNiveauPersonnalise(index, false);
+                ligne.appendChild(btnJouer);
+
+                if (modeDevNiveauxDeverrouille) {
+                    let btnEditer = document.createElement("button");
+                    btnEditer.innerText = "✏️";
+                    btnEditer.title = "Éditer";
+                    btnEditer.style.cssText = "background:#ffaa00; color:#0b0f19; border:none; border-radius:3px; padding:5px 9px; cursor:pointer; font-weight:bold;";
+                    btnEditer.onclick = () => chargerNiveauPersonnalise(index, true);
+                    ligne.appendChild(btnEditer);
+
+                    let btnSupprimer = document.createElement("button");
+                    btnSupprimer.innerText = "🗑️";
+                    btnSupprimer.title = "Supprimer";
+                    btnSupprimer.style.cssText = "background:#ff0055; color:#fff; border:none; border-radius:3px; padding:5px 9px; cursor:pointer; font-weight:bold;";
+                    btnSupprimer.onclick = () => supprimerNiveau(index);
+                    ligne.appendChild(btnSupprimer);
+                }
+
+                liste.appendChild(ligne);
+            });
+
+            let btnCreer = document.getElementById("btn-creer-niveau");
+            if (btnCreer) btnCreer.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
+        }
+
+        function creerNouveauNiveau() {
+            if (!modeDevNiveauxDeverrouille) return;
+            niveauxPersonnalises.push({
+                nom: "Niveau " + (niveauxPersonnalises.length + 1),
+                spawnX: 60, spawnY: 180,
+                blocs: blocsParDefautNiveau(),
+                mobs: []
+            });
+            sauvegarderNiveauxListe();
+            rendreListeNiveaux();
+        }
+
+        function supprimerNiveau(index) {
+            if (!modeDevNiveauxDeverrouille) return;
+            demanderConfirmation("Supprimer définitivement ce niveau ?", function() {
+                niveauxPersonnalises.splice(index, 1);
+                if (niveauxPersonnalises.length === 0) {
+                    niveauxPersonnalises.push({ nom: "Niveau 1", spawnX: 60, spawnY: 180, blocs: blocsParDefautNiveau(), mobs: [] });
+                }
+                sauvegarderNiveauxListe();
+                rendreListeNiveaux();
+            });
+        }
+
+        function chargerNiveauPersonnalise(index, modeEdition) {
+            let niveau = niveauxPersonnalises[index];
+            if (!niveau) return;
+            nettoyerMondeComplet();
+            niveau.blocs.forEach(b => creerBlocMondeDirect(b.x, b.y, b.type, b.couleur, b.symbole || "", b.valeur || 1));
+            (niveau.mobs || []).forEach(m => creerMobPatrouilleur(m.xMin, m.xMax, m.y, m.vitesse, "#8892b0", m.symbole || "👾"));
+            joueur.spawnX = niveau.spawnX || 60;
+            joueur.spawnY = niveau.spawnY || 180;
+            appliquerParametresDuNiveau(niveau);
+            // Seul un chargement en mode ÉDITION (dev uniquement) écrit dans la
+            // sauvegarde ensuite ; un simple "▶ Jouer" laisse niveauEnEditionId à
+            // null, donc rien de ce que le joueur fait n'est jamais sauvegardé.
+            niveauEnEditionId = modeEdition ? index : null;
+            modeNiveauPersonnaliseActif = true;
+            mettreAJourBadgeNiveauPerso();
+            fermerEcranNiveaux();
+            fermerParametres();
+            if (modeEdition && !modeConstructionActif) {
+                basculerModeCreatif();
+            }
+            respawnJoueur();
+            recalculerTotalPieces();
+        }
+
+        function afficherEcranNiveaux() {
+            rendreListeNiveaux();
+            document.getElementById("ecran-niveaux").style.display = "flex";
+        }
+        function fermerEcranNiveaux() {
+            document.getElementById("ecran-niveaux").style.display = "none";
+        }
+
+        // Vérifie si TOUS les blocs, skins et mobs sont acquis ; si oui, révèle
+        // les boutons "VOIR LA FIN" et "CRÉDITS" dans les Paramètres (indépendants
+        // du Hard Reset).
+        function verifierCompletionBoutique() {
+            let tout =
+                typesDeBlocs.every(b => b.acquis) &&
+                listeSkins.every(s => s.acquis) &&
+                mobsBoutique.every(m => m.acquis);
+            let btn = document.getElementById("btn-voir-fin");
+            if (btn) btn.style.display = tout ? "block" : "none";
+            let btnCredits = document.getElementById("btn-voir-credits");
+            if (btnCredits) btnCredits.style.display = tout ? "block" : "none";
+        }
+
+        function basculerModeCreatif() {
+            modeConstructionActif = !modeConstructionActif;
+            let displayVal = modeConstructionActif ? "block" : "none";
+            panneauInventaire.style.display = displayVal;
+            panneauSkins.style.display = displayVal;
+            compteurGlobalContainer.style.display = displayVal;
+            btnReset.style.display = displayVal;
+            btnGeneration.style.display = displayVal;
+            arene.style.touchAction = modeConstructionActif ? "none" : "";
+            if (modeActuel === "mobile") document.getElementById("controles-tactiles").style.display = modeConstructionActif ? "none" : "block";
+            positionnerPanneaux();
+            mettreAJourBoutonTailleZones();
+            rafraichirMarqueursZones();
+        }
+
+        function basculerConsoleCommande() {
+            let panelCmd = document.getElementById("panneau-commande");
+            if (panelCmd.style.display === "block") {
+                panelCmd.style.display = "none";
+            } else {
+                panelCmd.style.display = "block";
+                document.getElementById("input-commande").focus();
+            }
+        }
+
+        // --- Fenêtre des touches (écran titre) + console admin cachée ---
+        function ouvrirFenetreTouches() { document.getElementById("fenetre-touches").style.display = "flex"; }
+        function fermerFenetreTouches() { document.getElementById("fenetre-touches").style.display = "none"; }
+        function fermerFenetreAdmin() { document.getElementById("fenetre-admin").style.display = "none"; }
+
+        // Les touches de la fenêtre s'enfoncent quand on appuie sur la vraie touche
+        function basculerTouchesVisuelles(e, actif) {
+            if (document.getElementById("fenetre-touches").style.display !== "flex") return;
+            let k = e.key === " " ? " " : e.key.toLowerCase();
+            document.querySelectorAll('#fenetre-touches .touche[data-k]').forEach(el => {
+                if (el.dataset.k === k) el.classList.toggle("active", actif);
+            });
+        }
+        document.addEventListener("keydown", e => basculerTouchesVisuelles(e, true));
+        document.addEventListener("keyup", e => basculerTouchesVisuelles(e, false));
+        document.addEventListener("mousedown", () => {
+            if (document.getElementById("fenetre-touches").style.display === "flex")
+                document.querySelectorAll('#fenetre-touches .touche[data-k="mouse"]').forEach(el => el.classList.add("active"));
+        });
+        document.addEventListener("mouseup", () => {
+            document.querySelectorAll('#fenetre-touches .touche[data-k="mouse"]').forEach(el => el.classList.remove("active"));
+        });
+
+        // Liste COMPLÈTE des commandes (cachées comprises). À mettre à jour si on en ajoute.
+        const COMMANDES_ADMIN = [
+            { cmd: "/coin [nombre]", desc: "Définit ton argent (max 9 999 999 999).", cachee: false, prefill: "/coin " },
+            { cmd: "/shopfree", desc: "Débloque toute la boutique : blocs, skins, sentinelles.", cachee: false, prefill: "/shopfree" },
+            { cmd: "/title [texte]", desc: "Change l'aperçu des crédits pour la session. Sans texte : remet le défaut.", cachee: true, prefill: "/title " },
+            { cmd: "/editeur", desc: "Active / désactive les outils de création, édition et suppression de niveaux (sauvegardé).", cachee: true, prefill: "/editeur" },
+            { cmd: "/admin", desc: "Cette fenêtre. Affiche toutes les commandes, même cachées.", cachee: true, prefill: "/admin" }
+        ];
+
+        function ouvrirFenetreAdmin() {
+            let conteneur = document.getElementById("liste-commandes-admin");
+            conteneur.innerHTML = "";
+            COMMANDES_ADMIN.forEach(c => {
+                let ligne = document.createElement("div");
+                ligne.className = "ligne-touche ligne-cmd" + (c.cachee ? " cachee" : "");
+                ligne.innerHTML = '<div class="touches" style="flex-basis:150px;"><span class="touche">' + c.cmd.replace(/</g, "&lt;") + '</span></div>' +
+                    '<div class="desc">' + c.desc + (c.cachee ? '<span class="badge-cache">CACHÉE</span>' : '') + '</div>';
+                ligne.onclick = function() {
+                    fermerFenetreAdmin();
+                    let panneau = document.getElementById("panneau-commande");
+                    panneau.style.display = "block";
+                    let champ = document.getElementById("input-commande");
+                    champ.value = c.prefill;
+                    champ.focus();
+                };
+                conteneur.appendChild(ligne);
+            });
+            document.getElementById("fenetre-admin").style.display = "flex";
+        }
+
+        function executerCommande() {
+            let input = document.getElementById("input-commande").value.trim();
+            let parties = input.split(" ");
+            
+            if (parties[0] === "/coin") {
+                let montant = parseInt(parties[1]);
+                if (!isNaN(montant)) {
+                    if (montant > 9999999999) montant = 9999999999;
+                    if (montant < 0) montant = 0;
+                    mettreAJourBanque(montant);
+                    document.getElementById("input-commande").value = "";
+                    document.getElementById("panneau-commande").style.display = "none";
+                } else {
+                    afficherAlerte("Commande invalide. Utilisation : /coin [nombre]");
+                }
+            } else if (parties[0] === "/shopfree") {
+                deverrouillerToutLaBoutique();
+                document.getElementById("input-commande").value = "";
+                document.getElementById("panneau-commande").style.display = "none";
+            } else if (parties[0] === "/title") {
+                // Commande développeur cachée : change l'APERÇU des crédits pour la
+                // session en cours UNIQUEMENT (en mémoire, jamais sauvegardé). Ça permet
+                // de tester un texte avant de le rendre permanent.
+                // Ne s'affiche jamais dans le message "Commande inconnue" ci-dessous.
+                //
+                // ⚠️ Pour un changement DÉFINITIF, visible par TOUS les joueurs de ce
+                // fichier et immunisé au Hard Reset, il faut modifier directement la
+                // constante CREDITS_PAR_DEFAUT dans le code source (ou demander à
+                // Claude de le faire) — un simple /title ne suffit pas, car il ne
+                // touche que la mémoire de TON navigateur, le temps de cette session.
+                let nouveauxCredits = parties.slice(1).join(" ").trim();
+                if (nouveauxCredits.length > 0) {
+                    creditsPersonnalises = nouveauxCredits;
+                    appliquerTraductions();
+                    afficherAlerte("Aperçu appliqué pour cette session. Pour le rendre permanent et visible par tous, ce texte doit être écrit en dur dans le code.");
+                } else {
+                    // /title sans texte : efface l'aperçu et revient au texte par défaut
+                    creditsPersonnalises = CREDITS_PAR_DEFAUT;
+                    appliquerTraductions();
+                    afficherAlerte("Aperçu réinitialisé au texte par défaut.");
+                }
+                document.getElementById("input-commande").value = "";
+                document.getElementById("panneau-commande").style.display = "none";
+            } else if (parties[0] === "/editeur") {
+                // Commande développeur cachée : bascule l'accès aux outils de création/
+                // édition/suppression de niveaux (le bouton "🛠️ NIVEAUX" lui-même reste
+                // visible pour tout le monde, seuls CRÉER/ÉDITER/SUPPRIMER sont cachés
+                // tant que ce mode n'est pas activé). Ne s'affiche jamais dans le message
+                // "Commande inconnue" ci-dessous. Persiste même après un Hard Reset.
+                modeDevNiveauxDeverrouille = !modeDevNiveauxDeverrouille;
+                localStorage.setItem("cyber_hack_dev_unlocked", modeDevNiveauxDeverrouille ? "true" : "false");
+                rendreListeNiveaux();
+                afficherAlerte(modeDevNiveauxDeverrouille
+                    ? "🛠️ Mode développeur activé : tu peux créer/éditer/supprimer des niveaux."
+                    : "Mode développeur désactivé.");
+                document.getElementById("input-commande").value = "";
+                document.getElementById("panneau-commande").style.display = "none";
+            } else if (parties[0] === "/admin") {
+                // Commande cachée : affiche TOUTES les commandes, y compris les cachées.
+                // Ne figure jamais dans le message "Commande inconnue" ci-dessous.
+                document.getElementById("input-commande").value = "";
+                document.getElementById("panneau-commande").style.display = "none";
+                ouvrirFenetreAdmin();
+            } else {
+                afficherAlerte("Commande inconnue ! Commandes disponibles : /coin [nombre], /shopfree");
+            }
+        }
+
+        let modeActuel = "";
+        function choisirMode(type) {
+            modeActuel = type;
+            document.getElementById("ecran-selection-mode").style.display = "none";
+            if (type === 'mobile') {
+                document.getElementById("controles-tactiles").style.display = "block";
+                indicateurMode.innerText = traductions[langueActuelle].modeMobileTexte;
+            }
+            if (typeof positionnerPanneaux === "function" && typeof panneauInventaire !== "undefined") positionnerPanneaux();
+        }
+
+        const arene = document.getElementById("arene");
+        const monde = document.getElementById("monde");
+        const indicateurMode = document.getElementById("indicateur-mode");
+        const panneauInventaire = document.getElementById("panneau-inventaire");
+        const panneauSkins = document.getElementById("panneau-skins");
+        const compteurGlobalContainer = document.getElementById("compteur-global-container");
+        const valeurBanque = document.getElementById("valeur-banque");
+        const btnReset = document.getElementById("btn-reset");
+        const btnGeneration = document.getElementById("btn-generation");
+
+        const hudChrono = document.getElementById("hud-chrono");
+        const hudPieces = document.getElementById("hud-pieces");
+        const hudMorts = document.getElementById("hud-morts");
+        const hudPhase = document.getElementById("hud-phase");
+        const hudNiveauPerso = document.getElementById("hud-niveau-perso");
+
+        function mettreAJourBadgeNiveauPerso() {
+            hudNiveauPerso.style.display = modeNiveauPersonnaliseActif ? "inline" : "none";
+            mettreAJourBoutonTailleZones();
+            rafraichirMarqueursZones();
+        }
+
+        const TAILLE_BLOC = 20;
+
+        let piecesGlobales = parseInt(localStorage.getItem("cyber_hack_banque")) || 0;
+        function mettreAJourBanque(montant) {
+            piecesGlobales += montant;
+            if (piecesGlobales > 9999999999) piecesGlobales = 9999999999;
+            localStorage.setItem("cyber_hack_banque", piecesGlobales);
+            valeurBanque.innerText = piecesGlobales;
+        }
+        valeurBanque.innerText = piecesGlobales;
+
+        // --- GESTION RESPONSIVE DES PANNEAUX (PC / MOBILE) ---
+        // =====================================================================
+        // MOBILE : détection + disposition
+        // - estMobile() : écran étroit, mode tactile choisi, ou téléphone en paysage
+        //   (un téléphone de 930 px de large n'est PAS un ordinateur).
+        // - disposerMobile() : met l'arène à l'échelle de l'écran et place
+        //   l'inventaire créatif / les skins / les boutons là où on les voit.
+        // =====================================================================
+        function estMobile() {
+            let tactile = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+            return modeActuel === "mobile" || window.innerWidth <= 900 || (tactile && Math.min(window.innerWidth, window.innerHeight) <= 600);
+        }
+
+        const PROPS_PLACEMENT = ["position", "left", "right", "top", "bottom", "width", "height", "transform"];
+        function placerImportant(el, vals) {
+            PROPS_PLACEMENT.forEach(k => { if (k in vals) el.style.setProperty(k, vals[k], "important"); else el.style.removeProperty(k); });
+        }
+        function retirerPlacementMobile() {
+            [panneauInventaire, panneauSkins, compteurGlobalContainer, btnReset, btnGeneration, document.getElementById("btn-taille-zones")]
+                .forEach(el => { if (el) PROPS_PLACEMENT.forEach(k => el.style.removeProperty(k)); });
+            document.body.classList.remove("ui-mobile", "ui-portrait", "ui-paysage");
+            arene.style.width = ""; arene.style.transform = ""; arene.style.marginLeft = "";
+            document.getElementById("arene-scale-wrapper").style.height = "";
+        }
+
+        function disposerMobile() {
+            let W = window.innerWidth, H = window.innerHeight;
+            let paysage = W > H, creatif = modeConstructionActif;
+            let b = document.body;
+            b.classList.add("ui-mobile");
+            b.classList.toggle("ui-paysage", paysage);
+            b.classList.toggle("ui-portrait", !paysage);
+
+            // 1) Échelle de l'arène : remplit la largeur, sans dépasser la hauteur utile
+            let wrapper = document.getElementById("arene-scale-wrapper");
+            let colonnes = creatif && paysage ? 116 : 0;
+            let haut = wrapper.getBoundingClientRect().top + window.scrollY;
+            let bas = creatif ? (paysage ? 40 : 154) : (modeActuel === "mobile" ? 140 : 8);
+            let echelle = Math.max(0.3, Math.min(1, (W - 8 - colonnes) / 800, (H - haut - bas) / 320));
+            arene.style.width = "800px";
+            arene.style.transform = "scale(" + echelle + ")";
+            wrapper.style.height = Math.round(320 * echelle) + "px";
+            arene.style.marginLeft = Math.max(0, (wrapper.clientWidth - 800 * echelle) / 2) + "px";
+
+            // 2) Panneaux créatifs (affichés seulement en mode création)
+            if (paysage) {
+                placerImportant(panneauInventaire, { position: "fixed", right: "0px", top: "0px", bottom: "0px", width: "56px", height: "auto", transform: "none" });
+                placerImportant(panneauSkins, { position: "fixed", left: "0px", top: "0px", bottom: "0px", width: "56px", height: "auto", transform: "none" });
+            } else {
+                placerImportant(panneauInventaire, { position: "fixed", left: "0px", right: "0px", bottom: "0px", width: "auto", height: "54px", transform: "none" });
+                placerImportant(panneauSkins, { position: "fixed", left: "0px", right: "0px", bottom: "54px", width: "auto", height: "54px", transform: "none" });
+            }
+
+            // 3) Rangée de boutons : banque, reset, générer, taille & zones
+            let x0 = paysage ? 60 : 4, dispo = paysage ? W - 120 : W - 8;
+            let unite = dispo / 4, bas2 = paysage ? "4px" : "112px";
+            [compteurGlobalContainer, btnReset, btnGeneration, document.getElementById("btn-taille-zones")].forEach((el, i) => {
+                if (!el) return;
+                placerImportant(el, { position: "fixed", left: Math.round(x0 + i * unite) + "px", bottom: bas2, width: Math.round(unite - 4) + "px", height: "30px", transform: "none" });
+            });
+        }
+
+        function positionnerPanneaux() {
+            if (estMobile()) { disposerMobile(); return; }
+            retirerPlacementMobile();
+            _positionnerPanneauxPC();
+        }
+        window.addEventListener("orientationchange", () => setTimeout(positionnerPanneaux, 250));
+
+        function _positionnerPanneauxPC() {
+            let rectArene = arene.getBoundingClientRect();
+            let estMobile = false;
+
+            if (estMobile) {
+                // Sur mobile : "fixed" (relatif à l'écran visible) au lieu de "absolute"
+                // (relatif à toute la hauteur de la page, souvent bien plus grande que
+                // l'écran) — c'est ce qui faisait sortir les panneaux/boutons de la
+                // zone visible et rendait le jeu injouable sur téléphone.
+                panneauInventaire.style.position = "fixed";
+                panneauInventaire.style.left = "50%";
+                panneauInventaire.style.top = "50%";
+                panneauInventaire.style.transform = "translate(-50%, -50%)";
+
+                panneauSkins.style.position = "fixed";
+                panneauSkins.style.left = "50%";
+                panneauSkins.style.top = "12%";
+                panneauSkins.style.transform = "translateX(-50%)";
+
+                compteurGlobalContainer.style.position = "fixed";
+                compteurGlobalContainer.style.left = "10px";
+                compteurGlobalContainer.style.top = "10px";
+                compteurGlobalContainer.style.transform = "none";
+
+                btnReset.style.position = "fixed";
+                btnReset.style.left = "auto";
+                btnReset.style.right = "8px";
+                btnReset.style.top = "8px";
+                btnReset.style.bottom = "auto";
+                btnReset.style.transform = "none";
+
+                btnGeneration.style.position = "fixed";
+                btnGeneration.style.left = "auto";
+                btnGeneration.style.right = "8px";
+                btnGeneration.style.top = "38px";
+                btnGeneration.style.bottom = "auto";
+                btnGeneration.style.transform = "none";
+            } else {
+                // Sur PC : disposition classique sur les côtés de l'arène
+                panneauInventaire.style.position = "absolute";
+                panneauSkins.style.position = "absolute";
+                btnReset.style.position = "absolute";
+                btnGeneration.style.position = "absolute";
+                compteurGlobalContainer.style.position = "absolute";
+
+                panneauInventaire.style.transform = "none";
+                panneauSkins.style.transform = "none";
+                btnReset.style.transform = "none";
+                btnGeneration.style.transform = "none";
+                compteurGlobalContainer.style.transform = "none";
+
+                btnReset.style.right = "auto";
+                btnReset.style.bottom = "auto";
+                btnGeneration.style.right = "auto";
+                btnGeneration.style.bottom = "auto";
+
+                panneauInventaire.style.left = (rectArene.right + 12) + "px";
+                panneauInventaire.style.top = rectArene.top + "px";
+
+                btnReset.style.left = (rectArene.right + 12) + "px";
+                btnReset.style.top = (rectArene.top + 325) + "px";
+
+                btnGeneration.style.left = (rectArene.right + 12) + "px";
+                btnGeneration.style.top = (rectArene.top + 370) + "px";
+
+                compteurGlobalContainer.style.left = (rectArene.left - 142) + "px";
+                compteurGlobalContainer.style.top = rectArene.top + "px";
+
+                panneauSkins.style.left = (rectArene.left - 142) + "px";
+                panneauSkins.style.top = (rectArene.top + 48) + "px";
+            }
+        }
+
+        window.addEventListener("load", () => {
+            positionnerPanneaux();
+            appliquerTraductions();
+        });
+        window.addEventListener("resize", positionnerPanneaux);
+
+        // Un <button> HTML garde le focus après un clic ; si le joueur appuie ensuite
+        // sur Espace pour sauter, le navigateur "réactive" ce bouton en plus de faire
+        // sauter le perso (comportement par défaut du navigateur sur un bouton focus).
+        // C'est ce qui pouvait rouvrir la console de commande (ou n'importe quel autre
+        // bouton) alors qu'on ne fait que se déplacer/sauter. On retire le focus
+        // immédiatement après chaque clic sur un bouton, pour tout le jeu d'un coup.
+        document.addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON") {
+                e.target.blur();
+            }
+        });
+
+        let modeConstructionActif = false;
+        let blocsMonde = []; 
+        let mobsMonde = [];
+        
+        let elementActif = {
+            couleur: "#00ffcc",
+            type: "solide",
+            valeurPiece: 1
+        };
+
+        let cameraX = 0;
+        let maxWorldWidth = 7000;
+
+        // =====================================================================
+        // TAILLE DU NIVEAU & DISTANCE ENTRE LES ZONES (mode DEV "Éditer" only)
+        // - Chaque niveau perso peut avoir sa propre taille (niveau.largeur, en px)
+        //   et ses propres frontières de zones (niveau.zones = [début Z2, Z3, Z4]).
+        // - Un niveau sans ces champs (ancienne sauvegarde) / la génération
+        //   procédurale utilisent les valeurs par défaut (7000 px / 2300-4600-6400).
+        // - Le bouton et la fenêtre de réglage n'existent QUE si niveauEnEditionId
+        //   n'est pas null (donc uniquement via ✏️ avec /editeur activé).
+        // =====================================================================
+        const LARGEUR_NIVEAU_DEFAUT = 7000;
+        const ZONES_DEFAUT = [2300, 4600, 6400];
+        let zonesX = ZONES_DEFAUT.slice();
+        let marqueursZones = [];
+
+        function parametresNiveauValides(largeur, zones) {
+            if (!Number.isFinite(largeur) || !Array.isArray(zones) || zones.length !== 3) return false;
+            if (!zones.every(z => Number.isFinite(z))) return false;
+            if (largeur < 20 * TAILLE_BLOC || largeur > 1500 * TAILLE_BLOC) return false;
+            return zones[0] >= TAILLE_BLOC && zones[0] < zones[1] && zones[1] < zones[2] && zones[2] < largeur;
+        }
+
+        function appliquerParametresNiveau(largeur, zones) {
+            maxWorldWidth = largeur;
+            zonesX = zones.slice();
+            monde.style.width = largeur + "px";
+            rafraichirMarqueursZones();
+        }
+
+        function reinitialiserParametresNiveau() {
+            appliquerParametresNiveau(LARGEUR_NIVEAU_DEFAUT, ZONES_DEFAUT);
+        }
+
+        function appliquerParametresDuNiveau(niveau) {
+            if (niveau && parametresNiveauValides(niveau.largeur, niveau.zones)) {
+                appliquerParametresNiveau(niveau.largeur, niveau.zones);
+            } else {
+                reinitialiserParametresNiveau();
+            }
+        }
+
+        // Lignes pointillées orange dans le monde (visibles seulement en édition)
+        function rafraichirMarqueursZones() {
+            marqueursZones.forEach(m => m.remove());
+            marqueursZones = [];
+            if (!(modeConstructionActif && niveauEnEditionId !== null)) return;
+            let defs = [
+                { x: zonesX[0], label: "ZONE 2", fin: false },
+                { x: zonesX[1], label: "ZONE 3", fin: false },
+                { x: zonesX[2], label: "ZONE 4", fin: false },
+                { x: maxWorldWidth - 2, label: "FIN DU NIVEAU", fin: true }
+            ];
+            defs.forEach(d => {
+                let m = document.createElement("div");
+                m.style.cssText = "position:absolute; top:0; height:100%; width:0; border-left:2px dashed #ffaa00; pointer-events:none; z-index:50; left:" + d.x + "px;";
+                let t = document.createElement("span");
+                t.innerText = d.label;
+                t.style.cssText = "position:absolute; top:2px; font-size:8px; font-weight:bold; color:#ffaa00; white-space:nowrap; " + (d.fin ? "right:4px;" : "left:4px;");
+                m.appendChild(t);
+                monde.appendChild(m);
+                marqueursZones.push(m);
+            });
+        }
+
+        function mettreAJourBoutonTailleZones() {
+            let b = document.getElementById("btn-taille-zones");
+            if (!b) return;
+            let visible = modeConstructionActif && niveauEnEditionId !== null && modeDevNiveauxDeverrouille;
+            b.style.display = visible ? "block" : "none";
+        }
+
+        function positionnerBtnTailleZones() {
+            let b = document.getElementById("btn-taille-zones");
+            if (!b || estMobile()) return;
+            let r = arene.getBoundingClientRect();
+            b.style.transform = "none";
+            b.style.bottom = "auto";
+            if (window.innerWidth <= 900) {
+                b.style.position = "fixed";
+                b.style.left = "auto";
+                b.style.right = "8px";
+                b.style.top = "68px";
+            } else {
+                b.style.position = "absolute";
+                b.style.right = "auto";
+                b.style.left = (r.right + 12) + "px";
+                b.style.top = (r.top + 415) + "px";
+            }
+        }
+        window.addEventListener("load", positionnerBtnTailleZones);
+        window.addEventListener("resize", positionnerBtnTailleZones);
+
+        function lireChampsTailleZones() {
+            let g = id => parseInt(document.getElementById(id).value);
+            return {
+                largeur: g("tz-largeur") * TAILLE_BLOC,
+                zones: [g("tz-z2") * TAILLE_BLOC, g("tz-z3") * TAILLE_BLOC, g("tz-z4") * TAILLE_BLOC]
+            };
+        }
+
+        function remplirChampsTailleZones(largeur, zones) {
+            document.getElementById("tz-largeur").value = Math.round(largeur / TAILLE_BLOC);
+            document.getElementById("tz-z2").value = Math.round(zones[0] / TAILLE_BLOC);
+            document.getElementById("tz-z3").value = Math.round(zones[1] / TAILLE_BLOC);
+            document.getElementById("tz-z4").value = Math.round(zones[2] / TAILLE_BLOC);
+            majResumeTailleZones();
+        }
+
+        function majResumeTailleZones() {
+            let { largeur, zones } = lireChampsTailleZones();
+            let el = document.getElementById("tz-resume");
+            if (!parametresNiveauValides(largeur, zones)) {
+                el.innerText = "⚠️ Il faut : 1 ≤ Zone 2 < Zone 3 < Zone 4 < Taille du niveau (20 à 1500 blocs).";
+                el.style.color = "#ff0055";
+                return false;
+            }
+            let n = v => Math.round(v / TAILLE_BLOC);
+            el.innerText = "Longueur de chaque zone (en blocs) : Z1 = " + n(zones[0]) + " · Z2 = " + n(zones[1] - zones[0]) + " · Z3 = " + n(zones[2] - zones[1]) + " · Z4 = " + n(largeur - zones[2]);
+            el.style.color = "#8892b0";
+            return true;
+        }
+
+        function ouvrirModalTailleZones() {
+            if (niveauEnEditionId === null || !modeDevNiveauxDeverrouille) return;
+            remplirChampsTailleZones(maxWorldWidth, zonesX);
+            document.getElementById("modal-taille-zones").style.display = "flex";
+        }
+
+        function fermerModalTailleZones() {
+            document.getElementById("modal-taille-zones").style.display = "none";
+        }
+
+        function valeursParDefautTailleZones() {
+            remplirChampsTailleZones(LARGEUR_NIVEAU_DEFAUT, ZONES_DEFAUT);
+        }
+
+        function appliquerTailleZones() {
+            if (niveauEnEditionId === null || !modeDevNiveauxDeverrouille || !niveauxPersonnalises[niveauEnEditionId]) return;
+            if (!majResumeTailleZones()) return;
+            let { largeur, zones } = lireChampsTailleZones();
+            appliquerParametresNiveau(largeur, zones);
+            let niveau = niveauxPersonnalises[niveauEnEditionId];
+            niveau.largeur = largeur;
+            niveau.zones = zones.slice();
+            sauvegarderNiveauxListe();
+            fermerModalTailleZones();
+            let horsLimite = blocsMonde.filter(b => b.x >= largeur).length;
+            if (horsLimite > 0) {
+                afficherAlerte("⚠️ " + horsLimite + " bloc(s) se trouvent au-delà de la nouvelle fin du niveau.");
+            }
+        }
+
+        let stats = {
+            morts: 0,
+            piecesRecuperees: 0,
+            totalPieces: 0,
+            tempsSecondes: 0,
+            chronoActif: false
+        };
+
+        setInterval(() => {
+            if (!modeConstructionActif && stats.chronoActif) {
+                stats.tempsSecondes++;
+                let min = Math.floor(stats.tempsSecondes / 60).toString().padStart(2, '0');
+                let sec = (stats.tempsSecondes % 60).toString().padStart(2, '0');
+                hudChrono.innerText = `⏱️ ${min}:${sec}`;
+            }
+        }, 1000);
+
+        function recalculerTotalPieces() {
+            stats.totalPieces = blocsMonde.filter(b => (b.type === "piece") && !b.ramasse).length;
+            hudPieces.innerText = `🪙 ${stats.piecesRecuperees} / ${stats.totalPieces}`;
+        }
+
+        let outilsEdition = [
+            { nom: "Supprimer", couleur: "#ff0000", type: "outil_supprimer", symbole: "❌", prix: 0, acquis: true },
+            { nom: "Bloqueur", couleur: "#555555", type: "outil_bloquer", symbole: "🔒", prix: 0, acquis: true }
+        ];
+
+        outilsEdition.forEach(o => {
+            let item = document.createElement("div");
+            item.className = "item-inventaire";
+            item.style.backgroundColor = o.couleur;
+            item.innerText = o.symbole;
+            item.onclick = function() {
+                elementActif.couleur = o.couleur;
+                elementActif.type = o.type;
+            };
+            panneauInventaire.appendChild(item);
+        });
+
+        let sep = document.createElement("div");
+        sep.style.borderBottom = "1px solid #00ffcc";
+        sep.style.margin = "6px 0";
+        panneauInventaire.appendChild(sep);
+
+        // --- Sauvegarde persistante des achats (blocs, skins & mobs) ---
+        let achatsBlocs = {};
+        let achatsSkins = {};
+        let achatsMobs = {};
+        try { achatsBlocs = JSON.parse(localStorage.getItem("cyber_hack_achats")) || {}; } catch (e) { achatsBlocs = {}; }
+        try { achatsSkins = JSON.parse(localStorage.getItem("cyber_hack_skins")) || {}; } catch (e) { achatsSkins = {}; }
+        try { achatsMobs = JSON.parse(localStorage.getItem("cyber_hack_mobs")) || {}; } catch (e) { achatsMobs = {}; }
+
+        function sauvegarderAchatsBlocs() {
+            localStorage.setItem("cyber_hack_achats", JSON.stringify(achatsBlocs));
+        }
+        function sauvegarderAchatsSkins() {
+            localStorage.setItem("cyber_hack_skins", JSON.stringify(achatsSkins));
+        }
+        function sauvegarderAchatsMobs() {
+            localStorage.setItem("cyber_hack_mobs", JSON.stringify(achatsMobs));
+        }
+
+        // Prix fixés selon la rareté : blocs décoratifs (Commun/Peu Commun) = pas chers,
+        // blocs utilitaires à effet de gameplay (Rare/Épique) = plus chers,
+        // pièces = rentabilisent leur coût, Fin de Niveau = objet clé (Légendaire).
+        let typesDeBlocs = [
+            { nom: "Cyan Data (Commun)", couleur: "#00ffcc", type: "solide", symbole: "", prix: 0 },
+            { nom: "Firewall Rose (Commun)", couleur: "#ff0055", type: "solide", symbole: "", prix: 60 },
+            { nom: "Matrix Vert (Commun)", couleur: "#00ff66", type: "solide", symbole: "", prix: 60 },
+            { nom: "Alerte Orange (Peu Commun)", couleur: "#ffaa00", type: "solide", symbole: "", prix: 120 },
+            { nom: "Core Violet (Peu Commun)", couleur: "#9d00ff", type: "solide", symbole: "", prix: 150 },
+            { nom: "Acier Sombre (Peu Commun)", couleur: "#3a4454", type: "solide", symbole: "", prix: 120 },
+            { nom: "Glace Cyber (Rare - Utilitaire)", couleur: "#00bfff", type: "glace", symbole: "❄️", prix: 450 },
+            { nom: "Trampoline (Rare - Utilitaire)", couleur: "#39ff14", type: "trampoline", symbole: "⏫", prix: 500 },
+            { nom: "Boost Pad (Rare - Utilitaire)", couleur: "#00ffff", type: "boost", symbole: "⏩", prix: 500 },
+            { nom: "Checkpoint (Épique - Utilitaire)", couleur: "#ffcc00", type: "checkpoint", symbole: "🏁", prix: 700 },
+            { nom: "Pièce x1 (Commun)", couleur: "#ffee00", type: "piece", valeur: 1, symbole: "🪙1", prix: 0 },
+            { nom: "Pièce x5 (Rare - Anti-Farm)", couleur: "#ffcc00", type: "piece", valeur: 5, symbole: "🪙5", prix: 3000 },
+            { nom: "Pièce x10 (Épique - Anti-Farm)", couleur: "#ff8800", type: "piece", valeur: 10, symbole: "🪙10", prix: 7000 },
+            { nom: "Fin de Niveau (Légendaire - Clé)", couleur: "#ffffff", type: "fin_niveau", symbole: "🏆", prix: 900 },
+            { nom: "Piège Mortel (Épique - Utilitaire)", couleur: "#ff0000", type: "piege", symbole: "⚠️", prix: 350 }
+        ];
+
+        typesDeBlocs.forEach(b => {
+            // Débloqué si prix = 0 (offert de base) OU si déjà acheté et sauvegardé
+            b.acquis = (b.prix === 0) || (achatsBlocs[b.nom] === true);
+
+            let item = document.createElement("div");
+            item.className = "item-inventaire";
+            item.style.backgroundColor = b.couleur;
+            item.style.boxShadow = `0 0 6px ${b.couleur}`;
+            item.innerText = b.symbole;
+            item.title = b.acquis ? b.nom : `${b.nom} — 🪙${b.prix}`;
+
+            if (!b.acquis) {
+                let lock = document.createElement("div");
+                lock.className = "badge-lock";
+                lock.innerText = "🔒";
+                item.appendChild(lock);
+            }
+
+            item.onclick = function() {
+                if (!b.acquis) {
+                    if (piecesGlobales >= b.prix) {
+                        mettreAJourBanque(-b.prix);
+                        b.acquis = true;
+                        achatsBlocs[b.nom] = true;
+                        sauvegarderAchatsBlocs();
+                        verifierCompletionBoutique();
+                        let l = item.querySelector(".badge-lock");
+                        if (l) l.remove();
+                        item.title = b.nom;
+                    } else {
+                        afficherAlerte(traductions[langueActuelle].alertePrix(b.prix));
+                        return;
+                    }
+                }
+                elementActif.couleur = b.couleur;
+                elementActif.type = b.type;
+                elementActif.valeurPiece = b.valeur || 1;
+            };
+            panneauInventaire.appendChild(item);
+        });
+
+        // --- Mobs achetables en boutique (placés en mode créatif comme des blocs) ---
+        let mobsBoutique = [
+            { nom: "Drone Basique (Peu Commun)", couleur: "#8892b0", symbole: "👾", vitesse: 1.2, prix: 400 },
+            { nom: "Sentinelle Rapide (Rare)", couleur: "#ff0055", symbole: "🤖", vitesse: 2.5, prix: 900 },
+            { nom: "Garde Blindé (Épique)", couleur: "#3a4454", symbole: "🛡️", vitesse: 0.8, prix: 1400 }
+        ];
+
+        mobsBoutique.forEach(m => {
+            m.acquis = achatsMobs[m.nom] === true;
+
+            let item = document.createElement("div");
+            item.className = "item-inventaire";
+            item.style.backgroundColor = m.couleur;
+            item.style.boxShadow = `0 0 6px ${m.couleur}`;
+            item.innerText = m.symbole;
+            item.title = m.acquis ? m.nom : `${m.nom} — 🪙${m.prix}`;
+
+            if (!m.acquis) {
+                let lock = document.createElement("div");
+                lock.className = "badge-lock";
+                lock.innerText = "🔒";
+                item.appendChild(lock);
+            }
+
+            item.onclick = function() {
+                if (!m.acquis) {
+                    if (piecesGlobales >= m.prix) {
+                        mettreAJourBanque(-m.prix);
+                        m.acquis = true;
+                        achatsMobs[m.nom] = true;
+                        sauvegarderAchatsMobs();
+                        verifierCompletionBoutique();
+                        let l = item.querySelector(".badge-lock");
+                        if (l) l.remove();
+                        item.title = m.nom;
+                    } else {
+                        afficherAlerte(traductions[langueActuelle].alertePrix(m.prix));
+                        return;
+                    }
+                }
+                elementActif.couleur = m.couleur;
+                elementActif.type = "mob";
+                elementActif.vitesseMob = m.vitesse;
+                elementActif.symboleMob = m.symbole;
+            };
+            panneauInventaire.appendChild(item);
+        });
+
+        // Débloque définitivement tous les blocs, skins et mobs de la boutique
+        // (persistant via localStorage, ne se réinitialise qu'au Hard Reset)
+        function deverrouillerToutLaBoutique() {
+            typesDeBlocs.forEach(b => {
+                b.acquis = true;
+                achatsBlocs[b.nom] = true;
+            });
+            listeSkins.forEach(s => {
+                s.acquis = true;
+                achatsSkins[s.nom] = true;
+            });
+            mobsBoutique.forEach(m => {
+                m.acquis = true;
+                achatsMobs[m.nom] = true;
+            });
+            sauvegarderAchatsBlocs();
+            sauvegarderAchatsSkins();
+            sauvegarderAchatsMobs();
+            verifierCompletionBoutique();
+            document.querySelectorAll("#panneau-inventaire .badge-lock, #panneau-skins .badge-lock").forEach(l => l.remove());
+            afficherAlerte("🔓 Boutique entièrement débloquée ! Ces déblocages sont permanents (sauf Hard Reset).");
+        }
+
+        let listeSkins = [
+            {
+                nom: "Classic White (Commun)",
+                fond: "#ffffff",
+                prix: 0,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #000; border-radius: 50%;"></div><div style="width: 3px; height: 3px; background: #000; border-radius: 50%;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #000; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Neon Cyan (Rare)",
+                fond: "#00ffcc",
+                prix: 800,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #000;"></div><div style="width: 3px; height: 3px; background: #000;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #000; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Cyber Rose (Épique)",
+                fond: "#ff0055",
+                prix: 1500,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #fff; transform: rotate(45deg);"></div><div style="width: 3px; height: 3px; background: #fff; transform: rotate(45deg);"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #fff; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Gold Boss (Légendaire)",
+                fond: "#ffaa00",
+                prix: 3000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #000; border-radius: 50%;"></div><div style="width: 3px; height: 3px; background: #000; border-radius: 50%;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #000; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Matrix Glitch (Mythique)",
+                fond: "#00ff66",
+                prix: 5000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #000;"></div><div style="width: 3px; height: 3px; background: #000;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #000; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Cyber Void (Ultra Rare)",
+                fond: "#0b032d",
+                prix: 8000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #00ffff; box-shadow: 0 0 4px #00ffff;"></div><div style="width: 3px; height: 3px; background: #00ffff; box-shadow: 0 0 4px #00ffff;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #00ffff; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Hacker Spectre (Divin)",
+                fond: "#222222",
+                prix: 12000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #ff0055; box-shadow: 0 0 6px #ff0055;"></div><div style="width: 3px; height: 3px; background: #ff0055; box-shadow: 0 0 6px #ff0055;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ff0055; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Quantum God (Suprême)",
+                fond: "#ff00ff",
+                prix: 20000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #fff; box-shadow: 0 0 8px #fff;"></div><div style="width: 3px; height: 3px; background: #fff; box-shadow: 0 0 8px #fff;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #fff; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Cyber Demon (Infernal)",
+                fond: "#880000",
+                prix: 25000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #ffff00; box-shadow: 0 0 6px #ffff00;"></div><div style="width: 3px; height: 3px; background: #ffff00; box-shadow: 0 0 6px #ffff00;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ffff00; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Neon Phantom (Spectre)",
+                fond: "#002b3d",
+                prix: 35000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #00ffcc; box-shadow: 0 0 8px #00ffcc;"></div><div style="width: 3px; height: 3px; background: #00ffcc; box-shadow: 0 0 8px #00ffcc;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #00ffcc; border-radius: 50%;"></div>`
+            }
+        ];
+
+        listeSkins.forEach((skin) => {
+            // Débloqué si prix = 0 (skin de départ) OU si déjà acheté et sauvegardé
+            skin.acquis = (skin.prix === 0) || (achatsSkins[skin.nom] === true);
+
+            let divSkin = document.createElement("div");
+            divSkin.className = "skin-item";
+            divSkin.style.backgroundColor = skin.fond;
+            divSkin.innerHTML = skin.html;
+            divSkin.title = skin.acquis ? skin.nom : `${skin.nom} — 🪙${skin.prix}`;
+            if (!skin.acquis) {
+                let badgeCadenas = document.createElement("div");
+                badgeCadenas.className = "badge-lock";
+                badgeCadenas.innerText = "🔒";
+                divSkin.appendChild(badgeCadenas);
+            }
+            divSkin.onclick = function() {
+                if (!skin.acquis) {
+                    if (piecesGlobales >= skin.prix) {
+                        mettreAJourBanque(-skin.prix);
+                        skin.acquis = true;
+                        achatsSkins[skin.nom] = true;
+                        sauvegarderAchatsSkins();
+                        verifierCompletionBoutique();
+                        let l = divSkin.querySelector(".badge-lock");
+                        if (l) l.remove();
+                        divSkin.title = skin.nom;
+                    } else {
+                        afficherAlerte(traductions[langueActuelle].alerteSkin(skin.prix));
+                        return;
+                    }
+                }
+                if (skin.acquis) {
+                    joueur.element.style.backgroundColor = skin.fond;
+                    joueur.element.innerHTML = skin.html;
+                }
+            };
+            panneauSkins.appendChild(divSkin);
+        });
+
+        // Vérification initiale au chargement (si tout était déjà acquis avant un rechargement)
+        verifierCompletionBoutique();
+
+        let joueur = {
+            x: 60,
+            y: 180,
+            spawnX: 60,
+            spawnY: 180,
+            vx: 0,
+            vy: 0,
+            width: TAILLE_BLOC,
+            height: TAILLE_BLOC,
+            speed: 5.0,
+            gravity: 0.65,
+            jumpForce: -9.8,
+            isGrounded: false,
+            element: document.createElement("div")
+        };
+
+        joueur.element.className = "cyber-block";
+        joueur.element.style.cursor = "default";
+        joueur.element.style.backgroundColor = "#ffffff";
+        joueur.element.innerHTML = listeSkins[0].html;
+        monde.appendChild(joueur.element);
+
+        function nettoyerMondeComplet() {
+            let tousLesBlocs = monde.getElementsByClassName("cyber-block");
+            for (let i = tousLesBlocs.length - 1; i >= 0; i--) {
+                let b = tousLesBlocs[i];
+                if (b !== joueur.element) b.remove();
+            }
+            let tousLesMobs = monde.getElementsByClassName("cyber-mob");
+            for (let i = tousLesMobs.length - 1; i >= 0; i--) {
+                tousLesMobs[i].remove();
+            }
+            blocsMonde = [];
+            mobsMonde = [];
+            stats.piecesRecuperees = 0;
+        }
+
+        function creerBlocMondeDirect(gx, gy, typeBloc, couleurBloc, symboleBloc, valPiece) {
+            let div = document.createElement("div");
+            div.className = "cyber-block";
+            div.style.backgroundColor = couleurBloc;
+            div.style.left = gx + "px";
+            div.style.top = gy + "px";
+            div.innerText = symboleBloc;
+            
+            let blocObj = { 
+                x: gx, y: gy, width: TAILLE_BLOC, height: TAILLE_BLOC, 
+                type: typeBloc, couleur: couleurBloc, symbole: symboleBloc,
+                valeur: valPiece, ramasse: false, elementDom: div 
+            };
+
+            div.onclick = function(e) {
+                if (modeConstructionActif) {
+                    if (elementActif.type === "outil_supprimer") {
+                        div.remove();
+                        blocsMonde = blocsMonde.filter(b => b !== blocObj);
+                        recalculerTotalPieces();
+                        if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
+                    } else if (elementActif.type === "outil_bloquer") {
+                        blocObj.type = "verrouille";
+                        div.style.border = "1px dashed #fff";
+                        if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
+                    }
+                    e.stopPropagation();
+                }
+            };
+
+            monde.appendChild(div);
+            blocsMonde.push(blocObj);
+        }
+
+        function creerMobPatrouilleur(xMin, xMax, yPos, vitesse, couleur, symbole) {
+            const TAILLE_MOB = 28; // un peu plus grand qu'un bloc (20px) pour bien le distinguer
+            xMin = Math.max(0, xMin);
+            let div = document.createElement("div");
+            div.className = "cyber-mob";
+            div.style.backgroundColor = "transparent";
+            div.style.left = xMin + "px";
+            // Centré verticalement sur la même ligne qu'un bloc classique, malgré
+            // la taille plus grande, pour ne pas "flotter" par rapport au sol.
+            div.style.top = (yPos - (TAILLE_MOB - TAILLE_BLOC) / 2) + "px";
+            div.innerText = symbole || "👾";
+            monde.appendChild(div);
+
+            let mobObj = {
+                x: xMin,
+                y: yPos - (TAILLE_MOB - TAILLE_BLOC) / 2,
+                xMin: xMin,
+                xMax: xMax,
+                width: TAILLE_MOB,
+                height: TAILLE_MOB,
+                vitesse: vitesse || 1.5,
+                direction: 1,
+                elementDom: div,
+                type: "mob"
+            };
+
+            // Permet la suppression du mob avec l'outil "Supprimer" en mode créatif
+            div.onclick = function(e) {
+                if (modeConstructionActif && elementActif.type === "outil_supprimer") {
+                    div.remove();
+                    mobsMonde = mobsMonde.filter(m => m !== mobObj);
+                    recalculerTotalPieces();
+                    if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
+                    e.stopPropagation();
+                }
+            };
+
+            mobsMonde.push(mobObj);
+        }
+
+        // Tous les modules ci-dessous placent leurs blocs exclusivement sur des multiples
+        // de TAILLE_BLOC (x ET y), et chaque valeur "return" correspond exactement à la
+        // largeur réellement occupée : plus aucun chevauchement ni décalage de grille,
+        // et plus aucun bloc utilitaire recouvert/annulé par un autre bloc.
+        let modulesProceduraux = [
+            // Module A — Rush Boost & Danger
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ff0055", "", 1);
+                x += 2 * TAILLE_BLOC;
+                for (let i = 0; i < 6; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "boost", "#00ffff", "⏩", 1);
+                x += 6 * TAILLE_BLOC;
+                // Case tampon avant le danger : à pleine vitesse boostée, enchaîner
+                // directement sur un piège ne laissait pas le temps de réagir/sauter.
+                creerBlocMondeDirect(x, groundY, "solide", "#ff0055", "", 1);
+                x += TAILLE_BLOC;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "piege", "#ff0000", "⚠️", 1);
+                x += 2 * TAILLE_BLOC;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ff0055", "", 1);
+                x += 2 * TAILLE_BLOC;
+
+                // Plateforme bonus au-dessus de la zone boost (3 cases de haut = saut sûr)
+                creerBlocMondeDirect(startX + 4 * TAILLE_BLOC, groundY - 3 * TAILLE_BLOC, "solide", "#00ffcc", "", 1);
+                creerBlocMondeDirect(startX + 4 * TAILLE_BLOC, groundY - 4 * TAILLE_BLOC, "piece", "#ff8800", "🪙10", 10);
+
+                creerMobPatrouilleur(startX + 2 * TAILLE_BLOC, startX + 7 * TAILLE_BLOC, groundY - 4 * TAILLE_BLOC, 1.1, "#8892b0", "👾");
+
+                return x; // startX + 13 * TAILLE_BLOC
+            },
+            // Module B — Corridor de Glace & Pièges
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#3a4454", "", 1);
+                x += 2 * TAILLE_BLOC;
+                for (let i = 0; i < 4; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "piege", "#ff0000", "⚠️", 1);
+
+                // Plateforme de glace au-dessus des pièges (3 cases de haut = saut sûr)
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY - 3 * TAILLE_BLOC, "glace", "#00bfff", "❄️", 1);
+                creerBlocMondeDirect(x + 1 * TAILLE_BLOC, groundY - 5 * TAILLE_BLOC, "piece", "#ffcc00", "🪙5", 5);
+
+                x += 4 * TAILLE_BLOC;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#3a4454", "", 1);
+                x += 2 * TAILLE_BLOC;
+
+                creerMobPatrouilleur(startX + 1 * TAILLE_BLOC, startX + 6 * TAILLE_BLOC, groundY - 2 * TAILLE_BLOC, 1.0, "#8892b0", "👾");
+
+                return x; // startX + 8 * TAILLE_BLOC
+            },
+            // Module C — Rampe & Trampoline
+            function(startX, groundY) {
+                let x = startX;
+                let y = groundY;
+                for (let i = 0; i < 4; i++) {
+                    creerBlocMondeDirect(x, y, "solide", "#9d00ff", "", 1);
+                    creerBlocMondeDirect(x + TAILLE_BLOC, y, "piege", "#ff0000", "⚠️", 1);
+                    x += 2 * TAILLE_BLOC;
+                    y -= TAILLE_BLOC; // +1 case de haut par marche = saut toujours réalisable
+                }
+                creerBlocMondeDirect(x, y, "trampoline", "#39ff14", "⏫", 1);
+                creerBlocMondeDirect(x + 2 * TAILLE_BLOC, y - 3 * TAILLE_BLOC, "solide", "#00ff66", "", 1);
+                creerBlocMondeDirect(x + 2 * TAILLE_BLOC, y - 4 * TAILLE_BLOC, "piece", "#ff8800", "🪙10", 10);
+
+                let xFinRampe = x + 4 * TAILLE_BLOC;
+                for (let i = 0; i < 4; i++) creerBlocMondeDirect(xFinRampe + i * TAILLE_BLOC, groundY, "solide", "#9d00ff", "", 1);
+
+                return xFinRampe + 4 * TAILLE_BLOC; // startX + 16 * TAILLE_BLOC
+            },
+            // Module D — Zigzag de Pièges
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ffaa00", "", 1);
+                creerBlocMondeDirect(x + 2 * TAILLE_BLOC, groundY, "piege", "#ff0000", "⚠️", 1);
+                creerBlocMondeDirect(x + 3 * TAILLE_BLOC, groundY - 2 * TAILLE_BLOC, "solide", "#ffaa00", "", 1);
+                creerBlocMondeDirect(x + 3 * TAILLE_BLOC, groundY - 3 * TAILLE_BLOC, "piece", "#ffee00", "🪙1", 1);
+                creerBlocMondeDirect(x + 4 * TAILLE_BLOC, groundY, "piege", "#ff0000", "⚠️", 1);
+                creerBlocMondeDirect(x + 5 * TAILLE_BLOC, groundY - 3 * TAILLE_BLOC, "solide", "#ffaa00", "", 1);
+                creerBlocMondeDirect(x + 6 * TAILLE_BLOC, groundY, "piege", "#ff0000", "⚠️", 1);
+                for (let i = 7; i < 10; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ffaa00", "", 1);
+
+                creerMobPatrouilleur(x + 2 * TAILLE_BLOC, x + 6 * TAILLE_BLOC, groundY - 4 * TAILLE_BLOC, 1.1, "#8892b0", "👾");
+
+                return x + 10 * TAILLE_BLOC;
+            },
+            // Module E — Checkpoint & Cache de Pièces
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#3a4454", "", 1);
+                creerBlocMondeDirect(x + 1 * TAILLE_BLOC, groundY - TAILLE_BLOC, "checkpoint", "#ffcc00", "🏁", 1);
+
+                creerBlocMondeDirect(x + 4 * TAILLE_BLOC, groundY - 2 * TAILLE_BLOC, "solide", "#00ffcc", "", 1);
+                creerBlocMondeDirect(x + 6 * TAILLE_BLOC, groundY - 4 * TAILLE_BLOC, "solide", "#00ffcc", "", 1);
+                creerBlocMondeDirect(x + 6 * TAILLE_BLOC, groundY - 5 * TAILLE_BLOC, "piece", "#ffcc00", "🪙5", 5);
+                creerBlocMondeDirect(x + 8 * TAILLE_BLOC, groundY - 2 * TAILLE_BLOC, "solide", "#00ffcc", "", 1);
+
+                for (let i = 9; i < 12; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#3a4454", "", 1);
+
+                return x + 12 * TAILLE_BLOC;
+            },
+            // Module F — Pont de Glace
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#3a4454", "", 1);
+                x += 2 * TAILLE_BLOC;
+                for (let i = 0; i < 6; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "glace", "#00bfff", "❄️", 1);
+                creerBlocMondeDirect(x + 3 * TAILLE_BLOC, groundY - 3 * TAILLE_BLOC, "piece", "#ffcc00", "🪙5", 5);
+                x += 6 * TAILLE_BLOC;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#3a4454", "", 1);
+                x += 2 * TAILLE_BLOC;
+                return x; // startX + 10 * TAILLE_BLOC
+            },
+            // Module G — Anneau Boost-Piège
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#00ffff", "", 1);
+                x += 2 * TAILLE_BLOC;
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "boost", "#00ffff", "⏩", 1);
+                x += 3 * TAILLE_BLOC;
+                // Case tampon avant le danger (temps de réaction après le boost)
+                creerBlocMondeDirect(x, groundY, "solide", "#00ffff", "", 1);
+                x += TAILLE_BLOC;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "piege", "#ff0000", "⚠️", 1);
+                creerMobPatrouilleur(x - 2 * TAILLE_BLOC, x + 4 * TAILLE_BLOC, groundY - 4 * TAILLE_BLOC, 1.2, "#8892b0", "🤖");
+                x += 2 * TAILLE_BLOC;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#00ffff", "", 1);
+                x += 2 * TAILLE_BLOC;
+                return x; // startX + 10 * TAILLE_BLOC
+            },
+            // Module H — Escalier Symétrique
+            function(startX, groundY) {
+                let x = startX;
+                creerBlocMondeDirect(x, groundY, "solide", "#9d00ff", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - TAILLE_BLOC, "solide", "#9d00ff", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - 2 * TAILLE_BLOC, "solide", "#9d00ff", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - 3 * TAILLE_BLOC, "solide", "#9d00ff", "", 1);
+                creerBlocMondeDirect(x, groundY - 4 * TAILLE_BLOC, "piece", "#ffee00", "🪙1", 1);
+                x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - 2 * TAILLE_BLOC, "solide", "#9d00ff", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - TAILLE_BLOC, "solide", "#9d00ff", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY, "solide", "#9d00ff", "", 1); x += TAILLE_BLOC;
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#9d00ff", "", 1);
+                x += 3 * TAILLE_BLOC;
+                return x; // startX + 10 * TAILLE_BLOC
+            },
+            // Module I — Chicane de Blocs
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ff8800", "", 1);
+                x += 2 * TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - 2 * TAILLE_BLOC, "solide", "#ff8800", "", 1);
+                creerBlocMondeDirect(x, groundY - 3 * TAILLE_BLOC, "piece", "#ffcc00", "🪙5", 5);
+                x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY, "solide", "#ff8800", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - 2 * TAILLE_BLOC, "solide", "#ff8800", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY, "solide", "#ff8800", "", 1); x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - 2 * TAILLE_BLOC, "solide", "#ff8800", "", 1); x += TAILLE_BLOC;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ff8800", "", 1);
+                x += 2 * TAILLE_BLOC;
+                return x; // startX + 9 * TAILLE_BLOC
+            },
+            // Module J — Salle de Repos
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 6; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#3a4454", "", 1);
+                creerBlocMondeDirect(x + 1 * TAILLE_BLOC, groundY - TAILLE_BLOC, "checkpoint", "#ffcc00", "🏁", 1);
+                creerBlocMondeDirect(x + 4 * TAILLE_BLOC, groundY - 2 * TAILLE_BLOC, "piece", "#ffcc00", "🪙5", 5);
+                creerMobPatrouilleur(x + 2 * TAILLE_BLOC, x + 5 * TAILLE_BLOC, groundY - 2 * TAILLE_BLOC, 0.8, "#3a4454", "🛡️");
+                x += 6 * TAILLE_BLOC;
+                return x; // startX + 6 * TAILLE_BLOC
+            },
+            // Module K — Plateformes Suspendues (vrais trous à sauter, pas de piège)
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#00ff66", "", 1);
+                x += 3 * TAILLE_BLOC; // trou d'1 case
+                creerBlocMondeDirect(x, groundY - TAILLE_BLOC, "solide", "#00ff66", "", 1);
+                x += 2 * TAILLE_BLOC; // trou d'1 case
+                creerBlocMondeDirect(x, groundY - 2 * TAILLE_BLOC, "solide", "#00ff66", "", 1);
+                creerBlocMondeDirect(x, groundY - 3 * TAILLE_BLOC, "piece", "#ffcc00", "🪙5", 5);
+                x += 2 * TAILLE_BLOC; // trou d'1 case
+                creerBlocMondeDirect(x, groundY - TAILLE_BLOC, "solide", "#00ff66", "", 1);
+                x += 2 * TAILLE_BLOC; // trou d'1 case
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#00ff66", "", 1);
+                x += 2 * TAILLE_BLOC;
+                return x; // startX + 11 * TAILLE_BLOC
+            },
+            // Module L — Pièges Isolés (sauts précis un par un, jamais groupés)
+            function(startX, groundY) {
+                let x = startX;
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ff0055", "", 1);
+                x += 3 * TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY, "piege", "#ff0000", "⚠️", 1);
+                x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY - 2 * TAILLE_BLOC, "solide", "#ff0055", "", 1);
+                creerBlocMondeDirect(x, groundY - 3 * TAILLE_BLOC, "piece", "#ffee00", "🪙1", 1);
+                x += TAILLE_BLOC;
+                creerBlocMondeDirect(x, groundY, "piege", "#ff0000", "⚠️", 1);
+                x += TAILLE_BLOC;
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * TAILLE_BLOC, groundY, "solide", "#ff0055", "", 1);
+                x += 3 * TAILLE_BLOC;
+                return x; // startX + 9 * TAILLE_BLOC
+            }
+        ,
+            // Module M — Fourche : route basse (pièges isolés) OU route haute (plateformes + pièces)
+            function(startX, groundY) {
+                let T = TAILLE_BLOC, n = 8 + 2 * Math.floor(Math.random() * 3), x = startX;
+                for (let i = 0; i < n; i++) {
+                    let piege = (i >= 3 && i <= n - 3 && i % 3 === 0);
+                    creerBlocMondeDirect(x + i * T, groundY, piege ? "piege" : "solide", piege ? "#ff0000" : "#ff8800", piege ? "⚠️" : "", 1);
+                }
+                for (let i = 3; i <= n - 4; i += 3) {
+                    creerBlocMondeDirect(x + i * T, groundY - 3 * T, "solide", "#00ffcc", "", 1);
+                    creerBlocMondeDirect(x + (i + 1) * T, groundY - 3 * T, "solide", "#00ffcc", "", 1);
+                    creerBlocMondeDirect(x + i * T, groundY - 4 * T, "piece", "#ffcc00", "🪙5", 5);
+                }
+                return x + n * T;
+            },
+            // Module N — Gouffre : vrai trou de 2 ou 3 cases à franchir d'un saut
+            function(startX, groundY) {
+                let T = TAILLE_BLOC, g = 2 + Math.floor(Math.random() * 2), x = startX;
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * T, groundY, "solide", "#9d00ff", "", 1);
+                x += 3 * T;
+                creerBlocMondeDirect(x + T, groundY - 3 * T, "piece", "#ffcc00", "🪙5", 5);
+                x += g * T;
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * T, groundY, "solide", "#9d00ff", "", 1);
+                return x + 3 * T;
+            },
+            // Module O — Tour : montée à hauteur variable, plateau avec checkpoint, redescente
+            function(startX, groundY) {
+                let T = TAILLE_BLOC, h = 2 + Math.floor(Math.random() * 2), x = startX;
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * T, groundY, "solide", "#00ff66", "", 1);
+                x += 2 * T;
+                for (let k = 1; k <= h; k++) { creerBlocMondeDirect(x, groundY - k * T, "solide", "#00ff66", "", 1); x += 2 * T; }
+                for (let i = 0; i < 3; i++) creerBlocMondeDirect(x + i * T, groundY - h * T, "solide", "#00ff66", "", 1);
+                creerBlocMondeDirect(x + T, groundY - (h + 1) * T, "checkpoint", "#ffcc00", "🏁", 1);
+                creerBlocMondeDirect(x + 2 * T, groundY - (h + 3) * T, "piece", "#ff8800", "🪙10", 10);
+                x += 4 * T;
+                for (let k = h - 1; k >= 1; k--) { creerBlocMondeDirect(x, groundY - k * T, "solide", "#00ff66", "", 1); x += 2 * T; }
+                for (let i = 0; i < 2; i++) creerBlocMondeDirect(x + i * T, groundY, "solide", "#00ff66", "", 1);
+                return x + 2 * T;
+            }
+        ];
+
+        // --- Anti-répétition : sac de tirage (shuffle bag) ---
+        // Chaque module est pioché une fois avant qu'aucun ne puisse être repioché,
+        // et on évite aussi qu'un sac se termine sur le même module que le nouveau sac commence.
+        let sacModulesProceduraux = [];
+        let dernierModuleJoue = -1;
+
+        function melangerTableau(tableau) {
+            for (let i = tableau.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [tableau[i], tableau[j]] = [tableau[j], tableau[i]];
+            }
+            return tableau;
+        }
+
+        function piocherIndexModule() {
+            if (sacModulesProceduraux.length === 0) {
+                sacModulesProceduraux = melangerTableau(modulesProceduraux.map((_, i) => i));
+                // Évite d'enchaîner deux fois le même module à la jointure de deux sacs
+                if (sacModulesProceduraux.length > 1 && sacModulesProceduraux[sacModulesProceduraux.length - 1] === dernierModuleJoue) {
+                    let tmp = sacModulesProceduraux[0];
+                    sacModulesProceduraux[0] = sacModulesProceduraux[sacModulesProceduraux.length - 1];
+                    sacModulesProceduraux[sacModulesProceduraux.length - 1] = tmp;
+                }
+            }
+            let index = sacModulesProceduraux.pop();
+            dernierModuleJoue = index;
+            return index;
+        }
+
+        // =====================================================================
+        // FAISABILITÉ : analyse de la carte avec des sauts volontairement
+        // PRUDENTS (bien en dessous des vraies capacités : ~3,7 cases de haut,
+        // ~7 cases de long). Si le niveau n'est pas franchissable, il est
+        // regénéré (jusqu'à 8 essais). Les mobs sont ignorés (on peut attendre).
+        // =====================================================================
+        let casesAtteignables = new Set();
+        let bandesJonction = []; // [{x, y}] cases de sol plat que le joueur traverse obligatoirement
+
+        function niveauFaisable() {
+            let T = TAILLE_BLOC, solides = new Set(), dangers = new Set(), fin = null;
+            blocsMonde.forEach(b => {
+                let k = Math.round(b.x / T) + "," + Math.round(b.y / T);
+                if (b.type === "piege") dangers.add(k);
+                else if (estBlocSolide(b)) solides.add(k);
+                if (b.type === "fin_niveau") fin = Math.round(b.x / T);
+            });
+            if (fin === null) return false;
+            let libre = (c, r) => !solides.has(c + "," + r) && !dangers.has(c + "," + r);
+            let debout = (c, r) => libre(c, r) && solides.has(c + "," + (r + 1));
+            let colLibre = (c, r0, r1) => { for (let r = r0; r <= r1; r++) if (!libre(c, r)) return false; return true; };
+            let maxDc = h => h <= 1 ? 4 : (h === 2 ? 3 : 2);
+
+            let c0 = Math.round(joueur.spawnX / T), r0 = Math.round(joueur.spawnY / T), depart = null;
+            for (let r = r0 - 2; r <= r0 + 8 && !depart; r++) if (debout(c0, r)) depart = [c0, r];
+            if (!depart) return false;
+
+            let vus = new Set([depart.join(",")]), file = [depart], trouve = false;
+            while (file.length) {
+                let [c, r] = file.pop();
+                if (c >= fin - 2) trouve = true;
+                for (let dir = -1; dir <= 1; dir += 2) {
+                    for (let dc = 1; dc <= 4; dc++) {
+                        let tc = c + dir * dc;
+                        for (let tr = r - 3; tr <= r + 5; tr++) {
+                            let cle = tc + "," + tr;
+                            if (vus.has(cle) || !debout(tc, tr)) continue;
+                            let h = r - tr;
+                            if (h > 0 && dc > maxDc(h)) continue;
+                            let lo = Math.min(r, tr), ok = true;
+                            if (dc > 1 || h !== 0) {
+                                for (let i = 1; i < dc && ok; i++) ok = colLibre(c + dir * i, lo - 3, lo);
+                                if (ok) ok = colLibre(tc, lo - 3, tr);
+                                if (ok && h > 0) ok = colLibre(c, tr - 1, r - 1);
+                            }
+                            if (ok) { vus.add(cle); file.push([tc, tr]); }
+                        }
+                    }
+                }
+            }
+            casesAtteignables = vus;
+            return trouve;
+        }
+
+        function genererMapProcedurale() {
+            reinitialiserHistoire();
+            construireMapProcedurale();
+            if (modeHistoireActif) { placerFragmentsHistoire(); placerMursZones(); }
+        }
+
+        // Mur de verrouillage à chaque frontière de zone : une seule couleur
+        // (tirée parmi les blocs décoratifs), du sol au plafond. Les blocs solides
+        // déjà présents sont conservés (le sol reste intact quand le mur disparaît).
+        function placerMursZones() {
+            let T = TAILLE_BLOC;
+            let couleur = couleursDecorReset[Math.floor(Math.random() * couleursDecorReset.length)];
+            let haut = -400, hauteur = arene.clientHeight - haut; // dépasse largement le plafond
+            for (let z = 0; z < 3; z++) {
+                let x = Math.round(zonesX[z] / T) * T;
+                // On retire seulement les éléments NON solides de la colonne (pièges, pièces...)
+                let aRetirer = blocsMonde.filter(b => b.x === x && !estBlocSolide(b));
+                aRetirer.forEach(b => { if (b.elementDom) b.elementDom.remove(); });
+                blocsMonde = blocsMonde.filter(b => !aRetirer.includes(b));
+                creerBlocMondeDirect(x, haut, "mur_zone", couleur, "", 1);
+                let mur = blocsMonde[blocsMonde.length - 1];
+                mur.height = hauteur;
+                let d = mur.elementDom;
+                d.classList.add("mur-zone");
+                d.style.height = hauteur + "px";
+                d.style.alignItems = "flex-start";
+                d.style.setProperty("--mur", couleur);
+                d.innerHTML = '<span style="position:absolute; top:' + (-haut + 150) + 'px; left:2px; font-size:14px;">🔒</span>';
+                mursZone[z].push(mur);
+            }
+            recalculerTotalPieces();
+        }
+
+        // Le mur se dissout progressivement, mais SEULEMENT quand il est dans le
+        // champ de vision du joueur (visible à l'écran). Il reste solide jusqu'au bout.
+        function mettreAJourMursZones() {
+            for (let z = 0; z < 3; z++) {
+                if (!mursEnFonte[z] || mursZone[z].length === 0) continue;
+                let x = mursZone[z][0].x;
+                if (x + TAILLE_BLOC < cameraX || x > cameraX + arene.clientWidth) continue;
+                let opacite = (mursZone[z].opacite === undefined ? 1 : mursZone[z].opacite) - 0.012;
+                mursZone[z].opacite = opacite;
+                if (opacite <= 0) {
+                    mursZone[z].forEach(b => { if (b.elementDom) b.elementDom.remove(); });
+                    blocsMonde = blocsMonde.filter(b => !mursZone[z].includes(b));
+                    mursZone[z] = [];
+                } else {
+                    mursZone[z].forEach(b => { b.elementDom.style.opacity = opacite; });
+                }
+            }
+        }
+
+        // Mode Histoire uniquement : exactement `cible` fragments par zone, répartis
+        // le long de la zone, posés sur des cases que le joueur peut vraiment atteindre.
+        function placerFragmentsHistoire() {
+            let T = TAILLE_BLOC;
+            let bornes = [0, zonesX[0], zonesX[1], zonesX[2], 6800];
+            for (let z = 0; z < 4; z++) {
+                let cible = epreuvesHistoire[z].cible;
+                let deb = Math.max(bornes[z] + (z > 0 ? 3 * T : 0), 240), fin = bornes[z + 1] - (z === 3 ? 60 : 120);
+                let candidats = bandesJonction.filter(c => c.x >= deb && c.x <= fin);
+                if (candidats.length < cible) {
+                    // Zone très courte : on complète avec des cases de sol dégagées (pas de piège au-dessus)
+                    let dejaPris = new Set(candidats.map(c => c.x));
+                    blocsMonde.filter(b => b.type === "solide" && b.x >= deb && b.x <= fin && !dejaPris.has(b.x) &&
+                        !blocsMonde.some(o => o.x === b.x && o.y === b.y - T))
+                        .forEach(b => { if (!dejaPris.has(b.x)) { dejaPris.add(b.x); candidats.push({ x: b.x, y: b.y }); } });
+                }
+                for (let k = 0; k < cible && candidats.length; k++) {
+                    let visee = deb + (fin - deb) * (k + 0.5) / cible;
+                    candidats.sort((a, b) => Math.abs(a.x - visee) - Math.abs(b.x - visee));
+                    let c = candidats.shift();
+                    creerBlocMondeDirect(c.x, c.y - T, "fragment", "#00ffcc", "💽", 1);
+                }
+            }
+        }
+
+        function construireMapProcedurale() {
+            nettoyerMondeComplet();
+            modeNiveauPersonnaliseActif = false;
+            niveauEnEditionId = null;
+            mettreAJourBadgeNiveauPerso();
+            reinitialiserParametresNiveau();
+            sacModulesProceduraux = [];
+            bandesJonction = [];
+            dernierModuleJoue = -1;
+
+            for (let x = 0; x <= 160; x += TAILLE_BLOC) {
+                creerBlocMondeDirect(x, 240, "solide", "#00ffcc", "", 1);
+            }
+            joueur.spawnX = 60;
+            joueur.spawnY = 180;
+
+            let currentX = 160;
+            let groundY = 240; // hauteur de référence du sol, variera au fil du niveau
+            const GROUND_Y_MIN = 220; // marge resserrée : le module le plus haut grimpe jusqu'à 160px au-dessus du sol, il faut de la place au-dessus
+            const GROUND_Y_MAX = 280; // reste assez bas : ne frôle jamais le bas de l'arène
+            let finMapX = 6800;
+
+            while (currentX < finMapX) {
+                let indexModule = piocherIndexModule();
+                currentX = modulesProceduraux[indexModule](currentX, groundY);
+
+                // Le sol change de hauteur plus souvent (65% de chance), et parfois de
+                // DEUX crans d'un coup (20% des changements) au lieu d'un seul, pour un
+                // relief plus marqué et moins linéaire — toujours via une rampe d'UNE
+                // case à la fois (donc chaque marche individuelle reste trivialement
+                // sautable, même quand le changement total fait 2 cases).
+                let nouvelleGroundY = groundY;
+                if (Math.random() < 0.65) {
+                    let nbCrans = Math.random() < 0.2 ? 2 : 1;
+                    let sens = (Math.random() < 0.5 ? -1 : 1);
+                    let essai = groundY + sens * nbCrans * TAILLE_BLOC;
+                    if (essai >= GROUND_Y_MIN && essai <= GROUND_Y_MAX) nouvelleGroundY = essai;
+                }
+
+                // Rampe de transition, une case (20px) à la fois entre l'ancienne et la
+                // nouvelle hauteur (donc toujours sautable/descendable sans effort quel
+                // que soit le nombre de crans), puis bande de sol plate de sécurité au
+                // nouveau niveau avant le module suivant.
+                while (nouvelleGroundY !== groundY) {
+                    let pas = nouvelleGroundY > groundY ? TAILLE_BLOC : -TAILLE_BLOC;
+                    groundY += pas;
+                    creerBlocMondeDirect(currentX, groundY, "solide", "#00ffcc", "", 1);
+                    currentX += TAILLE_BLOC;
+                }
+                // Jonction variable : bande plate de 3 à 5 cases, et 30 % du temps
+                // un petit trou (1-2 cases) juste avant, pour casser la monotonie.
+                if (Math.random() < 0.3 && currentX > 400) currentX += (1 + Math.floor(Math.random() * 2)) * TAILLE_BLOC;
+                let bande = (3 + Math.floor(Math.random() * 3)) * TAILLE_BLOC;
+                for (let x = 0; x < bande; x += TAILLE_BLOC) {
+                    creerBlocMondeDirect(currentX + x, groundY, "solide", "#00ffcc", "", 1);
+                    if (x === TAILLE_BLOC) bandesJonction.push({ x: currentX + x, y: groundY });
+                }
+                currentX += bande;
+            }
+
+            // Le bloc "Fin de Niveau" a une priorité ABSOLUE sur ses côtés (gauche/
+            // droite) et sur la case juste au-dessus : on supprime sans exception
+            // tout ce qui s'y trouve déjà, quel que soit le module qui l'a généré.
+            // Ce qu'il y a en dessous n'a pas d'importance (le sol reste en place).
+            let positionsADegager = [
+                [finMapX, groundY], [finMapX - TAILLE_BLOC, groundY],
+                [finMapX + TAILLE_BLOC, groundY], [finMapX, groundY - TAILLE_BLOC]
+            ];
+            blocsMonde = blocsMonde.filter(b => {
+                let doitPartir = positionsADegager.some(([px, py]) => b.x === px && b.y === py);
+                if (doitPartir && b.elementDom) b.elementDom.remove();
+                return !doitPartir;
+            });
+
+            creerBlocMondeDirect(finMapX, groundY, "fin_niveau", "#ffffff", "🏆", 1);
+            
+            respawnJoueur();
+            recalculerTotalPieces();
+        }
+
+        // --- Pose de blocs : clic simple OU clic maintenu + glisser ---
+        function symboleDuTypeActif() {
+            if (elementActif.type === "glace") return "❄️";
+            if (elementActif.type === "trampoline") return "⏫";
+            if (elementActif.type === "boost") return "⏩";
+            if (elementActif.type === "checkpoint") return "🏁";
+            if (elementActif.type === "piece") return "🪙" + elementActif.valeurPiece;
+            if (elementActif.type === "fin_niveau") return "🏆";
+            if (elementActif.type === "piege") return "⚠️";
+            return "";
+        }
+
+        function caseSousPointeur(e) {
+            let rect = arene.getBoundingClientRect();
+            // Tient compte du zoom CSS de l'arène (ex. 0.55 sur mobile)
+            let echelle = rect.width / arene.offsetWidth || 1;
+            let clickX = (e.clientX - rect.left) / echelle + cameraX;
+            let clickY = (e.clientY - rect.top) / echelle;
+            return {
+                gx: Math.floor(clickX / TAILLE_BLOC) * TAILLE_BLOC,
+                gy: Math.floor(clickY / TAILLE_BLOC) * TAILLE_BLOC
+            };
+        }
+
+        function outilDePoseActif() {
+            return modeConstructionActif && elementActif.type !== "outil_supprimer" && elementActif.type !== "outil_bloquer" && elementActif.type !== "mob";
+        }
+
+        function outilEffaceActif() {
+            return modeConstructionActif && elementActif.type === "outil_supprimer";
+        }
+
+        let historiqueEdition = [];
+        let traitAjoutes = [], traitSupprimes = [];
+
+        function annulerDerniereAction() {
+            let h = historiqueEdition.pop();
+            if (!h) return;
+            h.ajoutes.forEach(b => { if (b.elementDom) b.elementDom.remove(); });
+            blocsMonde = blocsMonde.filter(b => !h.ajoutes.includes(b));
+            h.supprimes.forEach(o => {
+                if (o.type === "mob") mobsMonde.push(o); else blocsMonde.push(o);
+                if (o.elementDom) monde.appendChild(o.elementDom);
+            });
+            recalculerTotalPieces();
+            if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
+        }
+
+        document.addEventListener("keydown", function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && modeConstructionActif) {
+                e.preventDefault();
+                annulerDerniereAction();
+            }
+        });
+
+        let glisseEnCours = false;   // un glisser (pose OU effacement) est actif
+        let glisseEfface = false;    // true = on efface, false = on pose
+        let glisseAModifie = false;
+        let derniereCasePosee = null;
+        let casesPoseesDansLeGlisse = new Set();
+
+        function poserBlocSurCase(gx, gy, forcer) {
+            let cle = gx + "," + gy;
+            if (!forcer) {
+                // Pendant le glisser : pas de doublon sur une case déjà posée ou occupée
+                if (casesPoseesDansLeGlisse.has(cle)) return;
+                if (blocsMonde.some(b => b.x === gx && b.y === gy)) return;
+            }
+            casesPoseesDansLeGlisse.add(cle);
+            creerBlocMondeDirect(gx, gy, elementActif.type, elementActif.couleur, symboleDuTypeActif(), elementActif.valeurPiece);
+            glisseAModifie = true;
+            traitAjoutes.push(blocsMonde[blocsMonde.length - 1]);
+        }
+
+        // Efface tout ce qui occupe la case : blocs (doublons compris) et mobs
+        function effacerSurCase(gx, gy) {
+            let blocs = blocsMonde.filter(b => b.x === gx && b.y === gy);
+            if (blocs.length > 0) {
+                blocs.forEach(b => { if (b.elementDom) b.elementDom.remove(); });
+                blocsMonde = blocsMonde.filter(b => !blocs.includes(b));
+                traitSupprimes.push(...blocs);
+                glisseAModifie = true;
+            }
+            let mobs = mobsMonde.filter(m =>
+                m.x < gx + TAILLE_BLOC && m.x + m.width > gx &&
+                m.y < gy + TAILLE_BLOC && m.y + m.height > gy);
+            if (mobs.length > 0) {
+                mobs.forEach(m => { if (m.elementDom) m.elementDom.remove(); });
+                mobsMonde = mobsMonde.filter(m => !mobs.includes(m));
+                traitSupprimes.push(...mobs);
+                glisseAModifie = true;
+            }
+        }
+
+        function actionSurCase(gx, gy, forcer) {
+            if (glisseEfface) effacerSurCase(gx, gy);
+            else poserBlocSurCase(gx, gy, forcer);
+        }
+
+        // Relie la dernière case à la nouvelle (ligne continue même si la souris va vite)
+        function actionLigneJusqua(gx, gy) {
+            let c0 = derniereCasePosee.gx / TAILLE_BLOC, r0 = derniereCasePosee.gy / TAILLE_BLOC;
+            let c1 = gx / TAILLE_BLOC, r1 = gy / TAILLE_BLOC;
+            let pas = Math.max(Math.abs(c1 - c0), Math.abs(r1 - r0));
+            for (let i = 1; i <= pas; i++) {
+                let c = Math.round(c0 + (c1 - c0) * i / pas);
+                let r = Math.round(r0 + (r1 - r0) * i / pas);
+                actionSurCase(c * TAILLE_BLOC, r * TAILLE_BLOC, false);
+            }
+            derniereCasePosee = { gx: gx, gy: gy };
+        }
+
+        function finirGlisse(e) {
+            if (!glisseEnCours) return;
+            glisseEnCours = false;
+            derniereCasePosee = null;
+            casesPoseesDansLeGlisse.clear();
+            try { if (e && e.pointerId !== undefined) arene.releasePointerCapture(e.pointerId); } catch (err) {}
+            if (glisseAModifie) {
+                historiqueEdition.push({ ajoutes: traitAjoutes, supprimes: traitSupprimes });
+                if (historiqueEdition.length > 50) historiqueEdition.shift();
+                recalculerTotalPieces();
+                if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
+            }
+            glisseAModifie = false;
+            traitAjoutes = []; traitSupprimes = [];
+        }
+
+        arene.addEventListener("pointerdown", function(e) {
+            if (e.button !== undefined && e.button !== 0) return;
+            if (!outilDePoseActif() && !outilEffaceActif()) return;
+            glisseEnCours = true;
+            glisseEfface = outilEffaceActif();
+            glisseAModifie = false;
+            casesPoseesDansLeGlisse.clear();
+            let { gx, gy } = caseSousPointeur(e);
+            derniereCasePosee = { gx: gx, gy: gy };
+            actionSurCase(gx, gy, true); // 1ère case : comportement identique à l'ancien clic
+            try { arene.setPointerCapture(e.pointerId); } catch (err) {}
+            e.preventDefault();
+        });
+
+        arene.addEventListener("pointermove", function(e) {
+            if (!glisseEnCours) return;
+            // Si l'outil a changé en cours de route, on arrête proprement
+            if (glisseEfface ? !outilEffaceActif() : !outilDePoseActif()) { finirGlisse(e); return; }
+            let { gx, gy } = caseSousPointeur(e);
+            if (gx === derniereCasePosee.gx && gy === derniereCasePosee.gy) return;
+            actionLigneJusqua(gx, gy);
+        });
+
+        arene.addEventListener("pointerup", finirGlisse);
+        arene.addEventListener("pointercancel", finirGlisse);
+
+        // Les mobs gardent le clic simple (fenêtre de saisie de la zone de patrouille)
+        arene.onclick = function(e) {
+            if (modeConstructionActif && elementActif.type === "mob") {
+                let { gx, gy } = caseSousPointeur(e);
+                // Empêche d'ouvrir une 2e fenêtre de saisie pendant qu'une première
+                // est déjà en attente.
+                if (document.getElementById("modal-nombre").style.display === "flex") return;
+                demanderNombre("Zone de patrouille du mob (en blocs, 1 à 10) :", 3, 10, function(nbBlocs) {
+                    let xMin = gx - (nbBlocs * TAILLE_BLOC);
+                    let xMax = gx + (nbBlocs * TAILLE_BLOC);
+                    creerMobPatrouilleur(xMin, xMax, gy, elementActif.vitesseMob, elementActif.couleur, elementActif.symboleMob);
+                    if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
+                });
+            }
+        };
+
+        // Couleurs des blocs "non fonctionnels" (purement décoratifs, sans effet spécial)
+        // déjà présentes en boutique — utilisées pour les 5 blocs du reset.
+        const couleursDecorReset = ["#00ffcc", "#ff0055", "#00ff66", "#ffaa00", "#9d00ff", "#3a4454"];
+
+        function resetMapVersSpawn() {
+            // Nettoyage COMPLET : supprime tous les blocs de la génération procédurale,
+            // les mobs, et remet les compteurs à zéro — plus aucun résidu de l'ancienne map.
+            nettoyerMondeComplet();
+            modeNiveauPersonnaliseActif = false;
+            niveauEnEditionId = null;
+            mettreAJourBadgeNiveauPerso();
+
+            reinitialiserParametresNiveau();
+
+            // Téléportation propre au point de spawn
+            joueur.x = joueur.spawnX;
+            joueur.y = joueur.spawnY;
+            joueur.vx = 0;
+            joueur.vy = 0;
+
+            // 5 blocs "non fonctionnels" (couleur décorative, aucune capacité spéciale)
+            // mais avec EXACTEMENT la même collision que les blocs normaux (type "solide").
+            // Une seule couleur aléatoire pour les 5, alignée sur la grille TAILLE_BLOC.
+            let couleurChoisie = couleursDecorReset[Math.floor(Math.random() * couleursDecorReset.length)];
+            let baseX = joueur.spawnX - (2 * TAILLE_BLOC); // multiple de 20
+            let baseY = joueur.spawnY + (3 * TAILLE_BLOC); // = 240 = groundY, multiple de 20
+            for (let i = 0; i < 5; i++) {
+                creerBlocMondeDirect(baseX + (i * TAILLE_BLOC), baseY, "solide", couleurChoisie, "", 1);
+            }
+            recalculerTotalPieces();
+        }
+
+        btnReset.onclick = () => {
+            resetMapVersSpawn();
+        };
+
+        btnGeneration.onclick = () => {
+            genererMapProcedurale();
+        };
+
+        let joystickDirection = 0;
+        const joystickZone = document.getElementById("joystick-zone");
+        const joystickStick = document.getElementById("joystick-stick");
+        const boutonSautTactile = document.getElementById("bouton-saut-tactile");
+
+        // Calcule la direction ET déplace visuellement le stick en suivant le doigt
+        // dans le cercle (rendu plus fluide/analogique), tout en gardant une réponse
+        // binaire gauche/droite pour le déplacement (un jeu de plateforme 2D n'a pas
+        // besoin de haut/bas ici, le saut a son propre bouton dédié).
+        function calculerDirectionJoystick(touch) {
+            let rect = joystickZone.getBoundingClientRect();
+            let dx = touch.clientX - (rect.left + rect.width / 2);
+            let dy = touch.clientY - (rect.top + rect.height / 2);
+            let limite = 22;
+
+            let rayonMax = rect.width / 2 - 8;
+            let distance = Math.min(Math.sqrt(dx * dx + dy * dy), rayonMax);
+            let angle = Math.atan2(dy, dx);
+            joystickStick.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+
+            if (dx < -limite) {
+                joystickDirection = -1;
+            } else if (dx > limite) {
+                joystickDirection = 1;
+            } else {
+                joystickDirection = 0;
+            }
+        }
+
+        // touchstart réagit IMMÉDIATEMENT à l'appui (avant, seul touchmove était
+        // écouté : un simple appui sans glisser ne faisait donc rien). targetTouches
+        // (au lieu de touches) garantit qu'on lit bien le doigt posé SUR le joystick,
+        // même si un autre doigt appuie en même temps sur le bouton de saut.
+        joystickZone.addEventListener("touchstart", (e) => {
+            calculerDirectionJoystick(e.targetTouches[0]);
+            e.preventDefault();
+        }, { passive: false });
+
+        joystickZone.addEventListener("touchmove", (e) => {
+            calculerDirectionJoystick(e.targetTouches[0]);
+            e.preventDefault();
+        }, { passive: false });
+
+        function relacherJoystick() {
+            joystickDirection = 0;
+            joystickStick.style.transform = "translate(0px, 0px)";
+        }
+        joystickZone.addEventListener("touchend", relacherJoystick);
+        joystickZone.addEventListener("touchcancel", relacherJoystick); // sinon le perso continue d'avancer tout seul
+        document.getElementById("controles-tactiles").addEventListener("contextmenu", e => e.preventDefault());
+
+        ["touchend", "touchcancel"].forEach(ev => boutonSautTactile.addEventListener(ev, () => boutonSautTactile.classList.remove("appuye")));
+        boutonSautTactile.addEventListener("touchstart", (e) => {
+            boutonSautTactile.classList.add("appuye");
+            if (!modeConstructionActif && peutSauter()) {
+                joueur.vy = joueur.jumpForce;
+                joueur.isGrounded = false;
+            }
+            e.preventDefault();
+        });
+
+        let touches = { q: false, d: false };
+        window.addEventListener("keydown", (e) => {
+            if (document.activeElement.id === "input-commande") {
+                if (e.key === "Enter") {
+                    executerCommande();
+                }
+                return;
+            }
+
+            if (e.key === "q" || e.key === "Q") touches.q = true;
+            if (e.key === "d" || e.key === "D") touches.d = true;
+            if ((e.key === "z" || e.key === "Z" || e.key === " ") && !modeConstructionActif && peutSauter()) {
+                joueur.vy = joueur.jumpForce;
+                joueur.isGrounded = false;
+            }
+            if (e.key === "e" || e.key === "E") {
+                basculerModeCreatif();
+            }
+            // Échap : quitte un niveau personnalisé (test ou édition) en cours et
+            // repart en génération procédurale aléatoire infinie. Ne fait rien si
+            // on est déjà en procédural (pour éviter de couper la partie par erreur).
+            if (e.key === "Escape" && modeNiveauPersonnaliseActif) {
+                genererMapProcedurale();
+            }
+        });
+        window.addEventListener("keyup", (e) => {
+            if (e.key === "q" || e.key === "Q") touches.q = false;
+            if (e.key === "d" || e.key === "D") touches.d = false;
+        });
+
+        function respawnJoueur() {
+            stats.morts++;
+            hudMorts.innerText = `💀 ${traductions[langueActuelle].morts} : ${stats.morts}`;
+            joueur.x = joueur.spawnX;
+            joueur.y = joueur.spawnY;
+            joueur.vx = 0;
+            joueur.vy = 0;
+        }
+
+        function estBlocSolide(mur) {
+            return mur.type !== "piege" && mur.type !== "checkpoint" && mur.type !== "piece" && mur.type !== "fin_niveau" && mur.type !== "decor" && mur.type !== "fragment";
+        }
+
+        function peutSauter() {
+            if (joueur.isGrounded) return true;
+            for (let mur of blocsMonde) {
+                if (estBlocSolide(mur)) {
+                    if (joueur.x + joueur.width > mur.x + 2 && joueur.x < mur.x + mur.width - 2 &&
+                        Math.abs((joueur.y + joueur.height) - mur.y) <= 3 && joueur.vy >= 0) return true;
+                }
+            }
+            return false;
+        }
+
+        let surDeLaGlace = false;
+
+        function update() {
+            if (!modeConstructionActif && !tacheActive) {
+                let indexZoneActuelle;
+                if (joueur.x < zonesX[0]) {
+                    arene.className = "phase-1-bg";
+                    indexZoneActuelle = 0;
+                } else if (joueur.x < zonesX[1]) {
+                    arene.className = "phase-2-bg";
+                    indexZoneActuelle = 1;
+                } else if (joueur.x < zonesX[2]) {
+                    arene.className = "phase-3-bg";
+                    indexZoneActuelle = 2;
+                } else {
+                    arene.className = "phase-4-bg";
+                    indexZoneActuelle = 3;
+                }
+
+                if (modeHistoireActif) {
+                    zoneHistoireActuelle = indexZoneActuelle;
+                    let epreuve = epreuvesHistoire[zoneHistoireActuelle];
+                    let mission = epreuve.missions[missionChoisie[zoneHistoireActuelle]];
+                    let fait = missionsFaites[zoneHistoireActuelle];
+                    hudPhase.innerText = `${epreuve.nom} — ${mission.texte} ${mission.icone} ${Math.min(progressionZones[zoneHistoireActuelle], epreuve.cible)}/${epreuve.cible}` + (fait ? " ✅" : " 🔒");
+                } else {
+                    hudPhase.innerText = epreuvesHistoire[indexZoneActuelle].nom;
+                }
+
+                let moveDir = 0;
+                if (touches.q) moveDir = -1;
+                if (touches.d) moveDir = 1;
+                if (modeActuel === 'mobile' || joystickDirection !== 0) moveDir = joystickDirection;
+
+                let vitesseCible = moveDir * joueur.speed;
+
+                if (surDeLaGlace) {
+                    if (moveDir !== 0) {
+                        joueur.vx += moveDir * 0.45;
+                        if (Math.abs(joueur.vx) > joueur.speed * 1.8) {
+                            joueur.vx = Math.sign(joueur.vx) * joueur.speed * 1.8;
+                        }
+                    } else {
+                        joueur.vx *= 0.95;
+                    }
+                } else {
+                    if (moveDir !== 0) {
+                        joueur.vx = vitesseCible;
+                    } else {
+                        joueur.vx *= 0.25;
+                    }
+                }
+
+                joueur.x += joueur.vx;
+                joueur.vy += joueur.gravity;
+                joueur.y += joueur.vy;
+                joueur.isGrounded = false;
+                surDeLaGlace = false;
+
+                if (joueur.y + joueur.height >= arene.clientHeight) respawnJoueur();
+
+                mobsMonde.forEach(mob => {
+                    mob.x += mob.vitesse * mob.direction;
+                    if (mob.x <= mob.xMin || mob.x >= mob.xMax) {
+                        mob.direction *= -1;
+                    }
+                    mob.elementDom.style.left = mob.x + "px";
+
+                    if (joueur.x < mob.x + mob.width - 4 && joueur.x + joueur.width > mob.x + 4 &&
+                        joueur.y < mob.y + mob.height - 4 && joueur.y + joueur.height > mob.y + 4) {
+                        respawnJoueur();
+                    }
+                });
+
+                blocsMonde.forEach(mur => {
+                    if (mur.type === "fin_niveau" && (modeNiveauPersonnaliseActif || !modeHistoireActif || missionsFaites[3]) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        if (modeNiveauPersonnaliseActif) {
+                            // Niveau personnalisé : on boucle simplement le joueur au
+                            // spawn de CE niveau (sans compter de mort, ce n'est pas un
+                            // échec — juste la fin du parcours) plutôt que de générer
+                            // une nouvelle map procédurale par-dessus le niveau testé.
+                            joueur.x = joueur.spawnX;
+                            joueur.y = joueur.spawnY;
+                            joueur.vx = 0;
+                            joueur.vy = 0;
+                            // Les pièces redeviennent ramassables à chaque nouveau tour
+                            // (sinon, une fois le niveau bouclé une fois, elles restent
+                            // définitivement invisibles pour le reste de la session).
+                            blocsMonde.forEach(b => {
+                                if (b.type === "piece") {
+                                    b.ramasse = false;
+                                    if (b.elementDom) b.elementDom.style.display = "flex";
+                                }
+                            });
+                            stats.piecesRecuperees = 0;
+                            recalculerTotalPieces();
+                        } else {
+                            genererMapProcedurale();
+                        }
+                    }
+                    if (mur.type === "piece" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        mur.ramasse = true;
+                        stats.piecesRecuperees++;
+                        mettreAJourBanque(mur.valeur);
+                        hudPieces.innerText = `🪙 ${stats.piecesRecuperees} / ${stats.totalPieces}`;
+                        if (mur.elementDom) mur.elementDom.style.display = "none";
+                    }
+                    if (mur.type === "fragment" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        mur.ramasse = true;
+                        if (mur.elementDom) mur.elementDom.style.display = "none";
+                        let z = zoneHistoireActuelle, epreuve = epreuvesHistoire[z];
+                        if (modeHistoireActif && !modeNiveauPersonnaliseActif && z >= 0 && !missionsFaites[z]) {
+                            progressionZones[z]++;
+                            if (progressionZones[z] >= epreuve.cible) {
+                                missionsFaites[z] = true;
+                                if (z < 3) mursEnFonte[z] = true;
+                                let mission = epreuve.missions[missionChoisie[z]];
+                                let prochaine = epreuvesHistoire[z + 1];
+                                lancerTachePiratage(function() {
+                                    afficherAlerte(`✅ ${mission.fin} !` + (prochaine ? `\nLa zone suivante est déverrouillée : ${prochaine.nom}` : "\nLe 🏆 est accessible !"));
+                                });
+                            }
+                        }
+                    }
+                    if (mur.type === "piege" && joueur.x < mur.x + mur.width - 3 && joueur.x + joueur.width > mur.x + 3 && joueur.y < mur.y + mur.height - 3 && joueur.y + joueur.height > mur.y + 3) {
+                        respawnJoueur();
+                    }
+                    if (mur.type === "checkpoint" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        joueur.spawnX = mur.x;
+                        joueur.spawnY = mur.y - joueur.height;
+                    }
+                    if (estBlocSolide(mur)) {
+                        let joueurGauche = joueur.x, joueurDroite = joueur.x + joueur.width;
+                        let joueurHaut = joueur.y, joueurBas = joueur.y + joueur.height;
+                        let murGauche = mur.x, murDroite = mur.x + mur.width;
+                        let murHaut = mur.y, murBas = mur.y + mur.height;
+
+                        if (joueurDroite > murGauche + 2 && joueurGauche < murDroite - 2 &&
+                            joueurBas > murHaut && joueurHaut < murBas) {
+
+                            // Chevauchement réel : on résout sur l'axe où le chevauchement
+                            // est le plus petit (c'est le côté par lequel le joueur vient
+                            // de "rentrer" dans le bloc).
+                            let chevauchX = Math.min(joueurDroite, murDroite) - Math.max(joueurGauche, murGauche);
+                            let chevauchY = Math.min(joueurBas, murBas) - Math.max(joueurHaut, murHaut);
+
+                            if (chevauchY <= chevauchX) {
+                                if (joueur.vy >= 0 && joueurBas - joueur.vy <= murHaut + 6) {
+                                    // Atterrissage sur le dessus (cas normal)
+                                    joueur.y = murHaut - joueur.height;
+                                    joueur.vy = 0;
+                                    joueur.isGrounded = true;
+
+                                    if (mur.type === "trampoline") {
+                                        joueur.vy = joueur.jumpForce * 1.4;
+                                        joueur.isGrounded = false;
+                                    }
+                                    if (mur.type === "boost") {
+                                        let dirBoost = moveDir !== 0 ? moveDir : 1;
+                                        joueur.vx = dirBoost * 12.5;
+                                    }
+                                    if (mur.type === "glace") {
+                                        surDeLaGlace = true;
+                                    }
+                                } else if (joueur.vy < 0) {
+                                    // Cogne le dessous du bloc en sautant : stoppe la montée
+                                    // au lieu de traverser (bug corrigé).
+                                    joueur.y = murBas;
+                                    joueur.vy = 0;
+                                }
+                            } else {
+                                // Bloqué par un côté (gauche ou droit) : ne traverse plus
+                                // horizontalement (bug corrigé).
+                                if (joueurGauche < murGauche) {
+                                    joueur.x = murGauche - joueur.width;
+                                } else {
+                                    joueur.x = murDroite;
+                                }
+                                joueur.vx = 0;
+                            }
+                        }
+                    }
+                });
+
+                // Mode Histoire : la sortie de la zone reste verrouillée tant que tous
+                // les fragments de la zone ne sont pas récupérés.
+                if (modeHistoireActif && !modeNiveauPersonnaliseActif && zoneHistoireActuelle >= 0 && zoneHistoireActuelle < 3 && !missionsFaites[zoneHistoireActuelle]) {
+                    let limite = zonesX[zoneHistoireActuelle];
+                    if (joueur.x + joueur.width > limite) { joueur.x = limite - joueur.width; joueur.vx = 0; }
+                }
+
+                cameraX = Math.max(0, Math.min(joueur.x - 300, maxWorldWidth - arene.clientWidth));
+                if (modeHistoireActif) mettreAJourMursZones();
+                monde.style.left = -cameraX + "px";
+                joueur.element.style.left = joueur.x + "px";
+                joueur.element.style.top = joueur.y + "px";
+            }
+            requestAnimationFrame(update);
+        }
+
+        // Remise à zéro totale : banque, blocs, skins et langue (appelée par le
+        // bouton "SUPPRIMER TOUTES LES SAUVEGARDES" du panneau Paramètres)
+        function reinitialisationTotaleJeu() {
+            let confirmationLang = "Voulez-vous vraiment effectuer un Hard Reset complet (Banque à 0 et verrouillage des achats) ?";
+            if (langueActuelle === 'de') confirmationLang = "Wirklich alles komplett zurücksetzen?";
+            if (langueActuelle === 'en') confirmationLang = "Really perform a complete Hard Reset?";
+            if (langueActuelle === 'ja') confirmationLang = "本当にすべて完全にリセットしますか?";
+
+            demanderConfirmation(confirmationLang, function() {
+                localStorage.removeItem("cyber_hack_banque");
+                localStorage.removeItem("cyber_hack_achats");
+                localStorage.removeItem("cyber_hack_skins");
+                localStorage.removeItem("cyber_hack_mobs");
+                localStorage.removeItem("cyber_hack_langue");
+
+                // Remise à zéro immédiate EN MÉMOIRE, en filet de sécurité au cas où
+                // location.reload() serait bloqué (certains navigateurs mobiles/webviews) :
+                // l'effet est visible tout de suite, sans dépendre du rechargement.
+                piecesGlobales = 0;
+                achatsBlocs = {};
+                achatsSkins = {};
+                achatsMobs = {};
+                valeurBanque.innerText = piecesGlobales;
+
+                typesDeBlocs.forEach(b => { b.acquis = (b.prix === 0); });
+                listeSkins.forEach(s => { s.acquis = (s.prix === 0); });
+                mobsBoutique.forEach(m => { m.acquis = false; });
+                verifierCompletionBoutique();
+
+                location.reload();
+            });
+        }
+
+        genererMapProcedurale();
+        stats.chronoActif = true;
+        positionnerPanneaux();
+        update();
+    </script>
+</body>
+</html>
