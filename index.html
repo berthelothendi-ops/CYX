@@ -747,6 +747,7 @@
             <p id="texte-chrono-tache" style="color: #ffaa00; font-size: 20px; font-weight: bold; margin: 6px 0;"></p>
             <div id="grille-tache"></div>
             <p id="texte-statut-tache" style="color: #8892b0; font-size: 12px; min-height: 16px;"></p>
+            <button id="btn-quitter-test" class="btn-modal-action" onclick="quitterTestHistoire()" style="display:none; background-color:#3a4454; color:#00ffcc;">✖ QUITTER LE TEST</button>
         </div>
     </div>
 
@@ -791,6 +792,7 @@
         <div class="hud-actions">
             <button id="btn-commande-toggle" class="btn-hud-icone" onclick="basculerConsoleCommande()" title="Console de Commandes">💻</button>
             <button id="btn-histoire-toggle" class="btn-hud-icone" onclick="basculerModeHistoire()" title="Mode Histoire / Normal">📖</button>
+            <button id="btn-test-histoire" class="btn-hud-icone" onclick="ouvrirTestHistoire()" title="Tester toutes les missions de l'histoire" style="display:none;">🧪</button>
             <button id="btn-creatif-toggle" class="btn-hud-icone" onclick="basculerModeCreatif()" title="Mode Créatif / Inventaire">🎒</button>
             <button id="btn-parametres" class="btn-hud-icone" onclick="ouvrirParametres()" title="Paramètres">⚙️</button>
         </div>
@@ -1267,7 +1269,7 @@
             match: ["Relie chaque sigle à sa définition (clique un sigle, puis sa définition).", "Match each acronym with its definition (click an acronym, then its definition).", "Ordne jede Abkürzung ihrer Definition zu (erst Abkürzung, dann Definition).", "略語と説明を結べ(略語→説明の順にクリック)。"],
             decode: ["Message intercepté, chiffré par décalage de César. Chaque lettre a été avancée de {s} dans l'alphabet ({ex}). Tape le mot d'origine :", "Intercepted message, encrypted with a Caesar shift. Each letter was moved forward by {s} in the alphabet ({ex}). Type the original word:", "Abgefangene Nachricht, per Caesar-Verschiebung verschlüsselt. Jeder Buchstabe wurde um {s} verschoben ({ex}). Tippe das Originalwort:", "傍受したメッセージはシーザー暗号。各文字はアルファベット順に{s}つ進んでいる({ex})。元の単語を入力せよ:"],
             caesar: ["Chiffre ce mot avec un décalage de César de +{s} : avance chaque lettre de {s} dans l'alphabet ({ex}).", "Encrypt this word with a Caesar shift of +{s}: move each letter forward by {s} in the alphabet ({ex}).", "Verschlüssele dieses Wort mit Caesar-Verschiebung +{s}: jeder Buchstabe {s} weiter ({ex}).", "この単語をシーザー暗号(+{s})で暗号化せよ:各文字を{s}つ進める({ex})。"],
-            pin: ["Trouve le code à 4 chiffres (tous différents). 🟢 = bon chiffre bien placé · 🟡 = bon chiffre mal placé. 8 essais.", "Find the 4-digit code (all digits different). 🟢 = right digit, right place · 🟡 = right digit, wrong place. 8 tries.", "Finde den 4-stelligen Code (alle Ziffern verschieden). 🟢 = richtige Ziffer am richtigen Platz · 🟡 = richtige Ziffer am falschen Platz. 8 Versuche.", "4桁のコード(全て異なる数字)を探せ。🟢=数字と位置が正解 · 🟡=数字のみ正解。8回まで。"],
+            pin: ["Trouve le code à 4 chiffres (tous différents). 🟢 = chiffres bien placés : ils restent verrouillés 🔒. Les chiffres faux ou mal placés ne sont pas comptés. 8 essais, 1 minute.", "Find the 4-digit code (all digits different). 🟢 = correctly placed digits: they stay locked 🔒. Wrong or misplaced digits are not counted. 8 tries, 1 minute.", "Finde den 4-stelligen Code (alle Ziffern verschieden). 🟢 = richtig platzierte Ziffern: sie bleiben gesperrt 🔒. Falsche oder falsch platzierte Ziffern zählen nicht. 8 Versuche, 1 Minute.", "4桁のコード(全て異なる数字)を探せ。🟢=位置が正しい数字は🔒で固定される。間違い・位置違いはカウントしない。8回・1分。"],
             pinEchec: ["Plus d'essais !", "Out of tries!", "Keine Versuche mehr!", "試行回数切れ!"],
             pinInvalide: ["Entre 4 chiffres.", "Enter 4 digits.", "Gib 4 Ziffern ein.", "4桁の数字を入力。"],
             simon: ["Mémorise la séquence du pare-feu, puis répète-la dans le même ordre.", "Memorize the firewall sequence, then repeat it in the same order.", "Merke dir die Firewall-Sequenz und wiederhole sie in derselben Reihenfolge.", "ファイアウォールの順番を覚えて、同じ順にクリックせよ。"],
@@ -1516,7 +1518,7 @@
                 c.chrono(decoder ? 60 : 50);
             },
             pin: function(c) {
-                let chiffres = melanger(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]).slice(0, 4), essais = 0;
+                let chiffres = melanger(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]).slice(0, 4), essais = 0, verrou = [null, null, null, null];
                 c.consigne(tx(UI_TACHE.pin));
                 let hist = document.createElement("div");
                 hist.style.cssText = "font-family:'Courier New',monospace; font-size:14px; color:#ffffff; text-align:left; min-height:40px; margin:6px 0;";
@@ -1524,17 +1526,20 @@
                 let champ = creerChampTache("0000", function(v) {
                     v = v.trim();
                     if (!/^\d{4}$/.test(v)) { c.msg(tx(UI_TACHE.pinInvalide), "#ffaa00"); return; }
-                    let bien = 0, mal = 0;
-                    for (let i = 0; i < 4; i++) { if (v[i] === chiffres[i]) bien++; else if (chiffres.indexOf(v[i]) >= 0) mal++; }
+                    // Les chiffres déjà trouvés (bien placés) restent verrouillés et sont remis tout seuls.
+                    v = v.split("").map(function(d, i) { return verrou[i] !== null ? verrou[i] : d; }).join("");
+                    let bien = 0;
+                    for (let i = 0; i < 4; i++) { if (v[i] === chiffres[i]) { bien++; verrou[i] = v[i]; } }
                     essais++;
-                    let l = document.createElement("div"); l.innerText = v + "  →  🟢" + bien + "  🟡" + mal + "   (" + essais + "/8)"; hist.appendChild(l);
+                    // Les chiffres faux ou mal placés ne sont PAS comptés : seuls les bons s'affichent.
+                    let l = document.createElement("div"); l.innerText = v + "  →  🟢" + bien + "   🔒 " + verrou.map(function(d) { return d === null ? "_" : d; }).join(" ") + "   (" + essais + "/8)"; hist.appendChild(l);
                     champ.champ.value = "";
                     if (bien === 4) { c.msg(tx(UI_TACHE.ok), "#00ffcc"); setTimeout(function() { c.succes(); }, 500); }
                     else if (essais >= 8) c.echec(tx(UI_TACHE.pinEchec));
                     else c.msg("", "#8892b0");
                 }, { max: 4, numerique: true });
                 c.grille.appendChild(champ); champ.champ.focus();
-                c.chrono(90);
+                c.chrono(60);
             },
             simon: function(c) {
                 let n = 5, seq = []; for (let i = 0; i < n; i++) seq.push(RND(4));
@@ -1728,8 +1733,82 @@
                 }
             };
             chrono.innerText = ""; consigne.innerText = "";
+            let bq = g("btn-quitter-test"); if (bq) bq.style.display = testHistoireEnCours ? "block" : "none";
             TACHES[type](c);
             g("ecran-tache").style.display = "flex";
+        }
+
+        // =====================================================================
+        // TEST DE L'HISTOIRE (commande /histoire)
+        // Débloque un bouton 🧪 : toutes les missions de toutes les zones sont
+        // jouables d'un clic, sans faire 40 000 fois les niveaux, pour vérifier
+        // qu'elles sont faisables et voir combien de questions il y a.
+        // =====================================================================
+        let testHistoireEnCours = false;
+        let testHistoireDebloque = false;
+        try { testHistoireDebloque = localStorage.getItem("cyber_hack_histoire_test") === "1"; } catch (e) {}
+        function majBoutonTestHistoire() {
+            let b = document.getElementById("btn-test-histoire");
+            if (b) b.style.display = testHistoireDebloque ? "" : "none";
+        }
+        window.addEventListener("load", majBoutonTestHistoire);
+        function nbVariantesMission(tache, z) {
+            if (tache === "quiz") return QUIZ[z].length + " questions";
+            if (tache === "bug") return SNIPPETS_BUG.length + " codes";
+            if (tache === "match") return MATCH_POOL.length + " sigles";
+            if (tache === "ports") return CATS_PORTS.length + " catégories";
+            if (tache === "anagram") return MOTS_MDP.length + " mots";
+            if (tache === "decode" || tache === "caesar") return MOTS_CYBER.length + " mots";
+            return "aléatoire";
+        }
+        function fermerTestHistoire() {
+            let m = document.getElementById("ecran-test-histoire");
+            if (m) m.remove();
+        }
+        function ouvrirTestHistoire() {
+            if (!testHistoireDebloque || tacheActive) return;
+            fermerTestHistoire();
+            let fond = document.createElement("div");
+            fond.id = "ecran-test-histoire";
+            fond.style.cssText = "position:fixed; inset:0; background:rgba(11,15,25,0.95); display:flex; align-items:center; justify-content:center; z-index:1004;";
+            let boite = document.createElement("div");
+            boite.className = "conteneur-parametres";
+            boite.style.cssText = "max-width:460px; width:94%; max-height:90vh; overflow-y:auto; text-align:left;";
+            let totalQuiz = QUIZ.reduce((a, z) => a + z.length, 0);
+            let nbMissions = epreuvesHistoire.reduce((a, e) => a + e.missions.length, 0);
+            let h = document.createElement("h2"); h.style.cssText = "color:#00ffcc; margin-top:0;"; h.innerText = "🧪 TEST DE L'HISTOIRE";
+            let info = document.createElement("p"); info.style.cssText = "color:#8892b0; font-size:12px; line-height:1.4;";
+            info.innerText = nbMissions + " missions · " + totalQuiz + " questions de quiz au total. Clique ▶ pour jouer une mission comme en vrai (sans rien débloquer).";
+            boite.append(h, info);
+            epreuvesHistoire.forEach(function(ep, z) {
+                let t = document.createElement("div"); t.innerText = tx(ep.nom) + "  —  " + ep.cible + " 💽"; t.style.cssText = "color:#ffaa00; font-size:12px; letter-spacing:1px; margin:12px 0 6px; border-bottom:1px dashed rgba(255,170,0,0.4); padding-bottom:3px;";
+                boite.appendChild(t);
+                ep.missions.forEach(function(mi) {
+                    let l = document.createElement("div");
+                    l.style.cssText = "display:flex; align-items:center; gap:6px; margin-bottom:6px; background:#0b0f19; padding:6px; border-radius:4px; border:1px solid #3a4454;";
+                    let n = document.createElement("span"); n.style.cssText = "flex:1; color:#00ffcc; font-size:12px;";
+                    n.innerText = mi.icone + " " + tx(mi.texte) + "  [" + mi.tache + " · " + nbVariantesMission(mi.tache, z) + "]";
+                    let b = boutonNiveau("▶", "Tester cette mission", "#00ffcc", "#0b0f19", function() {
+                        fermerTestHistoire();
+                        testHistoireEnCours = true;
+                        lancerTachePiratage(function() {
+                            testHistoireEnCours = false;
+                            toast("✅ " + tx(mi.fin) + " (test)");
+                            ouvrirTestHistoire();
+                        }, mi.tache, z);
+                    });
+                    l.append(n, b); boite.appendChild(l);
+                });
+            });
+            let f = document.createElement("button"); f.className = "btn-modal-action"; f.innerText = "FERMER"; f.onclick = fermerTestHistoire;
+            boite.appendChild(f); fond.appendChild(boite); document.body.appendChild(fond);
+        }
+        function quitterTestHistoire() {
+            testHistoireEnCours = false;
+            ++tacheJeton; clearInterval(tacheMinuteur);
+            tacheActive = false;
+            document.getElementById("ecran-tache").style.display = "none";
+            ouvrirTestHistoire();
         }
 
         function fermerModalConfirmation() {
@@ -2489,6 +2568,7 @@
             { cmd: "/protector [on|off]", desc: "Bouclier de test : pièges et monstres ne te tuent plus (le vide, si). Sans option : active/désactive. /protector off l'annule.", cachee: false, prefill: "/protector" },
             { cmd: "/shopfree", desc: "Débloque toute la boutique : blocs, skins, sentinelles.", cachee: false, prefill: "/shopfree" },
             { cmd: "/title [texte]", desc: "DEV : change le titre/crédits pour tous (via niveaux_publics.json exporté). Sans texte : efface. Inactif hors mode /editeur.", cachee: true, prefill: "/title " },
+            { cmd: "/histoire", desc: "Débloque / cache le bouton 🧪 : teste toutes les missions du mode histoire (quiz, ports, code PIN, bug…) sans refaire les niveaux.", cachee: true, prefill: "/histoire" },
             { cmd: "/token [jeton|off]", desc: "DEV : enregistre ton jeton GitHub (droit « Contents : lecture/écriture » sur ton dépôt seulement) dans CE navigateur. Active l'écriture automatique des niveaux publics/communautaires.", cachee: true, prefill: "/token " },
             { cmd: "/github [proprio/depot] [branche]", desc: "DEV : dépôt et branche où écrire. Détecté tout seul sur une page github.io ; sinon, indique-les ici. Sans option : affiche la config.", cachee: true, prefill: "/github " },
             { cmd: "/editeur", desc: "Active / désactive le mode dev : édition des niveaux publics et communautaires (écriture auto sur GitHub), publication 🌐/👥, bouclier 🛡️, /title.", cachee: true, prefill: "/editeur" },
@@ -2580,6 +2660,15 @@
                 afficherAlerte(protecteurCmd ? tx(["🛡️ /protector ACTIVÉ : pièges et monstres ne te tuent plus (le vide, si). Tape /protector off pour l'annuler.", "🛡️ /protector ON: traps and monsters can't kill you (the void still can). Type /protector off to cancel.", "🛡️ /protector AN: Fallen und Monster töten dich nicht mehr (der Abgrund schon). Mit /protector off beenden.", "🛡️ /protector ON:罠とモンスターでは死なない(奈落は別)。/protector off で解除。"]) : tx(["🛡️ /protector désactivé : les dangers te tuent de nouveau.", "🛡️ /protector off: hazards can kill you again.", "🛡️ /protector aus: Gefahren töten dich wieder.", "🛡️ /protector OFF:再び危険で死ぬ。"]));
                 document.getElementById("input-commande").value = "";
                 document.getElementById("panneau-commande").style.display = "none";
+            } else if (parties[0] === "/histoire") {
+                // Bascule l'interface de test des missions (bouton 🧪), pour tout le monde.
+                testHistoireDebloque = !testHistoireDebloque;
+                try { localStorage.setItem("cyber_hack_histoire_test", testHistoireDebloque ? "1" : "0"); } catch (e) {}
+                majBoutonTestHistoire();
+                document.getElementById("input-commande").value = "";
+                document.getElementById("panneau-commande").style.display = "none";
+                if (testHistoireDebloque) ouvrirTestHistoire();
+                else { fermerTestHistoire(); afficherAlerte("🧪 Test de l'histoire désactivé."); }
             } else if (parties[0] === "/token" && modeDevNiveauxDeverrouille) {
                 // Jeton GitHub (dev) : gardé UNIQUEMENT dans ce navigateur, jamais dans le code.
                 let jeton = parties.slice(1).join("").trim();
