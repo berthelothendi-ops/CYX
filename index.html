@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V3</title><!-- build V3: generation par sauts, missions, traduction instantanee -->
+    <title>CYBER_HACK // PROTOCOL — V3.1</title><!-- build V3: generation par sauts, missions, traduction instantanee -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -621,7 +621,7 @@
         <button class="btn-mode-choix" onclick="fermerEcranTitre()">▶ JOUER</button>
         <button class="btn-mode-choix" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 15px rgba(255,170,0,0.3); padding:10px 22px; font-size:13px;" onclick="ouvrirFenetreTouches()">⌨️ TOUCHES &amp; COMMANDES</button>
         <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V3</p>
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V3.1</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -684,7 +684,9 @@
             <div id="liste-niveaux"></div>
             <p id="statut-publics" style="color:#6b7a99; font-size:10px; margin:2px 0 8px 0;"></p>
             <button class="btn-modal-action" id="btn-export-publics" onclick="exporterNiveauxPublics()" style="display:none; background-color:#00ff66; color:#0b0f19;">📤 EXPORTER LES NIVEAUX PUBLICS (GITHUB)</button>
-            <button class="btn-modal-action" id="btn-creer-niveau" onclick="creerNouveauNiveau()" style="display:none; background-color:#00ffcc; color:#0b0f19;">➕ CRÉER UN NIVEAU</button>
+            <button class="btn-modal-action" id="btn-creer-niveau" onclick="creerNouveauNiveau()" style="display:block; background-color:#00ffcc; color:#0b0f19;">➕ CRÉER UN NIVEAU</button>
+            <button class="btn-modal-action" onclick="document.getElementById('input-import-niveau').click()" style="background-color:#3a4454; color:#00ffcc;">📂 IMPORTER UN NIVEAU (.json)</button>
+            <input type="file" id="input-import-niveau" accept=".json,application/json" style="display:none" onchange="importerNiveauFichier(this)">
             <button class="btn-modal-action" onclick="fermerEcranNiveaux()">FERMER</button>
         </div>
     </div>
@@ -1289,15 +1291,26 @@
         // dans les données ; l'ordre est mélangé à l'affichage.
         const QUIZ = [
             [ // Zone 1 — Reconnaissance : réseau
-                { q: ["Quelle adresse IP est une adresse privée (réseau local) ?", "Which IP address is private (local network)?", "Welche IP-Adresse ist privat (lokales Netz)?", "プライベート(ローカルネットワーク)のIPアドレスはどれ?"], a: ["192.168.1.25", "8.8.8.8", "142.250.74.14", "1.1.1.1"] },
+                // — Questions pour débutants —
+                { q: ["Qu'est-ce que la cybersécurité ?", "What is cybersecurity?", "Was ist Cybersicherheit?", "サイバーセキュリティとは?"], a: [["Protéger les ordinateurs et les données contre les attaques", "Protecting computers and data from attacks", "Computer und Daten vor Angriffen schützen", "コンピュータとデータを攻撃から守ること"], ["Fabriquer des ordinateurs plus rapides", "Building faster computers", "Schnellere Computer bauen", "より速いコンピュータを作ること"], ["Créer des jeux vidéo", "Making video games", "Videospiele entwickeln", "ゲームを作ること"], ["Réparer les écrans cassés", "Fixing broken screens", "Kaputte Bildschirme reparieren", "壊れた画面を直すこと"]] },
+                { q: ["Une adresse IP, c'est comme…", "An IP address is like…", "Eine IP-Adresse ist wie…", "IPアドレスは例えるなら…"], a: [["L'adresse postale d'un appareil sur le réseau", "The postal address of a device on the network", "die Postadresse eines Geräts im Netzwerk", "ネットワーク上の機器の住所"], ["Le mot de passe de ta box", "Your router's password", "das Passwort deines Routers", "ルーターのパスワード"], ["Le nom de ton antivirus", "The name of your antivirus", "der Name deines Virenschutzes", "ウイルス対策ソフトの名前"], ["Ta taille d'écran", "Your screen size", "deine Bildschirmgröße", "画面サイズ"]] },
+                { q: ["Combien de nombres (de 0 à 255) compte une adresse IPv4 comme 192.168.1.25 ?", "How many numbers (0 to 255) does an IPv4 address like 192.168.1.25 have?", "Aus wie vielen Zahlen (0 bis 255) besteht eine IPv4-Adresse wie 192.168.1.25?", "192.168.1.25のようなIPv4アドレスには、0〜255の数がいくつある?"], a: [["4", "4", "4", "4"], ["2", "2", "2", "2"], ["8", "8", "8", "8"], ["12", "12", "12", "12"]] },
+                { q: ["Que veut dire « localhost » (127.0.0.1) ?", "What does “localhost” (127.0.0.1) mean?", "Was bedeutet „localhost“ (127.0.0.1)?", "「localhost」(127.0.0.1)とは?"], a: [["Ton propre ordinateur", "Your own computer", "Dein eigener Computer", "自分自身のコンピュータ"], ["Un serveur dans un autre pays", "A server in another country", "Ein Server in einem anderen Land", "他の国のサーバー"], ["Le site de Google", "Google's website", "Googles Webseite", "Googleのサイト"], ["Une adresse secrète de pirate", "A hacker's secret address", "Eine geheime Hackeradresse", "ハッカーの秘密のアドレス"]] },
+                // — Questions classiques —
+                { q: ["Que signifie « IP » dans « adresse IP » ?", "What does “IP” stand for in “IP address”?", "Wofür steht „IP“ in „IP-Adresse“?", "「IPアドレス」のIPとは?"], a: ["Internet Protocol", "Internet Phone", "Intranet Password", "Instant Player"] },
+                { q: ["À quoi sert une adresse IP ?", "What is an IP address for?", "Wozu dient eine IP-Adresse?", "IPアドレスの役割は?"], a: [["À identifier un appareil sur un réseau", "To identify a device on a network", "Um ein Gerät in einem Netzwerk zu identifizieren", "ネットワーク上の機器を識別する"], ["À augmenter le volume du son", "To raise the sound volume", "Um die Lautstärke zu erhöhen", "音量を上げる"], ["À réparer les virus", "To repair viruses", "Um Viren zu reparieren", "ウイルスを修復する"], ["À écrire des mots de passe", "To write passwords", "Um Passwörter zu schreiben", "パスワードを書く"]] },
+                { q: ["Laquelle de ces choses ressemble à une adresse IP ?", "Which of these looks like an IP address?", "Was davon sieht aus wie eine IP-Adresse?", "次のうちIPアドレスに見えるのはどれ?"], a: ["192.168.1.25", "www.google.com", "contact@mail.com", "0612345678"] },
                 { q: ["Quel port utilise HTTPS par défaut ?", "Which port does HTTPS use by default?", "Welchen Port nutzt HTTPS standardmäßig?", "HTTPSが標準で使うポートは?"], a: ["443", "80", "22", "25"] },
                 { q: ["Que fait un serveur DNS ?", "What does a DNS server do?", "Was macht ein DNS-Server?", "DNSサーバーの役割は?"], a: [["Il traduit un nom de domaine en adresse IP", "It translates a domain name into an IP address", "Er übersetzt einen Domainnamen in eine IP-Adresse", "ドメイン名をIPアドレスに変換する"], ["Il chiffre les mots de passe", "It encrypts passwords", "Er verschlüsselt Passwörter", "パスワードを暗号化する"], ["Il bloque les virus", "It blocks viruses", "Er blockiert Viren", "ウイルスをブロックする"], ["Il sauvegarde les fichiers", "It backs up files", "Er sichert Dateien", "ファイルをバックアップする"]] },
-                { q: ["Combien d'octets contient une adresse IPv4 ?", "How many bytes does an IPv4 address have?", "Aus wie vielen Bytes besteht eine IPv4-Adresse?", "IPv4アドレスは何バイト?"], a: ["4", "6", "8", "16"] },
                 { q: ["Quelle commande teste si une machine répond sur le réseau ?", "Which command tests whether a machine answers on the network?", "Welcher Befehl testet, ob ein Rechner im Netzwerk antwortet?", "ネットワーク上で機器が応答するか調べるコマンドは?"], a: ["ping", "chmod", "grep", "mkdir"] },
-                { q: ["Que signifie « MAC » dans « adresse MAC » ?", "What does “MAC” stand for in “MAC address”?", "Wofür steht „MAC“ in „MAC-Adresse“?", "「MACアドレス」のMACとは?"], a: ["Media Access Control", "Machine Access Code", "Main Admin Console", "Mobile Address Card"] },
                 { q: ["Quel protocole permet une connexion distante CHIFFRÉE à un serveur ?", "Which protocol gives an ENCRYPTED remote connection to a server?", "Welches Protokoll ermöglicht eine VERSCHLÜSSELTE Fernverbindung zu einem Server?", "サーバーへ暗号化されたリモート接続ができるプロトコルは?"], a: ["SSH", "Telnet", "FTP", "HTTP"] }
             ],
             [ // Zone 2 — Intrusion : authentification, social engineering
+                // — Questions pour débutants —
+                { q: ["Quel est le meilleur réflexe face à un lien suspect reçu par message ?", "What is the best reflex for a suspicious link in a message?", "Was ist die beste Reaktion auf einen verdächtigen Link in einer Nachricht?", "メッセージで届いた怪しいリンクへの最善の対応は?"], a: [["Ne pas cliquer et le signaler", "Don't click and report it", "Nicht klicken und melden", "クリックせず報告する"], ["Cliquer pour voir où il mène", "Click to see where it goes", "Anklicken, um zu sehen, wohin er führt", "どこに行くか見るためクリックする"], ["Le partager à tes amis", "Share it with friends", "An Freunde weiterleiten", "友達に共有する"], ["Y entrer ton mot de passe", "Enter your password there", "Dort dein Passwort eingeben", "パスワードを入力する"]] },
+                { q: ["Peut-on utiliser le même mot de passe partout ?", "Is it fine to use the same password everywhere?", "Darf man überall dasselbe Passwort benutzen?", "どこでも同じパスワードを使ってよい?"], a: [["Non : si un site fuit, tous tes comptes sont en danger", "No: if one site leaks, all your accounts are at risk", "Nein: Wenn eine Seite geleakt wird, sind alle Konten gefährdet", "いいえ:1つ漏れると全アカウントが危険"], ["Oui, c'est plus pratique et sûr", "Yes, it's handy and safe", "Ja, das ist praktisch und sicher", "はい、便利で安全"], ["Oui, si on ajoute un chiffre", "Yes, if you add a digit", "Ja, wenn man eine Ziffer anhängt", "はい、数字を足せば"], ["Oui, sur les réseaux sociaux seulement", "Yes, on social media only", "Ja, nur in sozialen Netzwerken", "はい、SNSだけなら"]] },
+                { q: ["À quoi sert un antivirus ?", "What is an antivirus for?", "Wofür ist ein Virenschutz da?", "ウイルス対策ソフトの役割は?"], a: [["À détecter et bloquer les logiciels malveillants", "To detect and block malicious software", "Schadsoftware erkennen und blockieren", "悪意あるソフトを検出・ブロックする"], ["À accélérer internet", "To speed up the internet", "Das Internet beschleunigen", "インターネットを速くする"], ["À libérer de l'espace disque", "To free disk space", "Speicherplatz freigeben", "ディスク容量を空ける"], ["À écrire des mails", "To write e-mails", "E-Mails schreiben", "メールを書く"]] },
+                // — Questions classiques —
                 { q: ["Quel mot de passe est le plus solide ?", "Which password is the strongest?", "Welches Passwort ist am stärksten?", "最も強いパスワードはどれ?"], a: ["T7#vq9!Lm2$x", "123456", "password", "qwerty123"] },
                 { q: ["Qu'est-ce que le phishing (hameçonnage) ?", "What is phishing?", "Was ist Phishing?", "フィッシングとは?"], a: [["Un faux message qui vole tes identifiants", "A fake message that steals your credentials", "Eine gefälschte Nachricht, die deine Zugangsdaten stiehlt", "ログイン情報を盗む偽のメッセージ"], ["Un virus qui efface le disque dur", "A virus that wipes the hard drive", "Ein Virus, das die Festplatte löscht", "ハードディスクを消すウイルス"], ["Une attaque qui sature un serveur", "An attack that floods a server", "Ein Angriff, der einen Server überlastet", "サーバーを過負荷にする攻撃"], ["Un outil qui chiffre tes fichiers", "A tool that encrypts your files", "Ein Werkzeug, das deine Dateien verschlüsselt", "ファイルを暗号化するツール"]] },
                 { q: ["Que signifie 2FA ?", "What does 2FA mean?", "Was bedeutet 2FA?", "2FAとは?"], a: [["Authentification à deux facteurs", "Two-factor authentication", "Zwei-Faktor-Authentifizierung", "二要素認証"], ["Deux pare-feux actifs", "Two active firewalls", "Zwei aktive Firewalls", "2つのファイアウォール"], ["Deuxième sauvegarde automatique", "A second automatic backup", "Zweite automatische Sicherung", "2つ目の自動バックアップ"], ["Double chiffrement des fichiers", "Double file encryption", "Doppelte Dateiverschlüsselung", "ファイルの二重暗号化"]] },
@@ -1307,6 +1320,11 @@
                 { q: ["Un e-mail urgent de ta « banque » te demande ton mot de passe. Tu…", "An urgent e-mail from your “bank” asks for your password. You…", "Eine dringende E-Mail deiner „Bank“ fragt nach deinem Passwort. Du…", "「銀行」から緊急メールでパスワードを求められた。あなたは…"], a: [["Ignores le lien et contactes ta banque autrement", "Ignore the link and contact your bank another way", "Ignorierst den Link und kontaktierst deine Bank anders", "リンクを無視して別の方法で銀行に連絡する"], ["Cliques vite sur le lien", "Quickly click the link", "Klickst schnell auf den Link", "急いでリンクをクリックする"], ["Réponds avec ton mot de passe", "Reply with your password", "Antwortest mit deinem Passwort", "パスワードを返信する"], ["Transfères le mail à tous tes amis", "Forward it to all your friends", "Leitest sie an alle Freunde weiter", "友達全員に転送する"]] }
             ],
             [ // Zone 3 — Exfiltration : chiffrement, données
+                // — Questions pour débutants —
+                { q: ["Que fait une sauvegarde (backup) ?", "What does a backup do?", "Was macht ein Backup?", "バックアップの役割は?"], a: [["Elle garde une copie de tes données en cas de problème", "It keeps a copy of your data in case of trouble", "Es bewahrt eine Kopie deiner Daten für den Notfall auf", "問題に備えてデータのコピーを残す"], ["Elle supprime les fichiers inutiles", "It deletes useless files", "Es löscht unnötige Dateien", "不要なファイルを消す"], ["Elle accélère le Wi-Fi", "It speeds up Wi-Fi", "Es beschleunigt das WLAN", "Wi-Fiを速くする"], ["Elle cache ton IP", "It hides your IP", "Es versteckt deine IP", "IPを隠す"]] },
+                { q: ["Que veut dire « chiffrer » un message ?", "What does “encrypt” a message mean?", "Was heißt eine Nachricht „verschlüsseln“?", "メッセージを「暗号化する」とは?"], a: [["Le rendre illisible sans la clé", "Make it unreadable without the key", "Sie ohne den Schlüssel unlesbar machen", "鍵がないと読めなくする"], ["L'envoyer plus vite", "Send it faster", "Sie schneller senden", "速く送る"], ["La traduire en anglais", "Translate it to English", "Sie ins Englische übersetzen", "英語に翻訳する"], ["La supprimer", "Delete it", "Sie löschen", "削除する"]] },
+                { q: ["Pourquoi faut-il éviter le Wi-Fi public pour sa banque ?", "Why avoid public Wi-Fi for banking?", "Warum sollte man im öffentlichen WLAN kein Online-Banking nutzen?", "公衆Wi-Fiで銀行を使うのを避けるのはなぜ?"], a: [["Quelqu'un peut espionner ce qui circule", "Someone may spy on the traffic", "Jemand kann den Datenverkehr mitlesen", "通信を盗み見られる可能性がある"], ["Il consomme plus de batterie", "It uses more battery", "Es verbraucht mehr Akku", "電池を多く使う"], ["Il est toujours plus lent", "It is always slower", "Es ist immer langsamer", "常に遅い"], ["Il est interdit par la loi", "It is against the law", "Es ist gesetzlich verboten", "法律で禁止されている"]] },
+                // — Questions classiques —
                 { q: ["Quel algorithme est un chiffrement SYMÉTRIQUE ?", "Which algorithm is SYMMETRIC encryption?", "Welcher Algorithmus ist SYMMETRISCHE Verschlüsselung?", "共通鍵暗号(対称暗号)はどれ?"], a: ["AES", "RSA", "SHA-256", "MD5"] },
                 { q: ["À quoi sert un VPN ?", "What is a VPN for?", "Wofür dient ein VPN?", "VPNの用途は?"], a: [["À chiffrer ta connexion et masquer ton IP", "To encrypt your connection and hide your IP", "Um deine Verbindung zu verschlüsseln und deine IP zu verbergen", "通信を暗号化しIPを隠す"], ["À accélérer ton processeur", "To speed up your processor", "Um deinen Prozessor zu beschleunigen", "プロセッサを高速化する"], ["À supprimer les virus", "To remove viruses", "Um Viren zu entfernen", "ウイルスを削除する"], ["À agrandir ton disque dur", "To enlarge your hard drive", "Um deine Festplatte zu vergrößern", "ハードディスクを大きくする"]] },
                 { q: ["Que garantit une fonction de hachage comme SHA-256 ?", "What does a hash function like SHA-256 help guarantee?", "Was hilft eine Hashfunktion wie SHA-256 zu garantieren?", "SHA-256のようなハッシュ関数が保証できるのは?"], a: [["Que le fichier n'a pas été modifié (intégrité)", "That the file was not modified (integrity)", "Dass die Datei nicht verändert wurde (Integrität)", "ファイルが改ざんされていないこと(完全性)"], ["Que le fichier est secret", "That the file is secret", "Dass die Datei geheim ist", "ファイルが秘密であること"], ["Que le fichier est plus petit", "That the file is smaller", "Dass die Datei kleiner ist", "ファイルが小さくなること"], ["Que le fichier est sans virus", "That the file is virus-free", "Dass die Datei virenfrei ist", "ファイルにウイルスがないこと"]] },
@@ -1315,6 +1333,12 @@
                 { q: ["Quel port utilise SSH par défaut ?", "Which port does SSH use by default?", "Welchen Port nutzt SSH standardmäßig?", "SSHが標準で使うポートは?"], a: ["22", "21", "23", "80"] }
             ],
             [ // Zone 4 — Backdoor : vulnérabilités, malwares
+                // — Questions pour débutants —
+                { q: ["Qu'est-ce qu'un bug informatique ?", "What is a software bug?", "Was ist ein Softwarefehler (Bug)?", "ソフトウェアのバグとは?"], a: [["Une erreur dans un programme", "A mistake in a program", "Ein Fehler in einem Programm", "プログラムの誤り"], ["Un insecte dans l'ordinateur", "An insect inside the computer", "Ein Insekt im Computer", "コンピュータの中の虫"], ["Un câble débranché", "An unplugged cable", "Ein abgezogenes Kabel", "抜けたケーブル"], ["Un type de clavier", "A kind of keyboard", "Eine Tastaturart", "キーボードの一種"]] },
+                { q: ["Pourquoi les mises à jour sont-elles importantes ?", "Why are updates important?", "Warum sind Updates wichtig?", "アップデートが重要なのはなぜ?"], a: [["Elles corrigent des bugs et des failles de sécurité", "They fix bugs and security holes", "Sie beheben Fehler und Sicherheitslücken", "バグや脆弱性を修正する"], ["Elles changent seulement les couleurs", "They only change colors", "Sie ändern nur die Farben", "色が変わるだけ"], ["Elles ralentissent exprès l'appareil", "They slow the device on purpose", "Sie verlangsamen das Gerät absichtlich", "わざと動作を遅くする"], ["Elles effacent tes photos", "They erase your photos", "Sie löschen deine Fotos", "写真を消す"]] },
+                { q: ["Qu'est-ce qu'une faille (vulnérabilité) ?", "What is a vulnerability?", "Was ist eine Schwachstelle?", "脆弱性とは?"], a: [["Un défaut qu'un attaquant peut exploiter", "A flaw an attacker can exploit", "Ein Fehler, den ein Angreifer ausnutzen kann", "攻撃者が悪用できる欠陥"], ["Une fonction cachée pour les joueurs", "A hidden feature for players", "Eine versteckte Funktion für Spieler", "プレイヤー用の隠し機能"], ["Un nouveau type d'écran", "A new type of screen", "Eine neue Bildschirmart", "新しい画面の種類"], ["Une marque d'antivirus", "An antivirus brand", "Eine Virenschutz-Marke", "ウイルス対策の銘柄"]] },
+                { q: ["Si un programme plante, que faire en premier ?", "If a program crashes, what do you do first?", "Wenn ein Programm abstürzt, was tust du zuerst?", "プログラムが落ちたら最初にすることは?"], a: [["Relever le message d'erreur et réessayer", "Note the error message and retry", "Die Fehlermeldung notieren und es erneut versuchen", "エラーメッセージを控えて再試行する"], ["Jeter l'ordinateur", "Throw the computer away", "Den Computer wegwerfen", "PCを捨てる"], ["Désactiver l'antivirus pour toujours", "Turn off antivirus forever", "Den Virenschutz dauerhaft ausschalten", "ウイルス対策を永久に切る"], ["Télécharger un « réparateur » inconnu", "Download an unknown “fixer”", "Ein unbekanntes „Reparaturtool“ laden", "知らない「修復ツール」を入れる"]] },
+                // — Questions classiques —
                 { q: ["Qu'est-ce qu'une backdoor (porte dérobée) ?", "What is a backdoor?", "Was ist eine Backdoor?", "バックドアとは?"], a: [["Un accès caché qui contourne l'authentification", "A hidden access that bypasses authentication", "Ein versteckter Zugang, der die Authentifizierung umgeht", "認証を回避する隠された入口"], ["Une sauvegarde automatique", "An automatic backup", "Eine automatische Sicherung", "自動バックアップ"], ["Un écran de veille", "A screensaver", "Ein Bildschirmschoner", "スクリーンセーバー"], ["Un type de câble réseau", "A kind of network cable", "Eine Art Netzwerkkabel", "ネットワークケーブルの一種"]] },
                 { q: ["Quelle attaque injecte du code dans une requête à la base de données ?", "Which attack injects code into a database query?", "Welcher Angriff schleust Code in eine Datenbankabfrage ein?", "データベースへの問い合わせにコードを注入する攻撃は?"], a: [["Injection SQL", "SQL injection", "SQL-Injection", "SQLインジェクション"], "DDoS", "Phishing", "Ransomware"] },
                 { q: ["Que fait un ransomware ?", "What does ransomware do?", "Was macht Ransomware?", "ランサムウェアは何をする?"], a: [["Il chiffre tes fichiers et exige une rançon", "It encrypts your files and demands a ransom", "Es verschlüsselt deine Dateien und fordert Lösegeld", "ファイルを暗号化して身代金を要求する"], ["Il espionne ta webcam", "It spies on your webcam", "Es spioniert deine Webcam aus", "ウェブカメラを盗撮する"], ["Il surchauffe le processeur", "It overheats the processor", "Es überhitzt den Prozessor", "プロセッサを過熱させる"], ["Il change ton fond d'écran", "It changes your wallpaper", "Es ändert dein Hintergrundbild", "壁紙を変える"]] },
@@ -1346,6 +1370,9 @@
         const MOTS_MDP = ["PASSWORD", "PHISHING", "MALWARE", "TROJAN", "ROOTKIT", "KEYLOGGER", "SPYWARE", "BOTNET", "EXPLOIT", "SANDBOX"];
 
         const SNIPPETS_BUG = [
+            ['print("Mot de passe : " + password)  # affiche le secret à l\'écran', 'name = "Alice"', 'print("Bonjour")', 'x = 2 + 2'],
+            ['API_KEY = "sk-123456"  # clé secrète écrite dans le code public', 'for i in range(3): print(i)', 'if age >= 18: ok = True', 'total = a + b'],
+            ['user_input = open(input("fichier: ")).read()  # chemin non vérifié', 'print(len(texte))', 'resultat = 10 / 2', 'liste = [1, 2, 3]'],
             ['eval(request.args["cmd"])', 'print("Hello")', 'total = len(items)', 'return render(page)'],
             ['query = "SELECT * FROM users WHERE id=" + user_id', 'cursor.execute("SELECT * FROM users WHERE id=%s", (uid,))', 'hashed = bcrypt.hash(password)', 'if not token: abort(403)'],
             ['DB_PASSWORD = "admin123"  # dans le code', 'DB_PASSWORD = os.environ["DB_PASSWORD"]', 'html = escape(user_input)', 'session.regenerate()'],
@@ -1866,7 +1893,7 @@
             return niveauEnEditionId !== null || modeTestCreation;
         }
         function estProtege() {
-            return joueur.invincible > 0 || protecteurCmd || (bouclierActif && niveauEnEditionId !== null);
+            return joueur.invincible > 0 || protecteurCmd || (bouclierActif && creationAutorisee());
         }
         function recalculerCredits() {
             creditsPersonnalises = titreDevLocal || titrePublic || CREDITS_PAR_DEFAUT;
@@ -1875,36 +1902,232 @@
         function niveauPublicValide(n) {
             return n && typeof n.nom === "string" && Array.isArray(n.blocs);
         }
+        // --- Dossiers sur GitHub (même dépôt, même branche que index.html) ---
+        //   niveaux/index.json                      → liste + titre (lu par le jeu)
+        //   niveaux/publics/<nom>.json              → niveaux du développeur
+        //   niveaux/communautaires/<nom>.json       → niveaux de la communauté
+        // Chaque niveau = UN fichier. Renommer le niveau renomme le fichier.
+        let niveauxCommunautaires = [];
+        let derniereMajIndex = null;
+
+        function nouvelId() { return "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+        function slugNiveau(t) {
+            let s = String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+            return s || "niveau";
+        }
+        function nomParDefaut(nom) { return /^Niveau \d+$/.test(nom || ""); }
+        // Nom de fichier : unique par défaut (niveau-<id>), ou dérivé du nom choisi.
+        function fichierPourNiveau(n) {
+            if (nomParDefaut(n.nom)) return "niveau-" + n.id + ".json";
+            let base = slugNiveau(n.nom);
+            let pris = niveauxPublics.concat(niveauxCommunautaires).some(o => o.fichier === base + ".json" && o.id !== n.id)
+                || niveauxPersonnalises.some(o => o !== n && o.cible && o.distant && o.distant.fichier === base + ".json");
+            return pris ? base + "-" + n.id.slice(-5) + ".json" : base + ".json";
+        }
+        function nomUniquePourNiveau() {
+            let k = niveauxPersonnalises.length + 1;
+            while (niveauxPersonnalises.some(n => n.nom === "Niveau " + k)) k++;
+            return "Niveau " + k;
+        }
+
+        async function lireJsonNiveau(url) {
+            try { let r = await fetch(url, { cache: "no-store" }); if (!r.ok) return null; return await r.json(); } catch (e) { return null; }
+        }
         async function chargerNiveauxPublics() {
             if (!/^https?:$/.test(location.protocol)) return; // fichier ouvert en local : rien à synchroniser
             try {
-                let r = await fetch("niveaux_publics.json?t=" + Date.now(), { cache: "no-store" });
-                if (!r.ok) return;
-                let d = await r.json();
-                niveauxPublics = Array.isArray(d.niveaux) ? d.niveaux.filter(niveauPublicValide) : [];
-                titrePublic = typeof d.titre === "string" ? d.titre.slice(0, 200) : "";
+                let idx = await lireJsonNiveau("niveaux/index.json?t=" + Date.now());
+                if (idx && idx.maj !== derniereMajIndex) {
+                    let charge = async (liste, dossier) => (await Promise.all((liste || []).map(async f => {
+                        let n = await lireJsonNiveau("niveaux/" + dossier + "/" + encodeURIComponent(f) + "?v=" + encodeURIComponent(idx.maj || ""));
+                        if (!niveauPublicValide(n)) return null;
+                        n.fichier = f; if (!n.id) n.id = "f-" + f; return n;
+                    }))).filter(Boolean);
+                    niveauxPublics = await charge(idx.publics, "publics");
+                    niveauxCommunautaires = await charge(idx.communautaires, "communautaires");
+                    titrePublic = typeof idx.titre === "string" ? idx.titre.slice(0, 200) : titrePublic;
+                    derniereMajIndex = idx.maj;
+                }
+                // Ancien fichier niveaux_publics.json : toujours lu (compatibilité)
+                let d = await lireJsonNiveau("niveaux_publics.json?t=" + Date.now());
+                if (d) {
+                    let anciens = Array.isArray(d.niveaux) ? d.niveaux.filter(niveauPublicValide) : [];
+                    anciens.forEach(a => { if (!niveauxPublics.some(n => n.nom === a.nom)) { a.id = a.id || "old-" + slugNiveau(a.nom); niveauxPublics.push(a); } });
+                    if (!idx && typeof d.titre === "string") titrePublic = d.titre.slice(0, 200);
+                }
                 derniereSynchro = new Date();
                 recalculerCredits();
                 if (document.getElementById("ecran-niveaux").style.display === "flex") rendreListeNiveaux();
             } catch (e) { /* hors-ligne ou fichier absent : on garde ce qu'on a */ }
         }
+        // Export manuel (toujours disponible) : télécharge niveaux_publics.json
         function exporterNiveauxPublics() {
             if (!modeDevNiveauxDeverrouille) return;
-            let pub = niveauxPersonnalises.filter(n => n.public).map(n => {
-                let c = JSON.parse(JSON.stringify(n)); delete c.public; return c;
+            let pub = niveauxPersonnalises.filter(n => n.cible === "publics").map(n => {
+                let c = JSON.parse(JSON.stringify(n)); delete c.public; delete c.cible; delete c.distant; return c;
             });
             let data = { version: 1, maj: new Date().toISOString(), titre: titreDevLocal || titrePublic || "", niveaux: pub };
+            telechargerJson(data, "niveaux_publics.json");
+            afficherAlerte("📤 " + pub.length + " niveau(x) public(s) exporté(s). Sinon, avec un jeton GitHub (/token), tout s'écrit automatiquement dans ton dépôt.");
+        }
+        function telechargerJson(data, nomFichier) {
             let blob = new Blob([JSON.stringify(data)], { type: "application/json" });
             let a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
-            a.download = "niveaux_publics.json";
+            a.download = nomFichier;
             document.body.appendChild(a); a.click(); a.remove();
             setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-            afficherAlerte("📤 " + pub.length + " niveau(x) public(s) exporté(s). Dépose niveaux_publics.json à côté de index.html sur GitHub (Add file → Upload files) : tout le monde le reçoit en moins d'une minute.");
         }
+        function telechargerNiveau(n) {
+            let c = JSON.parse(JSON.stringify(n)); delete c.public; delete c.cible; delete c.distant;
+            telechargerJson(c, slugNiveau(n.nom) + ".json");
+        }
+        function importerNiveauFichier(input) {
+            let f = input.files && input.files[0]; input.value = "";
+            if (!f) return;
+            let rd = new FileReader();
+            rd.onload = function() {
+                try {
+                    let d = JSON.parse(rd.result);
+                    let liste = Array.isArray(d.niveaux) ? d.niveaux : [d];
+                    let ajoutes = 0;
+                    liste.filter(niveauPublicValide).forEach(n => {
+                        let c = JSON.parse(JSON.stringify(n));
+                        delete c.public; delete c.cible; delete c.distant; delete c.fichier;
+                        c.id = nouvelId();
+                        if (niveauxPersonnalises.some(o => o.nom === c.nom)) c.nom = c.nom + " (import)";
+                        niveauxPersonnalises.push(c); ajoutes++;
+                    });
+                    sauvegarderNiveauxListe(); rendreListeNiveaux();
+                    afficherAlerte(ajoutes + " niveau(x) importé(s) dans tes niveaux locaux.");
+                } catch (e) { afficherAlerte("Fichier de niveau invalide."); }
+            };
+            rd.readAsText(f);
+        }
+
+        // --- Écriture automatique sur GitHub (développeur uniquement) ---
+        // Le jeton n'est JAMAIS dans le code : il est saisi avec /token et gardé
+        // uniquement dans le navigateur du développeur.
+        function ghConfig() {
+            let cfg = {};
+            try { cfg = JSON.parse(localStorage.getItem("cyber_hack_gh_cfg")) || {}; } catch (e) {}
+            if (!cfg.repo && /\.github\.io$/.test(location.hostname)) {
+                let owner = location.hostname.split(".")[0];
+                cfg.repo = owner + "/" + (location.pathname.split("/")[1] || owner + ".github.io");
+            }
+            let token = "";
+            try { token = localStorage.getItem("cyber_hack_gh_token") || ""; } catch (e) {}
+            return { repo: cfg.repo || "", branche: cfg.branche || "", token: token };
+        }
+        function ghPret() { let c = ghConfig(); return modeDevNiveauxDeverrouille && !!c.token && !!c.repo; }
+        function ghStatut(msg) {
+            let el = document.getElementById("statut-publics");
+            if (el) el.innerText = msg;
+            toast(msg);
+        }
+        async function ghApi(methode, chemin, corps) {
+            let c = ghConfig();
+            let r = await fetch("https://api.github.com/repos/" + c.repo + chemin, {
+                method: methode,
+                headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github+json", "Content-Type": "application/json" },
+                body: corps ? JSON.stringify(corps) : undefined
+            });
+            if (r.status === 404 && methode === "GET") return null;
+            if (!r.ok) {
+                let t = ""; try { t = (await r.json()).message; } catch (e) {}
+                throw new Error("GitHub " + r.status + (t ? " : " + t : ""));
+            }
+            return methode === "DELETE" || r.status === 204 ? {} : await r.json();
+        }
+        let ghBrancheCache = "";
+        async function ghBranche() {
+            let c = ghConfig();
+            if (c.branche) return c.branche;
+            if (ghBrancheCache) return ghBrancheCache;
+            let info = await ghApi("GET", "");
+            ghBrancheCache = (info && info.default_branch) || "main";
+            return ghBrancheCache;
+        }
+        const ghEnc = s => btoa(unescape(encodeURIComponent(s)));
+        const ghDec = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ""))));
+        async function ghLire(chemin) {
+            let b = await ghBranche();
+            return await ghApi("GET", "/contents/" + chemin.split("/").map(encodeURIComponent).join("/") + "?ref=" + encodeURIComponent(b));
+        }
+        async function ghEcrire(chemin, texte, message) {
+            let b = await ghBranche();
+            let ex = await ghLire(chemin);
+            let corps = { message: message, content: ghEnc(texte), branch: b };
+            if (ex && ex.sha) corps.sha = ex.sha;
+            await ghApi("PUT", "/contents/" + chemin.split("/").map(encodeURIComponent).join("/"), corps);
+        }
+        async function ghSupprimer(chemin, message) {
+            let b = await ghBranche();
+            let ex = await ghLire(chemin);
+            if (!ex || !ex.sha) return;
+            await ghApi("DELETE", "/contents/" + chemin.split("/").map(encodeURIComponent).join("/"), { message: message, sha: ex.sha, branch: b });
+        }
+        // File d'attente : une seule écriture à la fois (évite les conflits de version)
+        let ghFile = Promise.resolve();
+        function ghEnfiler(fn) {
+            ghFile = ghFile.then(fn).catch(e => { ghStatut("❌ " + (e && e.message ? e.message : e)); });
+            return ghFile;
+        }
+        async function ghMajIndex(modifier) {
+            let ex = await ghLire("niveaux/index.json");
+            let idx = { version: 2, publics: [], communautaires: [] };
+            if (ex && ex.content) { try { idx = Object.assign(idx, JSON.parse(ghDec(ex.content))); } catch (e) {} }
+            if (!Array.isArray(idx.publics)) idx.publics = [];
+            if (!Array.isArray(idx.communautaires)) idx.communautaires = [];
+            modifier(idx);
+            idx.maj = new Date().toISOString();
+            await ghEcrire("niveaux/index.json", JSON.stringify(idx), "Index des niveaux");
+            derniereMajIndex = null; // forcera le rechargement au prochain passage
+        }
+        async function publierNiveau(n) {
+            if (!ghPret() || !n.cible) return;
+            let dossier = n.cible, fichier = fichierPourNiveau(n), ancien = n.distant;
+            let data = JSON.parse(JSON.stringify(n)); delete data.public; delete data.cible; delete data.distant; delete data.fichier;
+            await ghEcrire("niveaux/" + dossier + "/" + fichier, JSON.stringify(data), "Niveau : " + n.nom);
+            if (ancien && (ancien.fichier !== fichier || ancien.dossier !== dossier)) {
+                await ghSupprimer("niveaux/" + ancien.dossier + "/" + ancien.fichier, "Renommage : " + ancien.fichier);
+            }
+            await ghMajIndex(idx => {
+                if (ancien) { idx[ancien.dossier] = idx[ancien.dossier].filter(f => f !== ancien.fichier); }
+                idx.publics = idx.publics.filter(f => f !== fichier || dossier === "publics");
+                idx.communautaires = idx.communautaires.filter(f => f !== fichier || dossier === "communautaires");
+                if (idx[dossier].indexOf(fichier) < 0) idx[dossier].push(fichier);
+                if (titreDevLocal) idx.titre = titreDevLocal;
+            });
+            n.distant = { dossier: dossier, fichier: fichier };
+            sauvegarderNiveauxListe();
+            ghStatut("✅ Publié sur GitHub : " + dossier + "/" + fichier);
+        }
+        async function depublierNiveau(n) {
+            if (!ghPret() || !n.distant) return;
+            let d = n.distant;
+            await ghSupprimer("niveaux/" + d.dossier + "/" + d.fichier, "Retrait : " + n.nom);
+            await ghMajIndex(idx => { idx[d.dossier] = idx[d.dossier].filter(f => f !== d.fichier); });
+            ghStatut("🗑️ Retiré de GitHub : " + d.fichier);
+        }
+        async function publierTitreGithub() {
+            if (!ghPret()) return;
+            await ghMajIndex(idx => { if (titreDevLocal) idx.titre = titreDevLocal; else delete idx.titre; });
+            ghStatut("✅ Titre publié sur GitHub");
+        }
+        let timersPublication = {};
+        // Édition publique automatique : chaque modification d'un niveau marqué
+        // public/communautaire est écrite toute seule dans le fichier GitHub.
+        function planifierPublication(n) {
+            if (!n || !n.cible) return;
+            if (!ghPret()) { if (modeDevNiveauxDeverrouille) ghStatut("⚠️ Jeton GitHub manquant : tape /token pour l'écriture automatique."); return; }
+            clearTimeout(timersPublication[n.id]);
+            timersPublication[n.id] = setTimeout(() => ghEnfiler(() => publierNiveau(n)), 2500);
+        }
+
         function majBouclier() {
             let it = document.getElementById("item-bouclier");
-            let dispo = modeDevNiveauxDeverrouille && niveauEnEditionId !== null;
+            let dispo = creationAutorisee(); // niveau en édition OU carte RESET MAP (tests)
             if (!dispo) bouclierActif = false;
             if (it) {
                 it.style.display = dispo ? "" : "none";
@@ -1941,19 +2164,28 @@
         function sauvegarderNiveauxListe() {
             localStorage.setItem("cyber_hack_niveaux_dev", JSON.stringify(niveauxPersonnalises));
         }
+        // Migration : identifiant unique par niveau + ancien drapeau "public"
+        niveauxPersonnalises.forEach(n => {
+            if (!n.id) n.id = nouvelId();
+            if (n.public && !n.cible) n.cible = "publics";
+            delete n.public;
+        });
+        try { sauvegarderNiveauxListe(); } catch (e) {}
 
-        // Resynchronise l'état ACTUEL du monde (tous les blocs/mobs posés en jeu)
-        // dans le niveau en cours d'édition, et sauvegarde. Appelée après chaque
-        // pose/suppression tant que niveauEnEditionId n'est pas null.
+        // Resynchronise l'état ACTUEL du monde dans le niveau en cours d'édition,
+        // et sauvegarde (local). Si le niveau est public/communautaire et que le
+        // jeton GitHub est présent (dev), le fichier GitHub est mis à jour tout seul.
         function sauvegarderNiveauEnCours() {
             if (niveauEnEditionId === null || !niveauxPersonnalises[niveauEnEditionId]) return;
-            niveauxPersonnalises[niveauEnEditionId].blocs = blocsMonde.map(b => ({
+            let n = niveauxPersonnalises[niveauEnEditionId];
+            n.blocs = blocsMonde.filter(b => b.type !== "mur_zone").map(b => ({
                 x: b.x, y: b.y, type: b.type, couleur: b.couleur, symbole: b.symbole, valeur: b.valeur
             }));
-            niveauxPersonnalises[niveauEnEditionId].mobs = mobsMonde.map(m => ({
+            n.mobs = mobsMonde.map(m => ({
                 xMin: m.xMin, xMax: m.xMax, y: m.y, vitesse: m.vitesse, symbole: m.elementDom.innerText
             }));
             sauvegarderNiveauxListe();
+            planifierPublication(n);
         }
 
         function boutonNiveau(txt, titre, bg, fg, fn) {
@@ -1965,10 +2197,10 @@
         }
         function ligneNiveau(nom, boutons, bordure) {
             let ligne = document.createElement("div");
-            ligne.style.cssText = "display:flex; align-items:center; gap:6px; margin-bottom:8px; background:#0b0f19; padding:6px; border-radius:4px; border:1px solid " + bordure + ";";
+            ligne.style.cssText = "display:flex; align-items:center; gap:6px; margin-bottom:8px; background:#0b0f19; padding:6px; border-radius:4px; border:1px solid " + bordure + "; flex-wrap:wrap;";
             let n = document.createElement("span");
             n.innerText = nom;
-            n.style.cssText = "color:#00ffcc; font-size:12px; flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;";
+            n.style.cssText = "color:#00ffcc; font-size:12px; flex:1; min-width:90px; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;";
             ligne.appendChild(n);
             boutons.forEach(x => ligne.appendChild(x));
             return ligne;
@@ -1979,60 +2211,136 @@
             h.style.cssText = "color:#ffaa00; font-size:11px; letter-spacing:2px; text-align:left; margin:12px 0 6px 0; border-bottom:1px dashed rgba(255,170,0,0.4); padding-bottom:3px;";
             return h;
         }
+        function messageVide(txt) {
+            let v = document.createElement("div");
+            v.style.cssText = "color:#8892b0; font-size:11px; text-align:left; margin-bottom:6px;";
+            v.innerText = txt;
+            return v;
+        }
+
+        // Fenêtre de saisie de texte (remplace prompt(), souvent bloqué sur mobile)
+        function demanderTexte(message, valeurDefaut, callback) {
+            let fond = document.createElement("div");
+            fond.style.cssText = "position:fixed; inset:0; background:rgba(11,15,25,0.9); display:flex; align-items:center; justify-content:center; z-index:1006;";
+            let boite = document.createElement("div");
+            boite.className = "conteneur-parametres";
+            boite.style.maxWidth = "360px";
+            let p = document.createElement("p"); p.style.cssText = "color:#ffcc00; font-size:14px;"; p.innerText = message;
+            let inp = document.createElement("input"); inp.type = "text"; inp.maxLength = 40; inp.value = valeurDefaut || "";
+            inp.style.cssText = "width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; color:#00ffcc; border:1px solid #00ffcc; font-family:inherit; font-size:14px; margin-bottom:10px;";
+            let ok = document.createElement("button"); ok.className = "btn-modal-action"; ok.innerText = "OK";
+            let non = document.createElement("button"); non.className = "btn-modal-action"; non.innerText = "✖";
+            let fermer = () => fond.remove();
+            let valider = () => { let v = inp.value.trim().slice(0, 40); if (!v) return; fermer(); callback(v); };
+            ok.onclick = valider; non.onclick = fermer;
+            inp.addEventListener("keydown", e => { e.stopPropagation(); if (e.key === "Enter") valider(); if (e.key === "Escape") fermer(); });
+            boite.append(p, inp, ok, non); fond.appendChild(boite); document.body.appendChild(fond);
+            inp.focus(); inp.select();
+        }
+
+        const ETATS_CIBLE = [null, "publics", "communautaires"];
+        function renommerNiveau(n) {
+            demanderTexte("Nom du niveau :", n.nom, function(nom) {
+                n.nom = nom;
+                sauvegarderNiveauxListe(); rendreListeNiveaux();
+                planifierPublication(n); // renomme aussi le fichier GitHub
+            });
+        }
+        function changerCibleNiveau(n) {
+            if (!modeDevNiveauxDeverrouille) return;
+            let suivante = ETATS_CIBLE[(ETATS_CIBLE.indexOf(n.cible || null) + 1) % ETATS_CIBLE.length];
+            let ancienne = n.cible || null;
+            n.cible = suivante;
+            sauvegarderNiveauxListe(); rendreListeNiveaux();
+            if (suivante) planifierPublication(n);
+            else if (ancienne && n.distant && ghPret()) {
+                let copie = { nom: n.nom, distant: n.distant };
+                n.distant = null; sauvegarderNiveauxListe();
+                ghEnfiler(() => depublierNiveau(copie));
+            }
+        }
+        // Ouvre un niveau public/communautaire en édition (dev) : une copie liée au
+        // fichier GitHub est créée dans les niveaux locaux (ou retrouvée si elle existe).
+        function editerNiveauDistant(niveau, dossier) {
+            if (!modeDevNiveauxDeverrouille) return;
+            let idx = niveauxPersonnalises.findIndex(n => n.id === niveau.id || (n.distant && n.distant.fichier === niveau.fichier && n.distant.dossier === dossier));
+            if (idx < 0) {
+                let c = JSON.parse(JSON.stringify(niveau));
+                c.id = niveau.id && !/^(f-|old-)/.test(niveau.id) ? niveau.id : nouvelId();
+                c.cible = dossier; c.distant = niveau.fichier ? { dossier: dossier, fichier: niveau.fichier } : null;
+                delete c.fichier;
+                niveauxPersonnalises.push(c); sauvegarderNiveauxListe();
+                idx = niveauxPersonnalises.length - 1;
+            }
+            chargerNiveauPersonnalise(idx, true);
+        }
+        function supprimerNiveauDistant(niveau, dossier) {
+            if (!modeDevNiveauxDeverrouille) return;
+            demanderConfirmation("Supprimer ce niveau de GitHub pour tout le monde ?", function() {
+                let copie = { nom: niveau.nom, distant: { dossier: dossier, fichier: niveau.fichier } };
+                if (!ghPret()) { afficherAlerte("Jeton GitHub manquant : tape /token."); return; }
+                niveauxPersonnalises.forEach(n => { if (n.distant && n.distant.fichier === niveau.fichier) { n.cible = null; n.distant = null; } });
+                sauvegarderNiveauxListe();
+                ghEnfiler(async () => { await depublierNiveau(copie); await chargerNiveauxPublics(); });
+            });
+        }
+
+        function ajouterSectionDistante(liste, titre, tableau, dossier, vide) {
+            liste.appendChild(titreSection(titre));
+            if (tableau.length === 0) liste.appendChild(messageVide(vide));
+            tableau.forEach(niveau => {
+                let btns = [boutonNiveau("▶", "Jouer", "#00ffcc", "#0b0f19", () => chargerNiveauObjet(niveau, null))];
+                btns.push(boutonNiveau("⬇", "Télécharger", "#3a4454", "#00ffcc", () => telechargerNiveau(niveau)));
+                if (modeDevNiveauxDeverrouille) {
+                    btns.push(boutonNiveau("✏️", "Éditer (écrit tout seul dans GitHub)", "#ffaa00", "#0b0f19", () => editerNiveauDistant(niveau, dossier)));
+                    btns.push(boutonNiveau("🗑️", "Supprimer de GitHub", "#ff0055", "#fff", () => supprimerNiveauDistant(niveau, dossier)));
+                }
+                liste.appendChild(ligneNiveau(niveau.nom, btns, "#3a4454"));
+            });
+        }
 
         function rendreListeNiveaux() {
             let liste = document.getElementById("liste-niveaux");
             liste.innerHTML = "";
+            let enLigne = /^https?:$/.test(location.protocol);
 
-            // --- Niveaux publics (fichier niveaux_publics.json) : jouables par tous ---
-            liste.appendChild(titreSection("🌐 NIVEAUX PUBLICS"));
-            if (niveauxPublics.length === 0) {
-                let v = document.createElement("div");
-                v.style.cssText = "color:#8892b0; font-size:11px; text-align:left; margin-bottom:6px;";
-                v.innerText = /^https?:$/.test(location.protocol) ? "Aucun niveau public pour l'instant." : "Disponible uniquement sur la version en ligne.";
-                liste.appendChild(v);
-            }
-            niveauxPublics.forEach(niveau => {
-                let btns = [boutonNiveau("▶", "Jouer", "#00ffcc", "#0b0f19", () => chargerNiveauObjet(niveau, null))];
-                if (modeDevNiveauxDeverrouille) {
-                    btns.push(boutonNiveau("📥", "Copier dans mes niveaux locaux (pour l'éditer)", "#ffaa00", "#0b0f19", () => {
-                        let c = JSON.parse(JSON.stringify(niveau)); c.public = true;
-                        niveauxPersonnalises.push(c); sauvegarderNiveauxListe(); rendreListeNiveaux();
-                    }));
-                }
-                liste.appendChild(ligneNiveau(niveau.nom, btns, "#3a4454"));
-            });
+            ajouterSectionDistante(liste, "🌐 NIVEAUX PUBLICS", niveauxPublics, "publics",
+                enLigne ? "Aucun niveau public pour l'instant." : "Disponible uniquement sur la version en ligne.");
+            ajouterSectionDistante(liste, "👥 NIVEAUX COMMUNAUTAIRES", niveauxCommunautaires, "communautaires",
+                enLigne ? "Aucun niveau communautaire pour l'instant." : "Disponible uniquement sur la version en ligne.");
+
             let statut = document.getElementById("statut-publics");
-            if (statut) statut.innerText = derniereSynchro ? "Synchronisé à " + derniereSynchro.toLocaleTimeString() : "";
+            if (statut && !statut.dataset.msg) statut.innerText = derniereSynchro ? "Synchronisé à " + derniereSynchro.toLocaleTimeString() : "";
 
-            // --- Niveaux locaux : propres à ce navigateur ---
-            if (niveauxPersonnalises.length > 0 || modeDevNiveauxDeverrouille) {
-                liste.appendChild(titreSection("💾 NIVEAUX LOCAUX"));
-            }
+            // --- Niveaux locaux : privés, propres à ce navigateur, éditables par tout le monde ---
+            liste.appendChild(titreSection("💾 MES NIVEAUX (PRIVÉS, LOCAUX)"));
+            if (niveauxPersonnalises.length === 0) liste.appendChild(messageVide("Aucun niveau. Crée-en un avec ➕."));
             niveauxPersonnalises.forEach((niveau, index) => {
-                let btns = [boutonNiveau("▶", "Jouer", "#00ffcc", "#0b0f19", () => chargerNiveauPersonnalise(index, false))];
+                let btns = [
+                    boutonNiveau("▶", "Jouer", "#00ffcc", "#0b0f19", () => chargerNiveauPersonnalise(index, false)),
+                    boutonNiveau("✏️", "Éditer", "#ffaa00", "#0b0f19", () => chargerNiveauPersonnalise(index, true)),
+                    boutonNiveau("🏷️", "Renommer", "#3a4454", "#00ffcc", () => renommerNiveau(niveau)),
+                    boutonNiveau("⬇", "Télécharger (pour l'exporter)", "#3a4454", "#00ffcc", () => telechargerNiveau(niveau))
+                ];
                 if (modeDevNiveauxDeverrouille) {
-                    btns.push(boutonNiveau("✏️", "Éditer", "#ffaa00", "#0b0f19", () => chargerNiveauPersonnalise(index, true)));
-                    btns.push(boutonNiveau("🌐", niveau.public ? "Public : sera inclus dans l'export (cliquer pour retirer)" : "Privé (cliquer pour rendre public)",
-                        niveau.public ? "#00ff66" : "#3a4454", niveau.public ? "#0b0f19" : "#8892b0", () => {
-                            niveau.public = !niveau.public; sauvegarderNiveauxListe(); rendreListeNiveaux();
-                        }));
-                    btns.push(boutonNiveau("🗑️", "Supprimer", "#ff0055", "#fff", () => supprimerNiveau(index)));
+                    let etat = niveau.cible === "publics" ? "🌐" : niveau.cible === "communautaires" ? "👥" : "🔒";
+                    btns.push(boutonNiveau(etat, "Privé → Public → Communautaire (cliquer pour changer). Actuel : " + (niveau.cible || "privé"),
+                        niveau.cible ? "#00ff66" : "#3a4454", niveau.cible ? "#0b0f19" : "#8892b0", () => changerCibleNiveau(niveau)));
                 }
-                liste.appendChild(ligneNiveau(niveau.nom + (niveau.public ? "  🌐" : ""), btns, "#00ffcc55"));
+                btns.push(boutonNiveau("🗑️", "Supprimer", "#ff0055", "#fff", () => supprimerNiveau(index)));
+                let marque = niveau.cible === "publics" ? "  🌐" : niveau.cible === "communautaires" ? "  👥" : "";
+                liste.appendChild(ligneNiveau(niveau.nom + marque, btns, "#00ffcc55"));
             });
 
-            let btnCreer = document.getElementById("btn-creer-niveau");
-            if (btnCreer) btnCreer.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
             let btnExp = document.getElementById("btn-export-publics");
             if (btnExp) btnExp.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
             majBouclier();
         }
 
         function creerNouveauNiveau() {
-            if (!modeDevNiveauxDeverrouille) return;
             niveauxPersonnalises.push({
-                nom: "Niveau " + (niveauxPersonnalises.length + 1),
+                id: nouvelId(),
+                nom: nomUniquePourNiveau(),
                 spawnX: 60, spawnY: 180,
                 blocs: blocsParDefautNiveau(),
                 mobs: []
@@ -2042,8 +2350,16 @@
         }
 
         function supprimerNiveau(index) {
-            if (!modeDevNiveauxDeverrouille) return;
             demanderConfirmation("Supprimer définitivement ce niveau ?", function() {
+                let n = niveauxPersonnalises[index];
+                let avait = n && n.cible && n.distant && ghPret();
+                if (avait) {
+                    // Le niveau était publié : le fichier GitHub est retiré aussi
+                    let copie = { nom: n.nom, distant: n.distant };
+                    ghEnfiler(async () => { await depublierNiveau(copie); await chargerNiveauxPublics(); });
+                }
+                if (niveauEnEditionId === index) niveauEnEditionId = null;
+                else if (niveauEnEditionId !== null && niveauEnEditionId > index) niveauEnEditionId--;
                 niveauxPersonnalises.splice(index, 1);
                 sauvegarderNiveauxListe();
                 rendreListeNiveaux();
@@ -2063,10 +2379,9 @@
             nettoyerMondeComplet();
             niveau.blocs.forEach(b => creerBlocMondeDirect(b.x, b.y, b.type, b.couleur, b.symbole || "", b.valeur || 1));
             (niveau.mobs || []).forEach(m => creerMobPatrouilleur(m.xMin, m.xMax, m.y, m.vitesse, "#8892b0", m.symbole || "👾"));
-            joueur.spawnX = niveau.spawnX || 60;
-            joueur.spawnY = niveau.spawnY || 180;
-            joueur.departX = joueur.spawnX; // point de départ réel du niveau (les checkpoints modifient spawnX/spawnY)
-            joueur.departY = joueur.spawnY;
+            joueur.departX = niveau.spawnX || 60; // point de départ réel du niveau (les checkpoints modifient spawnX/spawnY)
+            joueur.departY = niveau.spawnY || 180;
+            historiqueEdition = [];
             appliquerParametresDuNiveau(niveau);
             // Seul un chargement en mode ÉDITION (dev uniquement) écrit dans la
             // sauvegarde ensuite ; un simple "▶ Jouer" laisse niveauEnEditionId à
@@ -2076,10 +2391,10 @@
             mettreAJourBadgeNiveauPerso();
             fermerEcranNiveaux();
             fermerParametres();
+            nouvelleCarteDepart(); // TP instantané + morts à 0 + checkpoints remis à zéro
             if (editIdx !== null && !modeConstructionActif) {
                 basculerModeCreatif();
             }
-            respawnJoueur();
             recalculerTotalPieces();
         }
 
@@ -2105,6 +2420,15 @@
             if (btnCredits) btnCredits.style.display = tout ? "block" : "none";
         }
 
+        // Le message « création verrouillée » ne s'affiche que la toute première fois.
+        function messageCreationDejaVu() {
+            try {
+                if (localStorage.getItem("cyber_hack_msg_creation_vu") === "1") return true;
+                localStorage.setItem("cyber_hack_msg_creation_vu", "1");
+            } catch (e) {}
+            return false;
+        }
+
         function basculerModeCreatif() {
             modeConstructionActif = !modeConstructionActif;
             let displayVal = modeConstructionActif ? "block" : "none";
@@ -2115,7 +2439,7 @@
             btnGeneration.style.display = displayVal;
             btnNiveaux.style.display = displayVal;
             mettreAJourAccesInventaire();
-            if (modeConstructionActif && !creationAutorisee()) {
+            if (modeConstructionActif && !creationAutorisee() && !messageCreationDejaVu()) {
                 afficherAlerte(tx(["🔒 Création verrouillée en génération procédurale. Tu peux changer de skin. Appuie sur RESET MAP pour une carte de test, ou édite un niveau.", "🔒 Creation is locked in procedural generation. You can still change skins. Press RESET MAP for a test map, or edit a level.", "🔒 Bauen ist in der prozeduralen Generierung gesperrt. Skins kannst du weiterhin ändern. Drücke RESET MAP für eine Testkarte oder bearbeite ein Level.", "🔒 自動生成マップでは作成できません。スキンは変更可能。テストマップはRESET MAP、またはレベルを編集してください。"]));
             }
             arene.style.touchAction = modeConstructionActif ? "none" : "";
@@ -2165,7 +2489,9 @@
             { cmd: "/protector [on|off]", desc: "Bouclier de test : pièges et monstres ne te tuent plus (le vide, si). Sans option : active/désactive. /protector off l'annule.", cachee: false, prefill: "/protector" },
             { cmd: "/shopfree", desc: "Débloque toute la boutique : blocs, skins, sentinelles.", cachee: false, prefill: "/shopfree" },
             { cmd: "/title [texte]", desc: "DEV : change le titre/crédits pour tous (via niveaux_publics.json exporté). Sans texte : efface. Inactif hors mode /editeur.", cachee: true, prefill: "/title " },
-            { cmd: "/editeur", desc: "Active / désactive le mode dev : édition de niveaux, 🌐 public, export, bouclier 🛡️, /title.", cachee: true, prefill: "/editeur" },
+            { cmd: "/token [jeton|off]", desc: "DEV : enregistre ton jeton GitHub (droit « Contents : lecture/écriture » sur ton dépôt seulement) dans CE navigateur. Active l'écriture automatique des niveaux publics/communautaires.", cachee: true, prefill: "/token " },
+            { cmd: "/github [proprio/depot] [branche]", desc: "DEV : dépôt et branche où écrire. Détecté tout seul sur une page github.io ; sinon, indique-les ici. Sans option : affiche la config.", cachee: true, prefill: "/github " },
+            { cmd: "/editeur", desc: "Active / désactive le mode dev : édition des niveaux publics et communautaires (écriture auto sur GitHub), publication 🌐/👥, bouclier 🛡️, /title.", cachee: true, prefill: "/editeur" },
             { cmd: "/admin", desc: "Cette fenêtre. Affiche toutes les commandes, même cachées.", cachee: true, prefill: "/admin" }
         ];
 
@@ -2203,7 +2529,7 @@
                     document.getElementById("input-commande").value = "";
                     document.getElementById("panneau-commande").style.display = "none";
                 } else {
-                    afficherAlerte("Commande invalide. Utilisation : /coin [nombre]");
+                    afficherAlerte("Commande invalide.");
                 }
             } else if (parties[0] === "/shopfree") {
                 deverrouillerToutLaBoutique();
@@ -2227,8 +2553,9 @@
                 titreDevLocal = nouveauxCredits;
                 try { localStorage.setItem("cyber_hack_titre_dev", titreDevLocal); } catch (e) {}
                 recalculerCredits();
+                if (ghPret()) ghEnfiler(publierTitreGithub);
                 afficherAlerte(nouveauxCredits.length > 0
-                    ? "Titre enregistré. Exporte les niveaux publics (📤) et dépose le fichier sur GitHub pour le publier."
+                    ? (ghPret() ? "Titre enregistré et publié automatiquement sur GitHub." : "Titre enregistré sur ce navigateur. Ajoute un jeton (/token) pour le publier automatiquement.")
                     : "Titre dev effacé : le titre public (ou par défaut) est de retour.");
                 document.getElementById("input-commande").value = "";
                 document.getElementById("panneau-commande").style.display = "none";
@@ -2253,6 +2580,31 @@
                 afficherAlerte(protecteurCmd ? tx(["🛡️ /protector ACTIVÉ : pièges et monstres ne te tuent plus (le vide, si). Tape /protector off pour l'annuler.", "🛡️ /protector ON: traps and monsters can't kill you (the void still can). Type /protector off to cancel.", "🛡️ /protector AN: Fallen und Monster töten dich nicht mehr (der Abgrund schon). Mit /protector off beenden.", "🛡️ /protector ON:罠とモンスターでは死なない(奈落は別)。/protector off で解除。"]) : tx(["🛡️ /protector désactivé : les dangers te tuent de nouveau.", "🛡️ /protector off: hazards can kill you again.", "🛡️ /protector aus: Gefahren töten dich wieder.", "🛡️ /protector OFF:再び危険で死ぬ。"]));
                 document.getElementById("input-commande").value = "";
                 document.getElementById("panneau-commande").style.display = "none";
+            } else if (parties[0] === "/token" && modeDevNiveauxDeverrouille) {
+                // Jeton GitHub (dev) : gardé UNIQUEMENT dans ce navigateur, jamais dans le code.
+                let jeton = parties.slice(1).join("").trim();
+                try {
+                    if (jeton === "off" || jeton === "") localStorage.removeItem("cyber_hack_gh_token");
+                    else localStorage.setItem("cyber_hack_gh_token", jeton);
+                } catch (e) {}
+                ghBrancheCache = "";
+                afficherAlerte(jeton && jeton !== "off" ? "🔑 Jeton enregistré dans ce navigateur. Les niveaux publics s'écriront tout seuls sur GitHub." : "🔑 Jeton effacé.");
+                document.getElementById("input-commande").value = "";
+                document.getElementById("panneau-commande").style.display = "none";
+            } else if (parties[0] === "/github" && modeDevNiveauxDeverrouille) {
+                // /github proprietaire/depot [branche] — sinon détecté depuis l'adresse github.io
+                let depot = (parties[1] || "").trim(), branche = (parties[2] || "").trim();
+                if (depot && !/^[\w.-]+\/[\w.-]+$/.test(depot)) {
+                    afficherAlerte("Commande invalide.");
+                } else {
+                    let cfg = ghConfig();
+                    try { localStorage.setItem("cyber_hack_gh_cfg", JSON.stringify({ repo: depot || cfg.repo, branche: depot ? branche : (branche || cfg.branche) })); } catch (e) {}
+                    ghBrancheCache = "";
+                    let c2 = ghConfig();
+                    afficherAlerte("🐙 Dépôt : " + (c2.repo || "non défini") + " · branche : " + (c2.branche || "par défaut du dépôt") + " · jeton : " + (c2.token ? "présent" : "absent"));
+                    document.getElementById("input-commande").value = "";
+                    document.getElementById("panneau-commande").style.display = "none";
+                }
             } else if (parties[0] === "/editeur") {
                 // Commande développeur cachée : bascule l'accès aux outils de création/
                 // édition/suppression de niveaux (le bouton "🛠️ NIVEAUX" lui-même reste
@@ -2263,7 +2615,7 @@
                 localStorage.setItem("cyber_hack_dev_unlocked", modeDevNiveauxDeverrouille ? "true" : "false");
                 rendreListeNiveaux();
                 afficherAlerte(modeDevNiveauxDeverrouille
-                    ? "🛠️ Mode développeur activé : tu peux créer/éditer/supprimer des niveaux."
+                    ? "🛠️ Mode développeur activé : tu peux éditer les niveaux publics et communautaires (écriture auto sur GitHub avec /token)."
                     : "Mode développeur désactivé.");
                 document.getElementById("input-commande").value = "";
                 document.getElementById("panneau-commande").style.display = "none";
@@ -2274,7 +2626,7 @@
                 document.getElementById("panneau-commande").style.display = "none";
                 ouvrirFenetreAdmin();
             } else {
-                afficherAlerte("Commande inconnue ! Commandes disponibles : /coin [nombre], /shopfree, /save, /protector");
+                afficherAlerte("Commande inconnue.");
             }
         }
 
@@ -2587,7 +2939,7 @@
         function mettreAJourBoutonTailleZones() {
             let b = document.getElementById("btn-taille-zones");
             if (!b) return;
-            let visible = modeConstructionActif && niveauEnEditionId !== null && modeDevNiveauxDeverrouille;
+            let visible = modeConstructionActif && niveauEnEditionId !== null;
             b.style.display = visible ? "block" : "none";
         }
 
@@ -2626,7 +2978,7 @@
         }
 
         function ouvrirModalTailleZones() {
-            if (niveauEnEditionId === null || !modeDevNiveauxDeverrouille) return;
+            if (niveauEnEditionId === null) return;
             remplirChampsTailleZones(maxWorldWidth, zonesX);
             document.getElementById("modal-taille-zones").style.display = "flex";
         }
@@ -2640,7 +2992,7 @@
         }
 
         function appliquerTailleZones() {
-            if (niveauEnEditionId === null || !modeDevNiveauxDeverrouille || !niveauxPersonnalises[niveauEnEditionId]) return;
+            if (niveauEnEditionId === null || !niveauxPersonnalises[niveauEnEditionId]) return;
             if (!majResumeTailleZones()) return;
             let { largeur, zones } = lireChampsTailleZones();
             appliquerParametresNiveau(largeur, zones);
@@ -2648,6 +3000,7 @@
             niveau.largeur = largeur;
             niveau.zones = zones.slice();
             sauvegarderNiveauxListe();
+            planifierPublication(niveau);
             fermerModalTailleZones();
             let horsLimite = blocsMonde.filter(b => b.x >= largeur).length;
             if (horsLimite > 0) {
@@ -2704,7 +3057,7 @@
         itemBouclier.innerText = "🛡️";
         itemBouclier.title = "Bouclier : invincible pendant les tests du niveau (édition uniquement)";
         itemBouclier.onclick = function() {
-            if (!(modeDevNiveauxDeverrouille && niveauEnEditionId !== null)) return;
+            if (!creationAutorisee()) return;
             bouclierActif = !bouclierActif;
             majBouclier();
             afficherAlerte(bouclierActif ? "🛡️ Bouclier ACTIVÉ : pièges et monstres ne te tuent plus (le vide, si)." : "🛡️ Bouclier désactivé.");
@@ -3366,8 +3719,8 @@
             const finMapX = 6800, Y_MIN = 200, Y_MAX = 280;
             let groundY = 240;
             let x = sols(0, groundY, 9);
-            joueur.spawnX = 60;
-            joueur.spawnY = 180;
+            joueur.departX = 60;
+            joueur.departY = 180;
 
             let dernier = -1, avantDernier = -1, prochainRelais = rnd(900, 1300);
             while (x < finMapX - 300) {
@@ -3411,7 +3764,7 @@
             });
             creerBlocMondeDirect(finMapX, groundY, "fin_niveau", "#ffffff", "🏆", 1);
 
-            respawnJoueur();
+            nouvelleCarteDepart();
             recalculerTotalPieces();
         }
 
@@ -3600,11 +3953,10 @@
 
             reinitialiserParametresNiveau();
 
-            // Téléportation propre au point de spawn
-            joueur.x = joueur.spawnX;
-            joueur.y = joueur.spawnY;
-            joueur.vx = 0;
-            joueur.vy = 0;
+            // Départ standard + téléportation instantanée (même si on était loin / sur un checkpoint)
+            joueur.departX = 60;
+            joueur.departY = 180;
+            historiqueEdition = [];
 
             // 5 blocs "non fonctionnels" (couleur décorative, aucune capacité spéciale)
             // mais avec EXACTEMENT la même collision que les blocs normaux (type "solide").
@@ -3615,7 +3967,9 @@
             for (let i = 0; i < 5; i++) {
                 creerBlocMondeDirect(baseX + (i * TAILLE_BLOC), baseY, "solide", couleurChoisie, "", 1);
             }
+            nouvelleCarteDepart();
             recalculerTotalPieces();
+            majBouclier();
         }
 
         btnReset.onclick = () => {
@@ -3718,9 +4072,47 @@
             if (e.key === "d" || e.key === "D") touches.d = false;
         });
 
+        // --- Départ de carte : téléportation INSTANTANÉE au vrai départ, sans compter de mort ---
+        function afficherMorts() {
+            hudMorts.innerText = `💀 ${traductions[langueActuelle].morts} : ${stats.morts}`;
+        }
+        function reinitialiserMorts() {
+            stats.morts = 0;
+            afficherMorts();
+        }
+        // Les points de sauvegarde 🏁/✅ redeviennent neufs (le point de respawn est remis au départ)
+        function reinitialiserCheckpoints() {
+            blocsMonde.forEach(b => {
+                if (b.type === "checkpoint" && b.elementDom) b.elementDom.innerText = b.symbole || "🏁";
+            });
+            joueur.spawnX = joueur.departX !== undefined ? joueur.departX : 60;
+            joueur.spawnY = joueur.departY !== undefined ? joueur.departY : 180;
+        }
+        function teleporterAuDepart() {
+            joueur.x = joueur.spawnX;
+            joueur.y = joueur.spawnY;
+            joueur.vx = 0;
+            joueur.vy = 0;
+            joueur.isGrounded = false;
+            boostTimer = 0;
+            surDeLaGlace = false;
+            joueur.invincible = 45; // laisse le temps de se poser
+            // Caméra et sprite placés tout de suite : aucune image dans le vide
+            cameraX = Math.max(0, Math.min(joueur.x - Math.min(300, arene.clientWidth * 0.4), maxWorldWidth - arene.clientWidth));
+            monde.style.left = -cameraX + "px";
+            joueur.element.style.left = joueur.x + "px";
+            joueur.element.style.top = joueur.y + "px";
+        }
+        // À appeler à CHAQUE changement de carte (génération, niveau, reset, fin de niveau)
+        function nouvelleCarteDepart() {
+            reinitialiserCheckpoints();
+            reinitialiserMorts();
+            teleporterAuDepart();
+        }
+
         function respawnJoueur() {
             stats.morts++;
-            hudMorts.innerText = `💀 ${traductions[langueActuelle].morts} : ${stats.morts}`;
+            afficherMorts();
             joueur.x = joueur.spawnX;
             joueur.y = joueur.spawnY;
             joueur.vx = 0;
@@ -3745,6 +4137,13 @@
         }
 
         let surDeLaGlace = false;
+
+        // Vitesse de déplacement sur mobile : 80 % de celle du PC (modifiable ici)
+        const FACTEUR_VITESSE_MOBILE = 0.8;
+        function vitesseReduiteMobile() {
+            if (modeActuel === "mobile") return true;
+            try { return !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches); } catch (e) { return false; }
+        }
 
         function update() {
             if (!modeConstructionActif && !tacheActive) {
@@ -3783,13 +4182,15 @@
                 if (touches.d) moveDir = 1;
                 if (modeActuel === 'mobile' || joystickDirection !== 0) moveDir = joystickDirection;
 
-                let vitesseCible = moveDir * joueur.speed;
+                // Mobile (mode tactile choisi ou écran tactile) : déplacement plus lent
+                let fv = vitesseReduiteMobile() ? FACTEUR_VITESSE_MOBILE : 1;
+                let vitesseCible = moveDir * joueur.speed * fv;
 
                 if (surDeLaGlace) {
                     if (moveDir !== 0) {
-                        joueur.vx += moveDir * 0.45;
-                        if (Math.abs(joueur.vx) > joueur.speed * 1.8) {
-                            joueur.vx = Math.sign(joueur.vx) * joueur.speed * 1.8;
+                        joueur.vx += moveDir * 0.45 * fv;
+                        if (Math.abs(joueur.vx) > joueur.speed * 1.8 * fv) {
+                            joueur.vx = Math.sign(joueur.vx) * joueur.speed * 1.8 * fv;
                         }
                     } else {
                         joueur.vx *= 0.95;
@@ -3802,7 +4203,7 @@
                     }
                 }
 
-                if (boostTimer > 0) { boostTimer--; joueur.vx = boostDir * 7.5; }
+                if (boostTimer > 0) { boostTimer--; joueur.vx = boostDir * 7.5 * fv; }
 
                 // --- Mouvement et collisions SÉPARÉS PAR AXE ---
                 // 1) On bouge en X puis on se recolle au mur touché (jamais de choix
@@ -3839,7 +4240,9 @@
                     }
                 });
 
-                blocsMonde.forEach(mur => {
+                const listeParcourue = blocsMonde;
+                listeParcourue.forEach(mur => {
+                    if (listeParcourue !== blocsMonde) return; // la carte vient de changer : on ignore les anciens blocs
                     if (mur.type === "fin_niveau" && (modeNiveauPersonnaliseActif || !modeHistoireActif || missionsFaites[3]) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         if (modeNiveauPersonnaliseActif) {
                             // Niveau personnalisé : on boucle simplement le joueur au
@@ -3847,12 +4250,7 @@
                             // échec — juste la fin du parcours) plutôt que de générer
                             // une nouvelle map procédurale par-dessus le niveau testé.
                             // Retour au départ RÉEL du niveau (et non au dernier checkpoint).
-                            joueur.spawnX = joueur.departX !== undefined ? joueur.departX : 60;
-                            joueur.spawnY = joueur.departY !== undefined ? joueur.departY : 180;
-                            joueur.x = joueur.spawnX;
-                            joueur.y = joueur.spawnY;
-                            joueur.vx = 0;
-                            joueur.vy = 0;
+                            nouvelleCarteDepart(); // morts à 0, checkpoints remis à neuf, TP instantané
                             // Les pièces redeviennent ramassables à chaque nouveau tour
                             // (sinon, une fois le niveau bouclé une fois, elles restent
                             // définitivement invisibles pour le reste de la session).
@@ -3894,8 +4292,8 @@
                             }
                         }
                     }
-                    if (mur.type === "piege" && !estProtege() && joueur.x < mur.x + mur.width - 3 && joueur.x + joueur.width > mur.x + 3 && joueur.y < mur.y + mur.height - 3 && joueur.y + joueur.height > mur.y + 3) {
-                        respawnJoueur();
+                    if (mur.type === "piege" && !estProtege() && joueur.x < mur.x + mur.width - 1 && joueur.x + joueur.width > mur.x + 1 && joueur.y < mur.y + mur.height && joueur.y + joueur.height >= mur.y) {
+                        respawnJoueur(); // contact avec n'importe quelle face, dessus compris
                     }
                     if (mur.type === "checkpoint" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         if (joueur.spawnX !== mur.x || joueur.spawnY !== mur.y - joueur.height) {
