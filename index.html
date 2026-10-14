@@ -683,6 +683,7 @@
             <p style="color: #8892b0; font-size: 11px; margin-top: -8px;">Astuce : une fois dans un niveau, appuie sur <b>Échap</b> pour le quitter et revenir en génération aléatoire.</p>
             <div id="liste-niveaux"></div>
             <p id="statut-publics" style="color:#6b7a99; font-size:10px; margin:2px 0 8px 0;"></p>
+            <button class="btn-modal-action" id="btn-config-github" onclick="ouvrirAssistantGithub()" style="display:none; background-color:#9d00ff; color:#fff;">🐙 CONFIGURER GITHUB (ÉCRITURE AUTO)</button>
             <button class="btn-modal-action" id="btn-export-publics" onclick="exporterNiveauxPublics()" style="display:none; background-color:#00ff66; color:#0b0f19;">📤 EXPORTER LES NIVEAUX PUBLICS (GITHUB)</button>
             <button class="btn-modal-action" id="btn-creer-niveau" onclick="creerNouveauNiveau()" style="display:block; background-color:#00ffcc; color:#0b0f19;">➕ CRÉER UN NIVEAU</button>
             <button class="btn-modal-action" onclick="document.getElementById('input-import-niveau').click()" style="background-color:#3a4454; color:#00ffcc;">📂 IMPORTER UN NIVEAU (.json)</button>
@@ -1269,7 +1270,7 @@
             match: ["Relie chaque sigle à sa définition (clique un sigle, puis sa définition).", "Match each acronym with its definition (click an acronym, then its definition).", "Ordne jede Abkürzung ihrer Definition zu (erst Abkürzung, dann Definition).", "略語と説明を結べ(略語→説明の順にクリック)。"],
             decode: ["Message intercepté, chiffré par décalage de César. Chaque lettre a été avancée de {s} dans l'alphabet ({ex}). Tape le mot d'origine :", "Intercepted message, encrypted with a Caesar shift. Each letter was moved forward by {s} in the alphabet ({ex}). Type the original word:", "Abgefangene Nachricht, per Caesar-Verschiebung verschlüsselt. Jeder Buchstabe wurde um {s} verschoben ({ex}). Tippe das Originalwort:", "傍受したメッセージはシーザー暗号。各文字はアルファベット順に{s}つ進んでいる({ex})。元の単語を入力せよ:"],
             caesar: ["Chiffre ce mot avec un décalage de César de +{s} : avance chaque lettre de {s} dans l'alphabet ({ex}).", "Encrypt this word with a Caesar shift of +{s}: move each letter forward by {s} in the alphabet ({ex}).", "Verschlüssele dieses Wort mit Caesar-Verschiebung +{s}: jeder Buchstabe {s} weiter ({ex}).", "この単語をシーザー暗号(+{s})で暗号化せよ:各文字を{s}つ進める({ex})。"],
-            pin: ["Trouve le code à 4 chiffres (tous différents). 🟢 = chiffres bien placés : ils restent verrouillés 🔒. Les chiffres faux ou mal placés ne sont pas comptés. 8 essais, 1 minute.", "Find the 4-digit code (all digits different). 🟢 = correctly placed digits: they stay locked 🔒. Wrong or misplaced digits are not counted. 8 tries, 1 minute.", "Finde den 4-stelligen Code (alle Ziffern verschieden). 🟢 = richtig platzierte Ziffern: sie bleiben gesperrt 🔒. Falsche oder falsch platzierte Ziffern zählen nicht. 8 Versuche, 1 Minute.", "4桁のコード(全て異なる数字)を探せ。🟢=位置が正しい数字は🔒で固定される。間違い・位置違いはカウントしない。8回・1分。"],
+            pin: ["Trouve le code à 4 chiffres (tous différents). 🟢 = bien placé : le chiffre reste verrouillé 🔒. 🟡 = bon chiffre mais mal placé. 8 essais, 45 secondes.", "Find the 4-digit code (all digits different). 🟢 = correctly placed: the digit stays locked 🔒. 🟡 = right digit, wrong place. 8 tries, 45 seconds.", "Finde den 4-stelligen Code (alle Ziffern verschieden). 🟢 = richtig platziert: die Ziffer bleibt gesperrt 🔒. 🟡 = richtige Ziffer, falscher Platz. 8 Versuche, 45 Sekunden.", "4桁のコード(全て異なる数字)を探せ。🟢=位置が正しい数字は🔒で固定。🟡=数字のみ正解。8回・45秒。"],
             pinEchec: ["Plus d'essais !", "Out of tries!", "Keine Versuche mehr!", "試行回数切れ!"],
             pinInvalide: ["Entre 4 chiffres.", "Enter 4 digits.", "Gib 4 Ziffern ein.", "4桁の数字を入力。"],
             simon: ["Mémorise la séquence du pare-feu, puis répète-la dans le même ordre.", "Memorize the firewall sequence, then repeat it in the same order.", "Merke dir die Firewall-Sequenz und wiederhole sie in derselben Reihenfolge.", "ファイアウォールの順番を覚えて、同じ順にクリックせよ。"],
@@ -1528,18 +1529,18 @@
                     if (!/^\d{4}$/.test(v)) { c.msg(tx(UI_TACHE.pinInvalide), "#ffaa00"); return; }
                     // Les chiffres déjà trouvés (bien placés) restent verrouillés et sont remis tout seuls.
                     v = v.split("").map(function(d, i) { return verrou[i] !== null ? verrou[i] : d; }).join("");
-                    let bien = 0;
-                    for (let i = 0; i < 4; i++) { if (v[i] === chiffres[i]) { bien++; verrou[i] = v[i]; } }
+                    let bien = 0, mal = 0;
+                    for (let i = 0; i < 4; i++) { if (v[i] === chiffres[i]) { bien++; verrou[i] = v[i]; } else if (chiffres.indexOf(v[i]) >= 0) mal++; }
                     essais++;
-                    // Les chiffres faux ou mal placés ne sont PAS comptés : seuls les bons s'affichent.
-                    let l = document.createElement("div"); l.innerText = v + "  →  🟢" + bien + "   🔒 " + verrou.map(function(d) { return d === null ? "_" : d; }).join(" ") + "   (" + essais + "/8)"; hist.appendChild(l);
+                    // 🟢 = bien placé (reste verrouillé 🔒) · 🟡 = bon chiffre mais mal placé
+                    let l = document.createElement("div"); l.innerText = v + "  →  🟢" + bien + "  🟡" + mal + "   🔒 " + verrou.map(function(d) { return d === null ? "_" : d; }).join(" ") + "   (" + essais + "/8)"; hist.appendChild(l);
                     champ.champ.value = "";
                     if (bien === 4) { c.msg(tx(UI_TACHE.ok), "#00ffcc"); setTimeout(function() { c.succes(); }, 500); }
                     else if (essais >= 8) c.echec(tx(UI_TACHE.pinEchec));
                     else c.msg("", "#8892b0");
                 }, { max: 4, numerique: true });
                 c.grille.appendChild(champ); champ.champ.focus();
-                c.chrono(60);
+                c.chrono(45);
             },
             simon: function(c) {
                 let n = 5, seq = []; for (let i = 0; i < n; i++) seq.push(RND(4));
@@ -1694,7 +1695,262 @@
             }
         };
 
-        function lancerTachePiratage(callbackSucces, type, zone) {
+        // =====================================================================
+        // MINI-JEUX SUPPLÉMENTAIRES (pilotés par des données : c.d)
+        // 13 mécaniques différentes, réutilisées avec un contenu propre à chaque
+        // thème (voir MISSIONS_PLUS plus bas). Textes en français + anglais
+        // (les autres langues retombent sur le français).
+        // =====================================================================
+        const UI_PLUS = {
+            vrai: ["✔ VRAI", "✔ TRUE"], faux: ["✖ FAUX", "✖ FALSE"],
+            vf: ["Vrai ou faux ? Réponds à chaque affirmation. Une erreur : −8 s.", "True or false? Answer every statement. A mistake: −8 s."],
+            ordre: ["Clique les étapes dans le BON ORDRE (de la première à la dernière). Une erreur : −6 s.", "Click the steps in the RIGHT ORDER (first to last). A mistake: −6 s."],
+            intrus: ["Dans chaque ligne, clique l'INTRUS. Une erreur : −8 s.", "In each row, click the ODD ONE OUT. A mistake: −8 s."],
+            tri: ["Classe chaque élément dans la bonne catégorie. Une erreur : −6 s.", "Sort each item into the right category. A mistake: −6 s."],
+            lacune: ["Complète le mot manquant (là où il y a ____).", "Type the missing word (where you see ____)."],
+            memo: ["Retrouve les paires : retourne deux cartes à la fois.", "Find the pairs: flip two cards at a time."],
+            timing: ["Appuie sur STOP quand le curseur est dans la zone verte. {n} réussites nécessaires.", "Press STOP when the cursor is in the green zone. {n} hits needed."],
+            bits: ["Règle les 8 bits (clique pour passer 0 ↔ 1) pour obtenir la valeur demandée.", "Set the 8 bits (click to flip 0 ↔ 1) to reach the requested value."],
+            base64: ["Ce mot est encodé en Base64 (ce n'est PAS du chiffrement). Tape le mot d'origine :", "This word is Base64-encoded (NOT encryption). Type the original word:"],
+            cocher: ["Coche TOUTES les bonnes réponses puis valide. Une erreur : −8 s.", "Tick ALL the right answers, then submit. A mistake: −8 s."],
+            assoc: ["Relie chaque terme à sa définition (clique à gauche, puis à droite).", "Match each term with its definition (click left, then right)."],
+            cibles: ["Clique les cibles avant qu'elles disparaissent : {n} touches. Une cible ratée : −4 s.", "Click the targets before they vanish: {n} hits. A missed target: −4 s."],
+            calcul: ["Réponds par un nombre.", "Answer with a number."],
+            stop: ["STOP", "STOP"], valider: ["VALIDER", "SUBMIT"], binaire: ["Valeur à obtenir : ", "Target value: "]
+        };
+        const BASE_BTN_PLUS = "text-align:left; font-size:12px;";
+        function okPlus(c) { c.msg(tx(UI_TACHE.ok), "#00ffcc"); setTimeout(function() { c.succes(); }, 450); }
+        function fautePlus(c, s) { c.ajouter(-s); c.msg(tx(UI_TACHE.faux) + " : −" + s + " s"); }
+        function surligner(b, couleur) { b.style.backgroundColor = couleur; }
+
+        Object.assign(TACHES, {
+            vf: function(c) {
+                c.consigne(tx(UI_PLUS.vf));
+                let reste = c.d.s.length;
+                melanger(c.d.s).forEach(function(st) {
+                    let ligne = document.createElement("div");
+                    ligne.style.cssText = "background:#0b0f19; border:1px solid #3a4454; border-radius:4px; padding:6px; margin:6px 0; text-align:left;";
+                    let p = document.createElement("div"); p.style.cssText = "color:#fff; font-size:13px; margin-bottom:4px;"; p.innerText = tx(st[0]);
+                    let bV, bF;
+                    let rep = function(valeur) {
+                        return function(bt) {
+                            if (valeur === st[1]) { marquerBtn(bt, true); bV.disabled = true; bF.disabled = true; reste--; if (reste <= 0) okPlus(c); }
+                            else fautePlus(c, 8);
+                        };
+                    };
+                    bV = creerBtnTache(tx(UI_PLUS.vrai), rep(true), "width:48%; margin:2px 1%; text-align:center;");
+                    bF = creerBtnTache(tx(UI_PLUS.faux), rep(false), "width:48%; margin:2px 1%; text-align:center;");
+                    ligne.append(p, bV, bF); c.grille.appendChild(ligne);
+                });
+                c.chrono(60);
+            },
+            ordre: function(c) {
+                c.consigne(tx(UI_PLUS.ordre));
+                let suivant = 0, total = c.d.etapes.length;
+                melanger(c.d.etapes.map(function(e, i) { return { t: tx(e), i: i }; })).forEach(function(o) {
+                    c.grille.appendChild(creerBtnTache(o.t, function(bt) {
+                        if (o.i === suivant) { suivant++; bt.innerText = suivant + ". " + o.t; marquerBtn(bt, true); if (suivant >= total) okPlus(c); }
+                        else fautePlus(c, 6);
+                    }, BASE_BTN_PLUS));
+                });
+                c.chrono(60);
+            },
+            intrus: function(c) {
+                c.consigne(tx(UI_PLUS.intrus));
+                let reste = c.d.rangs.length;
+                c.d.rangs.forEach(function(r) {
+                    let ligne = document.createElement("div"); ligne.style.cssText = "display:grid; grid-template-columns:1fr 1fr; gap:4px; margin:8px 0;";
+                    let bs = [];
+                    melanger(r.items.map(function(t, i) { return { t: tx(t), i: i }; })).forEach(function(o) {
+                        let b = creerBtnTache(o.t, function(bt) {
+                            if (o.i === r.i) { marquerBtn(bt, true); bs.forEach(function(x) { x.disabled = true; }); reste--; if (reste <= 0) okPlus(c); }
+                            else { marquerBtn(bt, false); fautePlus(c, 8); }
+                        }, "text-align:center; font-size:12px; margin:0;");
+                        bs.push(b); ligne.appendChild(b);
+                    });
+                    c.grille.appendChild(ligne);
+                });
+                c.chrono(60);
+            },
+            tri: function(c) {
+                c.consigne(tx(UI_PLUS.tri));
+                let items = melanger(c.d.items), k = 0;
+                let carte = document.createElement("div"); carte.style.cssText = "background:#0b0f19; border:2px solid #ffaa00; border-radius:4px; padding:14px; margin:8px 0; color:#fff; font-size:15px; text-align:center;";
+                let compteur = document.createElement("div"); compteur.style.cssText = "color:#8892b0; font-size:11px; margin-bottom:6px;";
+                let zone = document.createElement("div");
+                let bA = creerBtnTache(tx(c.d.a), function() { choisir(0); }, "text-align:center; width:48%; margin:2px 1%;");
+                let bB = creerBtnTache(tx(c.d.b), function() { choisir(1); }, "text-align:center; width:48%; margin:2px 1%;");
+                function montrer() { compteur.innerText = (k + 1) + " / " + items.length; zone.innerText = tx(items[k][0]); }
+                function choisir(v) {
+                    if (items[k][1] === v) { k++; if (k >= items.length) { carte.style.display = "none"; okPlus(c); } else montrer(); }
+                    else fautePlus(c, 6);
+                }
+                carte.append(compteur, zone); c.grille.append(carte, bA, bB); montrer();
+                c.chrono(60);
+            },
+            lacune: function(c) {
+                c.consigne(tx(UI_PLUS.lacune));
+                let p = document.createElement("p"); p.style.cssText = "color:#ffffff; font-size:14px; line-height:1.5; text-align:left; background:#0b0f19; padding:8px; border-radius:4px;"; p.innerText = tx(c.d.phrase);
+                c.grille.appendChild(p);
+                let champ = creerChampTache("…", function(v) {
+                    v = v.trim().toLowerCase();
+                    if (c.d.reponses.indexOf(v) >= 0) okPlus(c); else { fautePlus(c, 8); champ.champ.value = ""; }
+                });
+                c.grille.appendChild(champ); champ.champ.focus();
+                c.chrono(60);
+            },
+            memo: function(c) {
+                c.consigne(tx(UI_PLUS.memo));
+                c.grille.style.display = "grid"; c.grille.style.gridTemplateColumns = "repeat(4, 1fr)"; c.grille.style.gap = "6px";
+                let cartes = [];
+                c.d.paires.forEach(function(pa, i) { cartes.push({ t: tx(pa[0]), p: i }); cartes.push({ t: tx(pa[1]), p: i }); });
+                let ouvertes = [], trouvees = 0, bloque = false;
+                melanger(cartes).forEach(function(ca) {
+                    let b = creerBtnTache("❓", function(bt) {
+                        if (bloque || ouvertes.indexOf(bt) >= 0) return;
+                        bt.innerText = ca.t; bt.style.backgroundColor = "#1d3b38"; ouvertes.push(bt); bt.carte = ca;
+                        if (ouvertes.length === 2) {
+                            let x = ouvertes[0], y = ouvertes[1];
+                            if (x.carte.p === y.carte.p) { marquerBtn(x, true); marquerBtn(y, true); ouvertes = []; trouvees++; if (trouvees >= c.d.paires.length) okPlus(c); }
+                            else { bloque = true; setTimeout(function() { [x, y].forEach(function(z) { z.innerText = "❓"; z.style.backgroundColor = "#0b0f19"; }); ouvertes = []; bloque = false; }, 700); }
+                        }
+                    }, "text-align:center; font-size:11px; min-height:54px; margin:0; padding:4px;");
+                    c.grille.appendChild(b);
+                });
+                c.chrono(75);
+            },
+            timing: function(c) {
+                let n = c.d.coups || 3, largeur = c.d.zone || 20, ok = 0;
+                c.consigne(sub(UI_PLUS.timing, { n: n }));
+                let barre = document.createElement("div"); barre.style.cssText = "position:relative; width:100%; height:30px; background:#0b0f19; border:2px solid #00ffcc; border-radius:4px; margin:10px 0; overflow:hidden;";
+                let vert = document.createElement("div"), curseur = document.createElement("div");
+                let curs = document.createElement("div");
+                vert.style.cssText = "position:absolute; top:0; height:100%; background:rgba(0,255,102,0.55);";
+                curseur.style.cssText = "position:absolute; top:0; width:4px; height:100%; background:#ffffff;";
+                barre.append(vert, curseur);
+                let compteur = document.createElement("div"); compteur.style.cssText = "color:#00ffcc; font-size:14px; margin:4px 0;";
+                let pos = 0, dir = 1, vitesse = 1.6;
+                function nouvelleZone() { let g = Math.random() * (100 - largeur); vert.style.left = g + "%"; vert.style.width = largeur + "%"; vert.dataset.g = g; }
+                function maj() { compteur.innerText = "🎯 " + ok + " / " + n; }
+                nouvelleZone(); maj();
+                let tick = setInterval(function() {
+                    if (!c.actif()) { clearInterval(tick); return; }
+                    pos += dir * vitesse; if (pos >= 100) { pos = 100; dir = -1; } if (pos <= 0) { pos = 0; dir = 1; }
+                    curseur.style.left = "calc(" + pos + "% - 2px)";
+                }, 16);
+                let stop = creerBtnTache(tx(UI_PLUS.stop), function() {
+                    let g = parseFloat(vert.dataset.g);
+                    if (pos >= g && pos <= g + largeur) { ok++; maj(); vitesse += 0.3; if (ok >= n) { clearInterval(tick); okPlus(c); } else nouvelleZone(); }
+                    else fautePlus(c, 5);
+                }, "text-align:center; font-weight:bold; font-size:16px; padding:14px;");
+                c.grille.append(barre, compteur, stop);
+                c.chrono(60);
+            },
+            bits: function(c) {
+                c.consigne(tx(UI_PLUS.bits));
+                let valeurs = melanger(c.d.valeurs).slice(0, 2), manche = 0;
+                let cible = document.createElement("div"); cible.style.cssText = "color:#ffaa00; font-size:18px; font-weight:bold; margin:8px 0;";
+                let rang = document.createElement("div"); rang.style.cssText = "display:grid; grid-template-columns:repeat(8,1fr); gap:3px;";
+                let etats = [0, 0, 0, 0, 0, 0, 0, 0], bs = [];
+                for (let i = 0; i < 8; i++) {
+                    let poids = 128 >> i;
+                    let b = creerBtnTache("0", function(bt) { etats[i] ^= 1; bt.innerText = etats[i]; bt.style.backgroundColor = etats[i] ? "#1d3b38" : "#0b0f19"; }, "text-align:center; padding:12px 0; margin:0; font-size:16px;");
+                    b.title = "" + poids; let w = document.createElement("div"); w.style.cssText = "text-align:center; color:#8892b0; font-size:10px;"; w.innerText = poids;
+                    let col = document.createElement("div"); col.append(w, b); rang.appendChild(col); bs.push(b);
+                }
+                function montrer() { cible.innerText = tx(UI_PLUS.binaire) + valeurs[manche] + "  (" + (manche + 1) + "/" + valeurs.length + ")"; etats.fill(0); bs.forEach(function(b) { b.innerText = "0"; b.style.backgroundColor = "#0b0f19"; }); }
+                let val = creerBtnTache(tx(UI_PLUS.valider), function() {
+                    let v = etats.reduce(function(a, e, i) { return a + (e ? 128 >> i : 0); }, 0);
+                    if (v === valeurs[manche]) { manche++; if (manche >= valeurs.length) okPlus(c); else { c.msg(tx(UI_TACHE.ok), "#00ffcc"); montrer(); } }
+                    else fautePlus(c, 6);
+                }, "text-align:center; background:#00ffcc; color:#0b0f19; margin-top:10px;");
+                c.grille.append(cible, rang, val); montrer();
+                c.chrono(75);
+            },
+            base64: function(c) {
+                c.consigne(tx(UI_PLUS.base64));
+                let mot = c.d.mots[RND(c.d.mots.length)];
+                let p = document.createElement("p"); p.style.cssText = "color:#ffcc00; font-size:20px; letter-spacing:1px; font-family:'Courier New',monospace;"; p.innerText = btoa(mot);
+                c.grille.appendChild(p);
+                let champ = creerChampTache("…", function(v) {
+                    if (v.trim().toUpperCase() === mot) okPlus(c); else { fautePlus(c, 8); champ.champ.value = ""; }
+                });
+                c.grille.appendChild(champ); champ.champ.focus();
+                c.chrono(60);
+            },
+            cocher: function(c) {
+                c.consigne(tx(c.d.q) + "\n" + tx(UI_PLUS.cocher));
+                let sel = new Set(), bs = [];
+                let items = melanger(c.d.items);
+                items.forEach(function(it, i) {
+                    let b = creerBtnTache(tx(it[0]), function(bt) {
+                        if (sel.has(i)) { sel.delete(i); bt.style.backgroundColor = "#0b0f19"; bt.style.color = "#00ffcc"; }
+                        else { sel.add(i); bt.style.backgroundColor = "#1d3b38"; bt.style.color = "#ffffff"; }
+                    }, BASE_BTN_PLUS);
+                    bs.push(b); c.grille.appendChild(b);
+                });
+                c.grille.appendChild(creerBtnTache(tx(UI_PLUS.valider), function() {
+                    let bon = items.every(function(it, i) { return sel.has(i) === it[1]; });
+                    if (bon) okPlus(c); else fautePlus(c, 8);
+                }, "text-align:center; background:#00ffcc; color:#0b0f19; margin-top:8px;"));
+                c.chrono(60);
+            },
+            assoc: function(c) {
+                c.consigne(tx(UI_PLUS.assoc));
+                c.grille.style.display = "grid"; c.grille.style.gridTemplateColumns = "100px 1fr"; c.grille.style.gap = "6px";
+                let colG = document.createElement("div"), colD = document.createElement("div");
+                let sel = null, faits = 0, btnsG = [], paires = c.d.paires;
+                paires.forEach(function(pa, i) {
+                    let b = creerBtnTache(tx(pa[0]), function(bt) {
+                        btnsG.forEach(function(x) { if (!x.disabled) x.style.backgroundColor = "#0b0f19"; });
+                        sel = { id: i, bt: bt }; bt.style.backgroundColor = "#1d3b38";
+                    }, "text-align:center; font-weight:bold; font-size:11px;");
+                    btnsG.push(b); colG.appendChild(b);
+                });
+                melanger(paires.map(function(pa, i) { return { t: tx(pa[1]), i: i }; })).forEach(function(o) {
+                    colD.appendChild(creerBtnTache(o.t, function(bt) {
+                        if (!sel) return;
+                        if (sel.id === o.i) { marquerBtn(bt, true); marquerBtn(sel.bt, true); sel = null; faits++; if (faits >= paires.length) okPlus(c); }
+                        else { bt.style.backgroundColor = "#ff0055"; setTimeout(function() { if (!bt.disabled) bt.style.backgroundColor = "#0b0f19"; }, 500); fautePlus(c, 5); }
+                    }, "font-size:11px; min-height:44px;"));
+                });
+                c.grille.appendChild(colG); c.grille.appendChild(colD);
+                c.chrono(60);
+            },
+            cibles: function(c) {
+                let n = c.d.n || 6, ms = c.d.ms || 1100, touches = 0;
+                c.consigne(sub(UI_PLUS.cibles, { n: n }));
+                let terrain = document.createElement("div"); terrain.style.cssText = "position:relative; width:100%; height:170px; background:#0b0f19; border:2px solid #00ffcc; border-radius:4px; margin:8px 0; overflow:hidden;";
+                let compteur = document.createElement("div"); compteur.style.cssText = "color:#00ffcc; font-size:14px;";
+                c.grille.append(terrain, compteur);
+                let minuterie = null;
+                function maj() { compteur.innerText = "🎯 " + touches + " / " + n; }
+                function apparait() {
+                    if (!c.actif()) return;
+                    terrain.innerHTML = "";
+                    let t = document.createElement("button"); t.innerText = c.d.symbole || "🎯";
+                    t.style.cssText = "position:absolute; width:44px; height:44px; font-size:22px; background:#ff0055; border:2px solid #fff; border-radius:50%; cursor:pointer; left:" + Math.floor(Math.random() * 85) + "%; top:" + Math.floor(Math.random() * 65) + "%;";
+                    t.onclick = function(e) { e.stopPropagation(); clearTimeout(minuterie); touches++; maj(); terrain.innerHTML = ""; if (touches >= n) okPlus(c); else setTimeout(apparait, 250); };
+                    terrain.appendChild(t);
+                    minuterie = setTimeout(function() { if (!c.actif()) return; c.ajouter(-4); c.msg(tx(UI_TACHE.faux) + " : −4 s"); apparait(); }, ms);
+                }
+                maj(); setTimeout(apparait, 500);
+                c.chrono(60);
+            },
+            calcul: function(c) {
+                c.consigne(tx(UI_PLUS.calcul));
+                let p = document.createElement("p"); p.style.cssText = "color:#ffffff; font-size:15px; line-height:1.4; text-align:left;"; p.innerText = tx(c.d.q);
+                c.grille.appendChild(p);
+                let champ = creerChampTache("0", function(v) {
+                    v = v.trim();
+                    if (c.d.rep.map(String).indexOf(v) >= 0) okPlus(c); else { fautePlus(c, 8); champ.champ.value = ""; }
+                }, { max: 8, numerique: true });
+                c.grille.appendChild(champ); champ.champ.focus();
+                c.chrono(60);
+            }
+        });
+
+        function lancerTachePiratage(callbackSucces, type, zone, donnees) {
             type = TACHES[type] ? type : "quiz"; zone = zone || 0;
             tacheActive = true;
             try { touches.q = false; touches.d = false; } catch (e) {}
@@ -1707,7 +1963,7 @@
             let reste = 0, fini = false, chronoOk = false;
             function majChrono() { chrono.innerText = "⏱️ " + reste; chrono.style.color = reste <= 10 ? "#ff0055" : "#ffaa00"; }
             const c = {
-                zone: zone, grille: grille,
+                zone: zone, d: donnees, grille: grille,
                 actif: function() { return !fini && jeton === tacheJeton; },
                 chronoLance: function() { return chronoOk; },
                 consigne: function(t) { consigne.innerText = t; },
@@ -1729,7 +1985,7 @@
                     if (fini) return; fini = true; clearInterval(tacheMinuteur);
                     grille.style.pointerEvents = "none";
                     statut.innerText = m + " " + tx(UI_TACHE.retry); statut.style.color = "#ffaa00";
-                    setTimeout(function() { if (jeton === tacheJeton) lancerTachePiratage(callbackSucces, type, zone); }, 1500);
+                    setTimeout(function() { if (jeton === tacheJeton) lancerTachePiratage(callbackSucces, type, zone, donnees); }, 1500);
                 }
             };
             chrono.innerText = ""; consigne.innerText = "";
@@ -1778,16 +2034,21 @@
             let nbMissions = epreuvesHistoire.reduce((a, e) => a + e.missions.length, 0);
             let h = document.createElement("h2"); h.style.cssText = "color:#00ffcc; margin-top:0;"; h.innerText = "🧪 TEST DE L'HISTOIRE";
             let info = document.createElement("p"); info.style.cssText = "color:#8892b0; font-size:12px; line-height:1.4;";
-            info.innerText = nbMissions + " missions · " + totalQuiz + " questions de quiz au total. Clique ▶ pour jouer une mission comme en vrai (sans rien débloquer).";
+            info.innerText = nbMissions + " missions classées par thème (clique un thème pour le déplier) · " + totalQuiz + " questions de quiz. Clique ▶ pour jouer une mission comme en vrai (sans rien débloquer).";
             boite.append(h, info);
             epreuvesHistoire.forEach(function(ep, z) {
-                let t = document.createElement("div"); t.innerText = tx(ep.nom) + "  —  " + ep.cible + " 💽"; t.style.cssText = "color:#ffaa00; font-size:12px; letter-spacing:1px; margin:12px 0 6px; border-bottom:1px dashed rgba(255,170,0,0.4); padding-bottom:3px;";
-                boite.appendChild(t);
+                let det = document.createElement("details");
+                det.style.cssText = "margin:10px 0;";
+                if (z === 0) det.open = true;
+                let sm = document.createElement("summary");
+                sm.innerText = tx(ep.nom) + "  —  " + ep.missions.length + " missions  ·  " + ep.cible + " 💽";
+                sm.style.cssText = "color:#ffaa00; font-size:13px; letter-spacing:1px; cursor:pointer; padding:6px 0; border-bottom:1px dashed rgba(255,170,0,0.4);";
+                det.appendChild(sm);
                 ep.missions.forEach(function(mi) {
                     let l = document.createElement("div");
-                    l.style.cssText = "display:flex; align-items:center; gap:6px; margin-bottom:6px; background:#0b0f19; padding:6px; border-radius:4px; border:1px solid #3a4454;";
+                    l.style.cssText = "display:flex; align-items:center; gap:6px; margin:6px 0; background:#0b0f19; padding:6px; border-radius:4px; border:1px solid #3a4454;";
                     let n = document.createElement("span"); n.style.cssText = "flex:1; color:#00ffcc; font-size:12px;";
-                    n.innerText = mi.icone + " " + tx(mi.texte) + "  [" + mi.tache + " · " + nbVariantesMission(mi.tache, z) + "]";
+                    n.innerText = mi.icone + " " + tx(mi.texte) + "  [" + mi.tache + (mi.plus ? "" : " · " + nbVariantesMission(mi.tache, z)) + "]";
                     let b = boutonNiveau("▶", "Tester cette mission", "#00ffcc", "#0b0f19", function() {
                         fermerTestHistoire();
                         testHistoireEnCours = true;
@@ -1795,10 +2056,11 @@
                             testHistoireEnCours = false;
                             toast("✅ " + tx(mi.fin) + " (test)");
                             ouvrirTestHistoire();
-                        }, mi.tache, z);
+                        }, mi.tache, z, mi.d);
                     });
-                    l.append(n, b); boite.appendChild(l);
+                    l.append(n, b); det.appendChild(l);
                 });
+                boite.appendChild(det);
             });
             let f = document.createElement("button"); f.className = "btn-modal-action"; f.innerText = "FERMER"; f.onclick = fermerTestHistoire;
             boite.appendChild(f); fond.appendChild(boite); document.body.appendChild(fond);
@@ -1922,6 +2184,170 @@
                 { tache: "binary", icone: "⚙️", texte: ["Compile : convertis les valeurs demandées", "Compile: convert the requested values", "Kompiliere: wandle die verlangten Werte um", "コンパイル:指定値を変換せよ"], fin: ["Payload compilé", "Payload compiled", "Payload kompiliert", "ペイロードのコンパイル完了"] },
                 { tache: "bug", icone: "🐞", texte: ["Trouve la ligne de code vulnérable", "Find the vulnerable line of code", "Finde die verwundbare Codezeile", "脆弱なコード行を見つけよ"], fin: ["Backdoor installée", "Backdoor installed", "Backdoor installiert", "バックドア設置完了"] } ] }
         ];
+                // =====================================================================
+        // MISSIONS SUPPLÉMENTAIRES : 20 par thème (en plus des 4 de départ),
+        // soit 24 missions différentes par zone. À chaque nouvelle carte du
+        // Mode Histoire, une mission est tirée au sort parmi toutes celles de la zone.
+        // Forme : M(mécanique, icône, texte[fr,en], fin[fr,en], données)
+        // =====================================================================
+        function M(tache, icone, texte, fin, d) { return { tache: tache, icone: icone, texte: texte, fin: fin, d: d, plus: true }; }
+        const MISSIONS_PLUS = [
+            [ // ───── Zone 1 — RECONNAISSANCE : réseau, IP, ports, OSINT
+                M("vf", "✅", ["Vrai ou faux : bases du réseau", "True or false: network basics"], ["Bases du réseau validées", "Network basics validated"],
+                    { s: [[["Une adresse IP identifie un appareil sur un réseau", "An IP address identifies a device on a network"], true], [["Le port 80 est celui de HTTPS", "Port 80 is the HTTPS port"], false], [["192.168.x.x est une adresse privée", "192.168.x.x is a private address"], true], [["Ping sert à tester si une machine répond", "Ping tests whether a machine answers"], true], [["Un scan de ports ne laisse jamais aucune trace", "A port scan never leaves any trace"], false]] }),
+                M("ordre", "🧭", ["Ordonne les étapes d'une reconnaissance", "Order the steps of a reconnaissance"], ["Méthode de reconnaissance maîtrisée", "Recon method mastered"],
+                    { etapes: [["Définir la cible", "Define the target"], ["Collecter les infos publiques (OSINT)", "Collect public info (OSINT)"], ["Repérer les machines du réseau", "Find the machines on the network"], ["Scanner les ports ouverts", "Scan the open ports"], ["Identifier les services", "Identify the services"]] }),
+                M("intrus", "🕵️", ["Trouve les intrus du réseau", "Spot the network intruders"], ["Intrus repérés", "Intruders spotted"],
+                    { rangs: [{ items: ["192.168.0.1", "10.0.0.5", "172.16.4.2", "8.8.8.8"], i: 3 }, { items: ["HTTP", "HTTPS", "SSH", "JPEG"], i: 3 }, { items: ["ping", "traceroute", "nslookup", "Photoshop"], i: 3 }] }),
+                M("tri", "🗃️", ["Trie les IP : privées ou publiques", "Sort the IPs: private or public"], ["IP triées", "IPs sorted"],
+                    { a: ["IP privée", "Private IP"], b: ["IP publique", "Public IP"], items: [["192.168.1.10", 0], ["8.8.8.8", 1], ["10.1.2.3", 0], ["1.1.1.1", 1], ["172.16.0.9", 0], ["93.184.216.34", 1]] }),
+                M("lacune", "⌨️", ["Complète la commande réseau", "Complete the network command"], ["Commande exécutée", "Command executed"],
+                    { phrase: ["Pour tester si 8.8.8.8 répond, tape :   ____ 8.8.8.8", "To test whether 8.8.8.8 answers, type:   ____ 8.8.8.8"], reponses: ["ping"] }),
+                M("memo", "🧠", ["Retrouve les paires de protocoles", "Find the protocol pairs"], ["Protocoles associés", "Protocols matched"],
+                    { paires: [["DNS", ["Noms", "Names"]], ["DHCP", ["IP auto", "Auto IP"]], ["SSH", ["Distant", "Remote"]], ["HTTP", ["Web", "Web"]]] }),
+                M("timing", "📡", ["Verrouille le signal du scanner", "Lock onto the scanner signal"], ["Signal verrouillé", "Signal locked"], { coups: 3, zone: 22 }),
+                M("bits", "🔢", ["Convertis les octets d'une IP en binaire", "Convert IP octets to binary"], ["Octets convertis", "Octets converted"], { valeurs: [10, 12, 37, 64, 100, 168, 192, 255] }),
+                M("base64", "📦", ["Décode le nom de l'hôte (Base64)", "Decode the hostname (Base64)"], ["Nom d'hôte décodé", "Hostname decoded"], { mots: ["ROUTER", "SCAN", "PORT", "HOST", "GATEWAY"] }),
+                M("cocher", "🔎", ["Repère les adresses IP valides", "Spot the valid IP addresses"], ["Adresses validées", "Addresses validated"],
+                    { q: ["Coche les adresses IPv4 VALIDES.", "Tick the VALID IPv4 addresses."], items: [["192.168.1.1", true], ["256.1.1.1", false], ["10.0.0.255", true], ["1.2.3", false], ["172.16.5.4", true], ["300.300.1.1", false]] }),
+                M("assoc", "🔗", ["Associe chaque port à son service", "Match each port to its service"], ["Ports associés", "Ports matched"],
+                    { paires: [["22", "SSH"], ["53", "DNS"], ["443", "HTTPS"], ["3389", ["Bureau à distance (RDP)", "Remote Desktop (RDP)"]]] }),
+                M("cibles", "🎯", ["Balaye les cibles du réseau", "Sweep the network targets"], ["Cibles balayées", "Targets swept"], { n: 6, ms: 1200, symbole: "🖥️" }),
+                M("calcul", "🧮", ["Quel numéro de port pour HTTPS ?", "Which port number for HTTPS?"], ["Port identifié", "Port identified"],
+                    { q: ["Quel est le numéro de port par défaut de HTTPS ?", "What is the default port number of HTTPS?"], rep: [443] }),
+                M("vf", "✅", ["Vrai ou faux : ports et services", "True or false: ports and services"], ["Services reconnus", "Services recognized"],
+                    { s: [[["SSH utilise le port 22", "SSH uses port 22"], true], [["HTTPS utilise le port 21", "HTTPS uses port 21"], false], [["DNS traduit les noms en adresses IP", "DNS turns names into IP addresses"], true], [["Un serveur web écoute souvent sur le port 80 ou 443", "A web server often listens on port 80 or 443"], true], [["127.0.0.1 désigne un serveur distant", "127.0.0.1 is a remote server"], false]] }),
+                M("ordre", "🌐", ["Ordonne : visiter un site web", "Order: visiting a website"], ["Chemin d'une requête tracé", "Request path traced"],
+                    { etapes: [["Taper l'adresse du site", "Type the site address"], ["Le DNS retrouve l'adresse IP", "DNS finds the IP address"], ["Connexion au serveur", "Connect to the server"], ["Le serveur envoie la page", "The server sends the page"], ["Le navigateur affiche la page", "The browser shows the page"]] }),
+                M("intrus", "🕵️", ["Trouve l'intrus du matériel réseau", "Find the odd network device"], ["Matériel identifié", "Hardware identified"],
+                    { rangs: [{ items: ["Switch", "Routeur", "Box internet", "Clavier"], i: 3 }, { items: ["TCP", "UDP", "IP", "JPEG"], i: 3 }, { items: ["Wi-Fi", "Ethernet", "Bluetooth", "Excel"], i: 3 }] }),
+                M("tri", "🔐", ["Trie : protocole chiffré ou en clair", "Sort: encrypted or plain protocol"], ["Protocoles triés", "Protocols sorted"],
+                    { a: ["Chiffré", "Encrypted"], b: ["En clair", "Plain text"], items: [["HTTPS", 0], ["HTTP", 1], ["SSH", 0], ["Telnet", 1], ["SFTP", 0], ["FTP", 1]] }),
+                M("lacune", "🛰️", ["Complète la commande de traçage", "Complete the trace command"], ["Route tracée", "Route traced"],
+                    { phrase: ["Pour voir la route des paquets vers google.com :   ____route google.com", "To see the packets' route to google.com:   ____route google.com"], reponses: ["trace"] }),
+                M("cocher", "🔍", ["OSINT : coche les sources publiques", "OSINT: tick the public sources"], ["Sources publiques listées", "Public sources listed"],
+                    { q: ["Coche les informations PUBLIQUES utiles à un enquêteur (OSINT).", "Tick the PUBLIC information useful to an investigator (OSINT)."], items: [[["Profil public sur un réseau social", "Public social-media profile"], true], [["Site web de l'entreprise", "Company website"], true], [["Mot de passe du Wi-Fi interne", "Internal Wi-Fi password"], false], [["Offres d'emploi publiées", "Published job offers"], true], [["Contenu d'un coffre-fort chiffré", "Contents of an encrypted vault"], false], [["Registre WHOIS d'un domaine", "WHOIS record of a domain"], true]] }),
+                M("calcul", "🧮", ["Valeur maximale d'un octet IP", "Maximum value of an IP octet"], ["Limite trouvée", "Limit found"],
+                    { q: ["Dans une adresse IPv4, quelle est la plus grande valeur possible d'un nombre (un octet) ?", "In an IPv4 address, what is the largest possible value of one number (one octet)?"], rep: [255] })
+            ],
+            [ // ───── Zone 2 — INTRUSION : mots de passe, phishing, social engineering
+                M("vf", "✅", ["Vrai ou faux : mots de passe", "True or false: passwords"], ["Mots de passe maîtrisés", "Passwords mastered"],
+                    { s: [[["Un mot de passe long est plus sûr qu'un court", "A long password is safer than a short one"], true], [["On peut envoyer son mot de passe à un collègue par message", "You can send your password to a colleague by message"], false], [["La double authentification (2FA) ajoute une protection", "Two-factor authentication (2FA) adds protection"], true], [["« password123 » est un bon mot de passe", "“password123” is a good password"], false], [["Un e-mail très urgent peut être du phishing", "A very urgent e-mail can be phishing"], true]] }),
+                M("ordre", "🎣", ["Ordonne les étapes d'un phishing", "Order the steps of a phishing attack"], ["Chaîne d'attaque comprise", "Attack chain understood"],
+                    { etapes: [["Envoi d'un faux e-mail", "A fake e-mail is sent"], ["La victime clique sur le lien", "The victim clicks the link"], ["Une fausse page de connexion s'affiche", "A fake login page appears"], ["Les identifiants sont saisis", "The credentials are typed in"], ["L'attaquant se connecte au vrai compte", "The attacker logs into the real account"]] }),
+                M("intrus", "🕵️", ["Repère l'intrus de la sécurité", "Spot the security odd-one-out"], ["Intrus repérés", "Intruders spotted"],
+                    { rangs: [{ items: ["Xk9#mP2$vL", "T7!qz4@Wn8", "Qw3$rT9&Lp", "soleil"], i: 3 }, { items: ["Faute d'orthographe", "Urgence exagérée", "Lien étrange", "Salutation par ton vrai nom"], i: 3 }, { items: ["Empreinte digitale", "Code SMS", "Mot de passe", "Couleur préférée"], i: 3 }] }),
+                M("tri", "🔑", ["Trie : mot de passe fort ou faible", "Sort: strong or weak password"], ["Mots de passe triés", "Passwords sorted"],
+                    { a: ["Fort", "Strong"], b: ["Faible", "Weak"], items: [["123456", 1], ["T7#vq9!Lm2$x", 0], ["qwerty", 1], ["Tr0ub4dor&3xK", 0], ["azerty123", 1], ["m!R8$kz2Qw#p", 0]] }),
+                M("lacune", "🔨", ["Complète : attaque par force brute", "Complete: brute-force attack"], ["Attaque nommée", "Attack named"],
+                    { phrase: ["Attaque par force ____ : on essaie un maximum de mots de passe.", "____-force attack: trying as many passwords as possible."], reponses: ["brute"] }),
+                M("memo", "🧠", ["Retrouve les paires d'attaques", "Find the attack pairs"], ["Attaques associées", "Attacks matched"],
+                    { paires: [["Phishing", ["Faux mail", "Fake mail"]], ["2FA", ["2 preuves", "2 proofs"]], ["Brute force", ["Essais massifs", "Mass tries"]], ["Spoofing", ["Usurpation", "Impersonation"]]] }),
+                M("timing", "🔓", ["Crochète la serrure du sas", "Pick the airlock's lock"], ["Serrure crochetée", "Lock picked"], { coups: 3, zone: 18 }),
+                M("bits", "🔢", ["Encode des lettres (ASCII) en binaire", "Encode letters (ASCII) in binary"], ["Lettres encodées", "Letters encoded"], { valeurs: [65, 66, 67, 97, 48, 33, 90, 122] }),
+                M("base64", "📦", ["Décode l'identifiant volé (Base64)", "Decode the stolen login (Base64)"], ["Identifiant décodé", "Login decoded"], { mots: ["PASSWORD", "ADMIN", "LOGIN", "TOKEN", "ROOT"] }),
+                M("cocher", "🛡️", ["Coche les bons réflexes de sécurité", "Tick the good security habits"], ["Bons réflexes validés", "Good habits validated"],
+                    { q: ["Coche les BONS réflexes.", "Tick the GOOD habits."], items: [[["Activer la double authentification", "Turn on two-factor authentication"], true], [["Réutiliser le même mot de passe partout", "Reuse the same password everywhere"], false], [["Utiliser un gestionnaire de mots de passe", "Use a password manager"], true], [["Cliquer sur un lien reçu d'un SMS inconnu", "Click a link from an unknown text message"], false], [["Mettre à jour ses appareils", "Keep devices updated"], true], [["Écrire son mot de passe sur un post-it visible", "Write the password on a visible sticky note"], false]] }),
+                M("assoc", "🔗", ["Associe chaque attaque à sa définition", "Match each attack to its definition"], ["Attaques associées", "Attacks matched"],
+                    { paires: [["Phishing", ["Faux message", "Fake message"]], ["Brute force", ["Essais massifs", "Mass guessing"]], ["Keylogger", ["Enregistre les touches", "Records keystrokes"]], ["Social eng.", ["Manipuler les gens", "Manipulating people"]]] }),
+                M("cibles", "🎯", ["Neutralise les caméras de surveillance", "Neutralize the security cameras"], ["Caméras neutralisées", "Cameras neutralized"], { n: 6, ms: 1000, symbole: "📹" }),
+                M("calcul", "🧮", ["Combien de codes à 4 chiffres ?", "How many 4-digit codes?"], ["Force brute chiffrée", "Brute force quantified"],
+                    { q: ["Un code de 4 chiffres (chacun de 0 à 9) : combien de codes différents existe-t-il ?", "A 4-digit code (each digit 0–9): how many different codes exist?"], rep: [10000] }),
+                M("vf", "✅", ["Vrai ou faux : ingénierie sociale", "True or false: social engineering"], ["Ingénierie sociale comprise", "Social engineering understood"],
+                    { s: [[["Un inconnu qui demande ton code SMS est de confiance", "A stranger asking for your SMS code can be trusted"], false], [["On peut vérifier l'adresse complète de l'expéditeur d'un e-mail", "You can check the full sender address of an e-mail"], true], [["Un vrai support technique ne demande jamais ton mot de passe", "Real tech support never asks for your password"], true], [["Un lien raccourci est toujours sûr", "A shortened link is always safe"], false], [["Une clé USB trouvée dans la rue peut être piégée", "A USB stick found in the street can be booby-trapped"], true]] }),
+                M("ordre", "🔐", ["Ordonne : créer un bon mot de passe", "Order: creating a good password"], ["Mot de passe créé", "Password created"],
+                    { etapes: [["Choisir une phrase longue", "Pick a long phrase"], ["Ajouter majuscules, chiffres, symboles", "Add capitals, digits, symbols"], ["Ne jamais le réutiliser", "Never reuse it"], ["Le ranger dans un gestionnaire", "Store it in a password manager"], ["Activer la double authentification", "Turn on two-factor authentication"]] }),
+                M("intrus", "🕵️", ["Trouve l'intrus de l'authentification", "Find the authentication odd-one-out"], ["Intrus repérés", "Intruders spotted"],
+                    { rangs: [{ items: ["Mot de passe", "Code SMS", "Empreinte digitale", "Fond d'écran"], i: 3 }, { items: ["Expéditeur inconnu", "Pièce jointe suspecte", "Lien étrange", "Message attendu d'un collègue"], i: 3 }, { items: ["Phishing", "Smishing", "Vishing", "Jardinage"], i: 3 }] }),
+                M("tri", "📧", ["Trie : message légitime ou phishing", "Sort: legitimate or phishing"], ["Messages triés", "Messages sorted"],
+                    { a: ["Légitime", "Legitimate"], b: ["Phishing", "Phishing"], items: [[["« Compte bloqué, clique vite ! »", "“Account blocked, click fast!”"], 1], [["Facture attendue de ton fournisseur habituel", "Expected invoice from your usual supplier"], 0], [["« Gagne un iPhone gratuit ! »", "“Win a free iPhone!”"], 1], [["Rappel d'un rendez-vous que tu as pris", "Reminder for an appointment you booked"], 0], [["« Colis en attente : paie 1 € ici »", "“Parcel waiting: pay €1 here”"], 1], [["Réunion d'équipe demain (agenda interne)", "Team meeting tomorrow (internal calendar)"], 0]] }),
+                M("lacune", "📱", ["Complète : authentification à 2 facteurs", "Complete: two-factor authentication"], ["2FA comprise", "2FA understood"],
+                    { phrase: ["Authentification à ____ facteurs : mot de passe + code SMS.", "____-factor authentication: password + SMS code."], reponses: ["deux", "2", "two"] }),
+                M("cocher", "🚫", ["Coche les mots de passe FAIBLES", "Tick the WEAK passwords"], ["Faiblesses repérées", "Weaknesses spotted"],
+                    { q: ["Coche les mots de passe FAIBLES.", "Tick the WEAK passwords."], items: [["123456", true], ["azerty", true], ["T7#vq9!Lm2$x", false], ["motdepasse", true], ["J'aime3Chats&2Chiens!", false], ["admin", true]] }),
+                M("calcul", "🧮", ["Combien de preuves pour la 2FA ?", "How many proofs for 2FA?"], ["2FA chiffrée", "2FA counted"],
+                    { q: ["La double authentification (2FA) demande combien de preuves d'identité ?", "Two-factor authentication (2FA) asks for how many proofs of identity?"], rep: [2] })
+            ],
+            [ // ───── Zone 3 — EXFILTRATION : chiffrement, données, logs, transfert
+                M("vf", "✅", ["Vrai ou faux : chiffrement", "True or false: encryption"], ["Chiffrement maîtrisé", "Encryption mastered"],
+                    { s: [[["HTTPS chiffre les échanges avec un site", "HTTPS encrypts the traffic with a site"], true], [["Le Base64 est un chiffrement très sûr", "Base64 is very secure encryption"], false], [["Une clé privée doit rester secrète", "A private key must stay secret"], true], [["Un hash se « dé-hache » facilement", "A hash is easily “un-hashed”"], false], [["Un VPN chiffre le trafic", "A VPN encrypts the traffic"], true]] }),
+                M("ordre", "📤", ["Ordonne les étapes d'une exfiltration", "Order the steps of an exfiltration"], ["Exfiltration planifiée", "Exfiltration planned"],
+                    { etapes: [["Choisir les données à voler", "Choose the data to steal"], ["Les compresser", "Compress them"], ["Les chiffrer", "Encrypt them"], ["Les envoyer vers l'extérieur", "Send them out"], ["Effacer les traces", "Erase the traces"]] }),
+                M("intrus", "🕵️", ["Trouve l'intrus du chiffrement", "Find the cryptography odd-one-out"], ["Intrus repérés", "Intruders spotted"],
+                    { rangs: [{ items: ["AES", "RSA", "ChaCha20", "HTTP"], i: 3 }, { items: ["SHA-256", "MD5", "SHA-1", "AES"], i: 3 }, { items: ["Clé publique", "Clé privée", "Certificat", "Souris"], i: 3 }] }),
+                M("tri", "#️⃣", ["Trie : chiffrement ou hachage", "Sort: encryption or hashing"], ["Algorithmes triés", "Algorithms sorted"],
+                    { a: ["Chiffrement", "Encryption"], b: ["Hachage", "Hashing"], items: [["AES", 0], ["SHA-256", 1], ["RSA", 0], ["MD5", 1], ["ChaCha20", 0], ["SHA-1", 1]] }),
+                M("lacune", "🗝️", ["Complète : fichier chiffré", "Complete: encrypted file"], ["Principe compris", "Principle understood"],
+                    { phrase: ["Un fichier chiffré est illisible sans la ____.", "An encrypted file is unreadable without the ____."], reponses: ["clé", "cle", "key"] }),
+                M("memo", "🧠", ["Retrouve les paires de crypto", "Find the crypto pairs"], ["Notions associées", "Concepts matched"],
+                    { paires: [["AES", ["Symétrique", "Symmetric"]], ["RSA", ["Asymétrique", "Asymmetric"]], ["SHA", ["Empreinte", "Fingerprint"]], ["VPN", ["Tunnel", "Tunnel"]]] }),
+                M("timing", "⏱️", ["Synchronise le transfert avant l'alerte", "Sync the transfer before the alert"], ["Transfert synchronisé", "Transfer synced"], { coups: 4, zone: 16 }),
+                M("bits", "🔢", ["Règle les bits d'une clé", "Set the bits of a key"], ["Clé réglée", "Key set"], { valeurs: [5, 10, 20, 40, 80, 160, 15, 255] }),
+                M("base64", "📦", ["Décode le fichier exfiltré (Base64)", "Decode the exfiltrated file (Base64)"], ["Fichier décodé", "File decoded"], { mots: ["SECRET", "DATA", "FILE", "KEY", "BACKUP"] }),
+                M("cocher", "💎", ["Coche les données sensibles", "Tick the sensitive data"], ["Données sensibles listées", "Sensitive data listed"],
+                    { q: ["Coche les données SENSIBLES à protéger.", "Tick the SENSITIVE data to protect."], items: [[["Mots de passe", "Passwords"], true], [["Numéro de carte bancaire", "Bank card number"], true], [["Météo du jour", "Today's weather"], false], [["Dossiers médicaux", "Medical records"], true], [["Recette de gâteau", "Cake recipe"], false], [["Clé privée", "Private key"], true]] }),
+                M("assoc", "🔗", ["Associe chaque notion à sa définition", "Match each notion to its definition"], ["Notions associées", "Notions matched"],
+                    { paires: [["Hash", ["Empreinte d'un fichier", "A file's fingerprint"]], ["VPN", ["Tunnel chiffré", "Encrypted tunnel"]], ["Clé publique", ["Sert à chiffrer", "Used to encrypt"]], ["Log", ["Journal d'événements", "Event journal"]]] }),
+                M("cibles", "🎯", ["Intercepte les paquets de données", "Intercept the data packets"], ["Paquets interceptés", "Packets intercepted"], { n: 7, ms: 900, symbole: "📦" }),
+                M("calcul", "🧮", ["Combien d'octets dans 1 Ko ?", "How many bytes in 1 KB?"], ["Taille calculée", "Size computed"],
+                    { q: ["En informatique (base 2), combien d'octets contient 1 Ko (kibioctet) ?", "In computing (base 2), how many bytes are in 1 KiB?"], rep: [1024] }),
+                M("vf", "✅", ["Vrai ou faux : clés et certificats", "True or false: keys and certificates"], ["Clés comprises", "Keys understood"],
+                    { s: [[["Le chiffrement symétrique utilise la même clé des deux côtés", "Symmetric encryption uses the same key on both sides"], true], [["Le chiffrement asymétrique utilise deux clés", "Asymmetric encryption uses two keys"], true], [["Stocker un mot de passe en clair est une bonne pratique", "Storing a password in plain text is good practice"], false], [["Un certificat HTTPS aide à prouver l'identité d'un site", "An HTTPS certificate helps prove a site's identity"], true], [["Un e-mail est chiffré automatiquement de bout en bout", "An e-mail is automatically encrypted end to end"], false]] }),
+                M("ordre", "🧹", ["Ordonne : effacer ses traces", "Order: wiping your traces"], ["Traces effacées", "Traces wiped"],
+                    { etapes: [["Se connecter au serveur", "Log into the server"], ["Repérer les journaux (logs)", "Find the logs"], ["Supprimer les lignes compromettantes", "Delete the incriminating lines"], ["Se déconnecter proprement", "Log out cleanly"]] }),
+                M("intrus", "🕵️", ["Trouve l'intrus des protocoles sûrs", "Find the secure-protocol odd-one-out"], ["Intrus repérés", "Intruders spotted"],
+                    { rangs: [{ items: ["TLS", "SSL", "HTTPS", "BMP"], i: 3 }, { items: ["Compression", "Chiffrement", "Transfert", "Mélange de cartes"], i: 3 }, { items: ["WPA3", "VPN", "SSH", "Fax"], i: 3 }] }),
+                M("tri", "🔓", ["Trie : information publique ou secrète", "Sort: public or secret information"], ["Informations triées", "Information sorted"],
+                    { a: ["Public", "Public"], b: ["Secret", "Secret"], items: [["Clé publique", 0], ["Clé privée", 1], ["Certificat", 0], ["Mot de passe", 1], ["Adresse e-mail pro", 0], ["Code PIN", 1]] }),
+                M("lacune", "🔒", ["Complète : HTTPS", "Complete: HTTPS"], ["HTTPS compris", "HTTPS understood"],
+                    { phrase: ["HTTPS = HTTP + ____ (le protocole de chiffrement).", "HTTPS = HTTP + ____ (the encryption protocol)."], reponses: ["tls", "ssl", "tls/ssl", "ssl/tls"] }),
+                M("cocher", "📨", ["Coche les transferts sûrs", "Tick the safe transfers"], ["Transferts sûrs choisis", "Safe transfers chosen"],
+                    { q: ["Coche les moyens SÛRS d'envoyer un fichier confidentiel.", "Tick the SAFE ways to send a confidential file."], items: [["SFTP", true], [["E-mail en clair avec le mot de passe dans le même mail", "Plain e-mail with the password in the same mail"], false], [["Archive chiffrée + mot de passe donné par un autre canal", "Encrypted archive + password given through another channel"], true], [["Clé USB trouvée par terre", "USB stick found on the floor"], false], [["Lien partagé protégé par authentification", "Shared link protected by authentication"], true], [["Forum public", "Public forum"], false]] }),
+                M("calcul", "🧮", ["Combien de bits dans un octet ?", "How many bits in a byte?"], ["Octet compris", "Byte understood"],
+                    { q: ["Combien de bits y a-t-il dans 1 octet ?", "How many bits are there in 1 byte?"], rep: [8] })
+            ],
+            [ // ───── Zone 4 — BACKDOOR : malwares, vulnérabilités, bugs
+                M("vf", "✅", ["Vrai ou faux : malwares", "True or false: malware"], ["Malwares reconnus", "Malware recognized"],
+                    { s: [[["Un ransomware chiffre tes fichiers et réclame une rançon", "Ransomware encrypts your files and demands a ransom"], true], [["Une mise à jour peut corriger une faille", "An update can fix a vulnerability"], true], [["Un cheval de Troie se fait passer pour un programme utile", "A Trojan pretends to be a useful program"], true], [["Un antivirus rend invulnérable", "An antivirus makes you invulnerable"], false], [["Un bug est toujours une faille de sécurité", "A bug is always a security hole"], false]] }),
+                M("ordre", "🚪", ["Ordonne : installer une backdoor", "Order: installing a backdoor"], ["Backdoor planifiée", "Backdoor planned"],
+                    { etapes: [["Trouver une faille", "Find a vulnerability"], ["Exploiter la faille", "Exploit the vulnerability"], ["Installer la porte dérobée", "Install the backdoor"], ["Cacher sa présence", "Hide its presence"], ["Revenir plus tard sans être vu", "Come back later unseen"]] }),
+                M("intrus", "🕵️", ["Trouve l'intrus des menaces", "Find the threats odd-one-out"], ["Intrus repérés", "Intruders spotted"],
+                    { rangs: [{ items: ["Virus", "Ver", "Cheval de Troie", "Clavier"], i: 3 }, { items: ["Injection SQL", "XSS", "Buffer overflow", "Sauvegarde"], i: 3 }, { items: ["Pare-feu", "Antivirus", "Mise à jour", "Ransomware"], i: 3 }] }),
+                M("tri", "🦠", ["Trie : malware ou protection", "Sort: malware or protection"], ["Menaces triées", "Threats sorted"],
+                    { a: ["Malware", "Malware"], b: ["Protection", "Protection"], items: [["Ransomware", 0], ["Antivirus", 1], ["Spyware", 0], ["Pare-feu", 1], ["Keylogger", 0], ["Sauvegarde", 1]] }),
+                M("lacune", "🚪", ["Complète : porte dérobée", "Complete: back door"], ["Terme trouvé", "Term found"],
+                    { phrase: ["Une porte dérobée s'appelle en anglais une ____.", "A hidden back entrance into a system is called a ____."], reponses: ["backdoor"] }),
+                M("memo", "🧠", ["Retrouve les paires de malwares", "Find the malware pairs"], ["Malwares associés", "Malware matched"],
+                    { paires: [["Virus", ["Se copie", "Copies itself"]], ["Ver", ["Se propage seul", "Spreads alone"]], ["Troie", ["Se cache", "Hides"]], ["Ransomware", ["Rançon", "Ransom"]]] }),
+                M("timing", "💉", ["Injecte le payload au bon moment", "Inject the payload at the right time"], ["Payload injecté", "Payload injected"], { coups: 4, zone: 14 }),
+                M("bits", "🔢", ["Règle les bits du shellcode", "Set the shellcode bits"], ["Shellcode réglé", "Shellcode set"], { valeurs: [3, 13, 31, 77, 99, 127, 200, 250] }),
+                M("base64", "📦", ["Décode le payload (Base64)", "Decode the payload (Base64)"], ["Payload décodé", "Payload decoded"], { mots: ["BACKDOOR", "MALWARE", "EXPLOIT", "PATCH", "ROOTKIT"] }),
+                M("cocher", "🦠", ["Coche les signes d'infection", "Tick the infection signs"], ["Infection diagnostiquée", "Infection diagnosed"],
+                    { q: ["Coche les signes d'un ordinateur INFECTÉ.", "Tick the signs of an INFECTED computer."], items: [[["Programmes inconnus qui se lancent seuls", "Unknown programs launching by themselves"], true], [["Mises à jour installées normalement", "Updates installed normally"], false], [["Fichiers qui deviennent illisibles", "Files becoming unreadable"], true], [["Antivirus désactivé tout seul", "Antivirus turned off by itself"], true], [["Batterie chargée à 100 %", "Battery at 100%"], false], [["Navigateur redirigé vers des sites étranges", "Browser redirected to strange sites"], true]] }),
+                M("assoc", "🔗", ["Associe chaque terme à sa définition", "Match each term to its definition"], ["Termes associés", "Terms matched"],
+                    { paires: [["Patch", ["Correctif", "Fix"]], ["Exploit", ["Code qui abuse d'une faille", "Code abusing a flaw"]], ["Zero-day", ["Faille encore inconnue", "Not-yet-known flaw"]], ["Sandbox", ["Zone isolée", "Isolated area"]]] }),
+                M("cibles", "🎯", ["Écrase les bugs qui apparaissent", "Squash the bugs that pop up"], ["Bugs écrasés", "Bugs squashed"], { n: 7, ms: 900, symbole: "🐞" }),
+                M("calcul", "🧮", ["Combien de bits dans 2 octets ?", "How many bits in 2 bytes?"], ["Calcul validé", "Calculation validated"],
+                    { q: ["Combien y a-t-il de bits dans 2 octets ?", "How many bits are there in 2 bytes?"], rep: [16] }),
+                M("vf", "✅", ["Vrai ou faux : se protéger", "True or false: protecting yourself"], ["Protections validées", "Protections validated"],
+                    { s: [[["Mettre à jour ses logiciels réduit les risques", "Updating your software reduces risks"], true], [["Cliquer sur « Autoriser » partout est sans danger", "Clicking “Allow” everywhere is harmless"], false], [["Un fichier .exe d'origine inconnue peut contenir un malware", "An .exe of unknown origin can contain malware"], true], [["Un pare-feu bloque certaines connexions", "A firewall blocks some connections"], true], [["Une sauvegarde hors ligne aide contre un ransomware", "An offline backup helps against ransomware"], true]] }),
+                M("ordre", "🩹", ["Ordonne : réagir à une infection", "Order: reacting to an infection"], ["Infection contenue", "Infection contained"],
+                    { etapes: [["Déconnecter l'appareil du réseau", "Disconnect the device from the network"], ["Prévenir le responsable", "Tell the person in charge"], ["Lancer une analyse antivirus", "Run an antivirus scan"], ["Restaurer depuis une sauvegarde", "Restore from a backup"], ["Changer les mots de passe", "Change the passwords"]] }),
+                M("intrus", "🕵️", ["Trouve l'intrus du code", "Find the code odd-one-out"], ["Intrus repérés", "Intruders spotted"],
+                    { rangs: [{ items: ["Python", "JavaScript", "C", "Excel"], i: 3 }, { items: ["print()", "for", "if", "Microsoft Word"], i: 3 }, { items: ["Bug", "Crash", "Erreur", "Bonbon"], i: 3 }] }),
+                M("tri", "🐞", ["Trie : simple bug ou faille de sécurité", "Sort: plain bug or security flaw"], ["Défauts triés", "Defects sorted"],
+                    { a: ["Simple bug", "Plain bug"], b: ["Faille de sécurité", "Security flaw"], items: [[["Un bouton qui ne s'affiche pas", "A button that doesn't show"], 0], [["Accès admin sans mot de passe", "Admin access without a password"], 1], [["Texte mal aligné", "Misaligned text"], 0], [["Injection SQL possible", "SQL injection possible"], 1], [["L'appli plante au clic", "The app crashes on click"], 0], [["Mot de passe visible dans le code", "Password visible in the code"], 1]] }),
+                M("lacune", "🩹", ["Complète : corriger une faille", "Complete: fixing a flaw"], ["Terme trouvé", "Term found"],
+                    { phrase: ["Pour corriger une faille, l'éditeur publie un ____ (correctif).", "To fix a flaw, the vendor releases a ____."], reponses: ["patch", "correctif"] }),
+                M("cocher", "⚠️", ["Coche les lignes de code dangereuses", "Tick the dangerous lines of code"], ["Lignes dangereuses repérées", "Dangerous lines spotted"],
+                    { q: ["Coche les lignes de code DANGEREUSES.", "Tick the DANGEROUS lines of code."], items: [["eval(input())", true], ["print(\"Bonjour\")", false], ["password = \"admin123\"", true], ["total = a + b", false], ["os.system(\"rm -rf \" + saisie)", true], ["liste.append(5)", false]] }),
+                M("calcul", "🧮", ["Quel code HTTP pour « page introuvable » ?", "Which HTTP code for “page not found”?"], ["Code identifié", "Code identified"],
+                    { q: ["Quel est le code d'erreur HTTP d'une page introuvable ?", "What is the HTTP error code for a page that can't be found?"], rep: [404] })
+            ]
+        ];
+        // Ajoute les missions de chaque thème à celles de départ
+        epreuvesHistoire.forEach(function(ep, z) { MISSIONS_PLUS[z].forEach(function(m) { ep.missions.push(m); }); });
+
         let missionChoisie = [0, 0, 0, 0];
         let progressionZones = [0, 0, 0, 0];
         let missionsFaites = [false, false, false, false];
@@ -2096,8 +2522,10 @@
             }
             let token = "";
             try { token = localStorage.getItem("cyber_hack_gh_token") || ""; } catch (e) {}
-            return { repo: cfg.repo || "", branche: cfg.branche || "", token: token };
+            return { repo: cfg.repo || "", branche: cfg.branche || "", base: (cfg.base || "").replace(/^\/+|\/+$/g, ""), token: token };
         }
+        // Chemin réel dans le dépôt (si le jeu est dans un sous-dossier du dépôt)
+        function ghChemin(p) { let b = ghConfig().base; return b ? b + "/" + p : p; }
         function ghPret() { let c = ghConfig(); return modeDevNiveauxDeverrouille && !!c.token && !!c.repo; }
         function ghStatut(msg) {
             let el = document.getElementById("statut-publics");
@@ -2130,12 +2558,14 @@
         const ghEnc = s => btoa(unescape(encodeURIComponent(s)));
         const ghDec = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ""))));
         async function ghLire(chemin) {
+            chemin = ghChemin(chemin);
             let b = await ghBranche();
             return await ghApi("GET", "/contents/" + chemin.split("/").map(encodeURIComponent).join("/") + "?ref=" + encodeURIComponent(b));
         }
         async function ghEcrire(chemin, texte, message) {
             let b = await ghBranche();
-            let ex = await ghLire(chemin);
+            let cheminLogique = chemin; chemin = ghChemin(chemin);
+            let ex = await ghLire(cheminLogique);
             let corps = { message: message, content: ghEnc(texte), branch: b };
             if (ex && ex.sha) corps.sha = ex.sha;
             await ghApi("PUT", "/contents/" + chemin.split("/").map(encodeURIComponent).join("/"), corps);
@@ -2143,6 +2573,7 @@
         async function ghSupprimer(chemin, message) {
             let b = await ghBranche();
             let ex = await ghLire(chemin);
+            chemin = ghChemin(chemin);
             if (!ex || !ex.sha) return;
             await ghApi("DELETE", "/contents/" + chemin.split("/").map(encodeURIComponent).join("/"), { message: message, sha: ex.sha, branch: b });
         }
@@ -2163,6 +2594,85 @@
             await ghEcrire("niveaux/index.json", JSON.stringify(idx), "Index des niveaux");
             derniereMajIndex = null; // forcera le rechargement au prochain passage
         }
+        // --- Assistant GitHub : tout se configure ici, sans toucher au dépôt à la main ---
+        async function ghInitialiser(journal) {
+            let c = ghConfig();
+            let info = await ghApi("GET", "");
+            if (!info) throw new Error("Dépôt introuvable : vérifie « proprio/depot » et que le jeton a accès à ce dépôt.");
+            if (info.permissions && info.permissions.push === false) throw new Error("Le jeton n'a pas le droit d'écrire : donne-lui « Contents : Read and write ».");
+            ghBrancheCache = c.branche || info.default_branch || "main";
+            journal("✅ Dépôt trouvé : " + info.full_name + " · branche « " + ghBrancheCache + " »");
+            for (let dossier of ["publics", "communautaires"]) {
+                let chemin = "niveaux/" + dossier + "/.gitkeep";
+                if (!(await ghLire(chemin))) await ghEcrire(chemin, "", "Création du dossier niveaux/" + dossier);
+                journal("📁 Dossier niveaux/" + dossier + " prêt");
+            }
+            if (!(await ghLire("niveaux/index.json"))) {
+                await ghEcrire("niveaux/index.json", JSON.stringify({ version: 2, maj: new Date().toISOString(), publics: [], communautaires: [] }), "Index des niveaux");
+            }
+            journal("📄 niveaux/index.json prêt");
+            journal("🎉 Terminé ! Les niveaux 🌐 publics et 👥 communautaires s'écrivent maintenant tout seuls dans ton dépôt.");
+        }
+        function ouvrirAssistantGithub() {
+            if (!modeDevNiveauxDeverrouille) { afficherAlerte("Active d'abord le mode développeur avec /editeur."); return; }
+            let cfg = ghConfig();
+            let fond = document.createElement("div");
+            fond.style.cssText = "position:fixed; inset:0; background:rgba(11,15,25,0.95); display:flex; align-items:center; justify-content:center; z-index:1006;";
+            let boite = document.createElement("div");
+            boite.className = "conteneur-parametres";
+            boite.style.cssText = "max-width:480px; width:94%; max-height:92vh; overflow-y:auto; text-align:left;";
+            let h = document.createElement("h2"); h.style.cssText = "color:#00ffcc; margin-top:0;"; h.innerText = "🐙 CONFIGURER GITHUB";
+            let aide = document.createElement("div");
+            aide.style.cssText = "color:#8892b0; font-size:12px; line-height:1.55;";
+            aide.innerHTML =
+                "<b style='color:#ffaa00'>Tu n'as rien à créer à la main</b> : pas de sous-dossier, pas de fichier. Le jeu crée tout seul <code>niveaux/publics</code> et <code>niveaux/communautaires</code> dans ton dépôt.<br><br>" +
+                "<b style='color:#ffaa00'>1.</b> Va sur GitHub → ta photo → <i>Settings</i> → <i>Developer settings</i> → <i>Personal access tokens</i> → <i>Fine-grained tokens</i> → <i>Generate new token</i>.<br>" +
+                "<b style='color:#ffaa00'>2.</b> <i>Repository access</i> : « Only select repositories » → choisis le dépôt de ton jeu.<br>" +
+                "<b style='color:#ffaa00'>3.</b> <i>Permissions → Repository permissions → Contents</i> : « <b>Read and write</b> ». Puis <i>Generate token</i> et copie-le.<br>" +
+                "<b style='color:#ffaa00'>4.</b> Colle-le ci-dessous (il reste dans ce navigateur, jamais dans le code), puis clique le bouton.<br><br>";
+            let mk = function(label, valeur, ph, type) {
+                let l = document.createElement("div"); l.style.cssText = "color:#00ffcc; font-size:12px; margin-top:8px;"; l.innerText = label;
+                let i = document.createElement("input"); i.type = type || "text"; i.value = valeur || ""; i.placeholder = ph || "";
+                i.autocomplete = "off"; i.spellcheck = false;
+                i.style.cssText = "width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; color:#00ffcc; border:1px solid #00ffcc; font-family:inherit; font-size:13px;";
+                i.addEventListener("keydown", function(e) { e.stopPropagation(); });
+                let w = document.createElement("div"); w.append(l, i); return { w: w, i: i };
+            };
+            let fDepot = mk("Dépôt GitHub (proprio/nom-du-depot)", cfg.repo, "ex : monpseudo/cyber-hack");
+            let fBranche = mk("Branche (vide = la branche principale du dépôt)", cfg.branche, "ex : main");
+            let fBase = mk("Dossier du jeu dans le dépôt (vide = à la racine, à côté de index.html)", cfg.base, "");
+            let fToken = mk("Jeton GitHub", cfg.token ? "" : "", cfg.token ? "déjà enregistré (laisse vide pour le garder)" : "github_pat_…", "password");
+            let sortie = document.createElement("div");
+            sortie.style.cssText = "color:#00ff66; font-size:12px; line-height:1.5; margin:10px 0; white-space:pre-wrap;";
+            let go = document.createElement("button"); go.className = "btn-modal-action"; go.style.cssText = "background:#00ff66; color:#0b0f19;"; go.innerText = "✅ TESTER ET PRÉPARER LES DOSSIERS";
+            let fermer = document.createElement("button"); fermer.className = "btn-modal-action"; fermer.innerText = "FERMER";
+            fermer.onclick = function() { fond.remove(); rendreListeNiveaux(); };
+            let ligne = function(t, ko) { let d = document.createElement("div"); d.style.color = ko ? "#ff0055" : "#00ff66"; d.innerText = t; sortie.appendChild(d); };
+            go.onclick = async function() {
+                sortie.innerHTML = "";
+                let depot = fDepot.i.value.trim();
+                if (!/^[\w.-]+\/[\w.-]+$/.test(depot)) { ligne("❌ Écris le dépôt sous la forme proprio/nom (ex : monpseudo/cyber-hack).", true); return; }
+                try {
+                    localStorage.setItem("cyber_hack_gh_cfg", JSON.stringify({ repo: depot, branche: fBranche.i.value.trim(), base: fBase.i.value.trim() }));
+                    if (fToken.i.value.trim()) localStorage.setItem("cyber_hack_gh_token", fToken.i.value.trim());
+                } catch (e) {}
+                if (!ghConfig().token) { ligne("❌ Colle ton jeton GitHub.", true); return; }
+                ghBrancheCache = "";
+                go.disabled = true; ligne("⏳ Connexion à GitHub…");
+                try { await ghInitialiser(function(t) { ligne(t); }); }
+                catch (e) { ligne("❌ " + (e && e.message ? e.message : e), true); }
+                go.disabled = false;
+            };
+            boite.append(h, aide, fDepot.w, fBranche.w, fBase.w, fToken.w, sortie, go, fermer);
+            fond.appendChild(boite); document.body.appendChild(fond);
+        }
+        function statutGithubTexte() {
+            if (!modeDevNiveauxDeverrouille) return "";
+            let c = ghConfig();
+            if (!c.token || !c.repo) return "🐙 GitHub non configuré : clique « CONFIGURER GITHUB » ci-dessous.";
+            return "🐙 GitHub prêt : " + c.repo + (c.branche ? " @" + c.branche : "") + " — les niveaux 🌐/👥 s'écrivent tout seuls.";
+        }
+
         async function publierNiveau(n) {
             if (!ghPret() || !n.cible) return;
             let dossier = n.cible, fichier = fichierPourNiveau(n), ancien = n.distant;
@@ -2199,7 +2709,7 @@
         // public/communautaire est écrite toute seule dans le fichier GitHub.
         function planifierPublication(n) {
             if (!n || !n.cible) return;
-            if (!ghPret()) { if (modeDevNiveauxDeverrouille) ghStatut("⚠️ Jeton GitHub manquant : tape /token pour l'écriture automatique."); return; }
+            if (!ghPret()) { if (modeDevNiveauxDeverrouille) ghStatut("⚠️ Jeton GitHub manquant : tape /github pour configurer l'écriture automatique."); return; }
             clearTimeout(timersPublication[n.id]);
             timersPublication[n.id] = setTimeout(() => ghEnfiler(() => publierNiveau(n)), 2500);
         }
@@ -2357,7 +2867,7 @@
             if (!modeDevNiveauxDeverrouille) return;
             demanderConfirmation("Supprimer ce niveau de GitHub pour tout le monde ?", function() {
                 let copie = { nom: niveau.nom, distant: { dossier: dossier, fichier: niveau.fichier } };
-                if (!ghPret()) { afficherAlerte("Jeton GitHub manquant : tape /token."); return; }
+                if (!ghPret()) { afficherAlerte("Jeton GitHub manquant : tape /github pour le configurer."); return; }
                 niveauxPersonnalises.forEach(n => { if (n.distant && n.distant.fichier === niveau.fichier) { n.cible = null; n.distant = null; } });
                 sauvegarderNiveauxListe();
                 ghEnfiler(async () => { await depublierNiveau(copie); await chargerNiveauxPublics(); });
@@ -2413,6 +2923,9 @@
 
             let btnExp = document.getElementById("btn-export-publics");
             if (btnExp) btnExp.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
+            let btnGh = document.getElementById("btn-config-github");
+            if (btnGh) btnGh.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
+            if (statut && modeDevNiveauxDeverrouille) statut.innerText = statutGithubTexte() + (derniereSynchro ? "  ·  Synchronisé à " + derniereSynchro.toLocaleTimeString() : "");
             majBouclier();
         }
 
@@ -2570,7 +3083,7 @@
             { cmd: "/title [texte]", desc: "DEV : change le titre/crédits pour tous (via niveaux_publics.json exporté). Sans texte : efface. Inactif hors mode /editeur.", cachee: true, prefill: "/title " },
             { cmd: "/histoire", desc: "Débloque / cache le bouton 🧪 : teste toutes les missions du mode histoire (quiz, ports, code PIN, bug…) sans refaire les niveaux.", cachee: true, prefill: "/histoire" },
             { cmd: "/token [jeton|off]", desc: "DEV : enregistre ton jeton GitHub (droit « Contents : lecture/écriture » sur ton dépôt seulement) dans CE navigateur. Active l'écriture automatique des niveaux publics/communautaires.", cachee: true, prefill: "/token " },
-            { cmd: "/github [proprio/depot] [branche]", desc: "DEV : dépôt et branche où écrire. Détecté tout seul sur une page github.io ; sinon, indique-les ici. Sans option : affiche la config.", cachee: true, prefill: "/github " },
+            { cmd: "/github", desc: "DEV : ouvre l'assistant GitHub (explications pas à pas, jeton, dépôt, création automatique des dossiers niveaux/publics et niveaux/communautaires).", cachee: true, prefill: "/github " },
             { cmd: "/editeur", desc: "Active / désactive le mode dev : édition des niveaux publics et communautaires (écriture auto sur GitHub), publication 🌐/👥, bouclier 🛡️, /title.", cachee: true, prefill: "/editeur" },
             { cmd: "/admin", desc: "Cette fenêtre. Affiche toutes les commandes, même cachées.", cachee: true, prefill: "/admin" }
         ];
@@ -2683,7 +3196,11 @@
             } else if (parties[0] === "/github" && modeDevNiveauxDeverrouille) {
                 // /github proprietaire/depot [branche] — sinon détecté depuis l'adresse github.io
                 let depot = (parties[1] || "").trim(), branche = (parties[2] || "").trim();
-                if (depot && !/^[\w.-]+\/[\w.-]+$/.test(depot)) {
+                if (!depot) {
+                    document.getElementById("input-commande").value = "";
+                    document.getElementById("panneau-commande").style.display = "none";
+                    ouvrirAssistantGithub();
+                } else if (depot && !/^[\w.-]+\/[\w.-]+$/.test(depot)) {
                     afficherAlerte("Commande invalide.");
                 } else {
                     let cfg = ghConfig();
@@ -2704,7 +3221,7 @@
                 localStorage.setItem("cyber_hack_dev_unlocked", modeDevNiveauxDeverrouille ? "true" : "false");
                 rendreListeNiveaux();
                 afficherAlerte(modeDevNiveauxDeverrouille
-                    ? "🛠️ Mode développeur activé : tu peux éditer les niveaux publics et communautaires (écriture auto sur GitHub avec /token)."
+                    ? "🛠️ Mode développeur activé : tu peux éditer les niveaux publics et communautaires (écriture auto sur GitHub : tape /github pour la configurer)."
                     : "Mode développeur désactivé.");
                 document.getElementById("input-commande").value = "";
                 document.getElementById("panneau-commande").style.display = "none";
@@ -4377,7 +4894,7 @@
                                     afficherAlerte(`✅ ${tx(mission.fin)} !` + (prochaine
                                         ? "\n" + tx(["La zone suivante est déverrouillée : ", "The next zone is unlocked: ", "Die nächste Zone ist freigeschaltet: ", "次のゾーンが解放された: "]) + tx(prochaine.nom)
                                         : "\n" + tx(["Le 🏆 est accessible !", "The 🏆 is now reachable!", "Das 🏆 ist jetzt erreichbar!", "🏆に到達できる!"])));
-                                }, mission.tache, z);
+                                }, mission.tache, z, mission.d);
                             }
                         }
                     }
