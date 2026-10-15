@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V5.0</title><!-- build V5.0 : nouveaux blocs, skins, blocs fonctionnels, missions, niveaux GitHub -->
+    <title>CYBER_HACK // PROTOCOL — V5.1</title><!-- build V5.1 : menus déroulants, spawn, nouveaux blocs et mobs -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -315,6 +315,19 @@
             cursor: pointer;
         }
 
+        /* Plateforme traversante : occupe une case mais on ne voit qu'une fine planche en haut */
+        .bloc-traversant { background: transparent !important; box-shadow: none !important; border: none !important; font-size: 0; }
+        .bloc-traversant::before, .planche-inv::before {
+            content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; border-radius: 3px;
+            background: linear-gradient(#d9f7ff, #4fb8e0 70%, #2a86b0);
+            box-shadow: 0 0 6px rgba(127, 219, 255, 0.7), 0 2px 0 rgba(0, 40, 70, 0.55);
+        }
+        .bloc-traversant::after {
+            content: ""; position: absolute; left: 3px; right: 3px; top: 2px; height: 1px; background: rgba(255, 255, 255, 0.75);
+        }
+        body.mode-creatif .bloc-traversant { outline: 1px dashed rgba(127, 219, 255, 0.4); outline-offset: -1px; }
+        .planche-inv { background: #0b0f19 !important; position: relative; }
+        .planche-inv::before { top: 8px; }
         .fenetre-info { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(11, 15, 25, 0.93); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .fenetre-info .conteneur-parametres { width: 460px; text-align: left; }
         .fenetre-info h2 { margin: 0 0 4px 0; text-align: center; }
@@ -422,6 +435,9 @@
             border-radius: 3px;
             z-index: 500;
         }
+        .groupe-inv { margin: 4px 0; }
+        .groupe-inv > summary { outline: none; }
+        .groupe-inv .item-inventaire { margin: 3px; }
         .item-inventaire {
             width: 22px;
             height: 22px;
@@ -621,7 +637,7 @@
         <button class="btn-mode-choix" onclick="fermerEcranTitre()">▶ JOUER</button>
         <button class="btn-mode-choix" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 15px rgba(255,170,0,0.3); padding:10px 22px; font-size:13px;" onclick="ouvrirFenetreTouches()">⌨️ TOUCHES &amp; COMMANDES</button>
         <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V5.0</p>
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V5.1</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -2012,10 +2028,10 @@
         // V5 : fenêtre des nouveautés, affichée une seule fois par version
         window.addEventListener("load", function() {
             let vue = null; try { vue = localStorage.getItem("cyber_hack_version_vue"); } catch (e) {}
-            if (vue === "5.0") return;
-            try { localStorage.setItem("cyber_hack_version_vue", "5.0"); } catch (e) {}
+            if (vue === "5.1") return;
+            try { localStorage.setItem("cyber_hack_version_vue", "5.1"); } catch (e) {}
             setTimeout(function() {
-                afficherAlerte("🆕 V5.0 — Grosse mise à jour !\n\n🎨 12 nouvelles couleurs de blocs\n🧩 6 blocs fonctionnels : 🍂 plateforme fragile · 🚀 super trampoline · ◀️▶️ convoyeurs · 🟤 boue · 🌀 colonne de vent\n🙂 9 nouveaux skins\n🎯 24 missions différentes par thème en Mode Histoire\n🛠️ Éditeur de niveaux ouvert à tous (privé / public / communautaire)\n\nTout est dans l'inventaire 🎒 (mode créatif).");
+                afficherAlerte("🆕 V5.1 — Mise à jour !\n\n🗂️ Inventaire en menus déroulants : Outils · Essentiels · Couleurs · Fonctionnels · Mobs\n📍 Nouveau bloc Point de départ (gratuit) : place ton spawn où tu veux\n🏆 Fin de niveau maintenant gratuite\n⚙️ 3 nouveaux blocs : ➖ plateforme traversante · 💡 bloc clignotant · 🌌 portail de retour\n🎨 7 nouvelles couleurs\n👾 4 nouveaux mobs : 🐸 grenouille qui saute · 👻 fantôme qui flotte · 🦂 scorpion rapide · 🐉 dragon\n\nOuvre l'inventaire 🎒 pour tout voir.");
             }, 700);
         });
         function nbVariantesMission(tache, z) {
@@ -2813,8 +2829,10 @@
                 x: b.x, y: b.y, type: b.type, couleur: b.couleur, symbole: b.symbole, valeur: b.valeur
             }));
             n.mobs = mobsMonde.map(m => ({
-                xMin: m.xMin, xMax: m.xMax, y: m.y, vitesse: m.vitesse, symbole: m.elementDom.innerText
+                xMin: m.xMin, xMax: m.xMax, y: (m.yBase !== undefined ? m.yBase : m.y + 4), vitesse: m.vitesse, symbole: m.elementDom.innerText, mode: m.mode || "patrouille"
             }));
+            let sp = blocsMonde.find(b => b.type === "spawn");
+            if (sp) { n.spawnX = sp.x; n.spawnY = sp.y; }
             sauvegarderNiveauxListe();
             planifierPublication(n);
         }
@@ -3066,9 +3084,12 @@
             modeTestCreation = false;
             nettoyerMondeComplet();
             niveau.blocs.forEach(b => creerBlocMondeDirect(b.x, b.y, b.type, b.couleur, b.symbole || "", b.valeur || 1));
-            (niveau.mobs || []).forEach(m => creerMobPatrouilleur(m.xMin, m.xMax, m.y, m.vitesse, "#8892b0", m.symbole || "👾"));
+            (niveau.mobs || []).forEach(m => creerMobPatrouilleur(m.xMin, m.xMax, m.y, m.vitesse, "#8892b0", m.symbole || "👾", m.mode));
             joueur.departX = niveau.spawnX || 60; // point de départ réel du niveau (les checkpoints modifient spawnX/spawnY)
             joueur.departY = niveau.spawnY || 180;
+            let blocSpawn = blocsMonde.find(b => b.type === "spawn");
+            if (blocSpawn) { joueur.departX = blocSpawn.x; joueur.departY = blocSpawn.y; }
+            joueur.spawnX = joueur.departX; joueur.spawnY = joueur.departY;
             historiqueEdition = [];
             appliquerParametresDuNiveau(niveau);
             // Seul un chargement en mode ÉDITION (dev uniquement) écrit dans la
@@ -3079,6 +3100,8 @@
             mettreAJourBadgeNiveauPerso();
             fermerEcranNiveaux();
             fermerParametres();
+            majClignotants(true);
+            majVisibiliteSpawn();
             nouvelleCarteDepart(); // TP instantané + morts à 0 + checkpoints remis à zéro
             if (editIdx !== null && !modeConstructionActif) {
                 basculerModeCreatif();
@@ -3119,6 +3142,7 @@
 
         function basculerModeCreatif() {
             modeConstructionActif = !modeConstructionActif;
+            document.body.classList.toggle("mode-creatif", modeConstructionActif);
             let displayVal = modeConstructionActif ? "block" : "none";
             panneauInventaire.style.display = displayVal;
             panneauSkins.style.display = displayVal;
@@ -3127,6 +3151,8 @@
             btnGeneration.style.display = displayVal;
             btnNiveaux.style.display = displayVal;
             mettreAJourAccesInventaire();
+            majVisibiliteSpawn();
+            if (modeConstructionActif) { phaseClignote = true; blocsMonde.forEach(b => { if (b.type === "clignotant" && b.elementDom) b.elementDom.style.opacity = 1; }); }
             if (modeConstructionActif && !creationAutorisee() && !messageCreationDejaVu()) {
                 afficherAlerte(tx(["🔒 Création verrouillée en génération procédurale. Tu peux changer de skin. Appuie sur RESET MAP pour une carte de test, ou édite un niveau.", "🔒 Creation is locked in procedural generation. You can still change skins. Press RESET MAP for a test map, or edit a level.", "🔒 Bauen ist in der prozeduralen Generierung gesperrt. Skins kannst du weiterhin ändern. Drücke RESET MAP für eine Testkarte oder bearbeite ein Level.", "🔒 自動生成マップでは作成できません。スキンは変更可能。テストマップはRESET MAP、またはレベルを編集してください。"]));
             }
@@ -3741,6 +3767,46 @@
             { nom: "Bloqueur", couleur: "#555555", type: "outil_bloquer", symbole: "🔒", prix: 0, acquis: true }
         ];
 
+        // ===== Menus déroulants de l'inventaire (V5.1) =====
+        const groupesInv = {};
+        const TITRES_GROUPES = { outils: "🔧 OUTILS", essentiels: "⭐ ESSENTIELS", couleurs: "🎨 COULEURS", fonction: "⚙️ FONCTIONNELS", mobs: "👾 MOBS" };
+        function creerGroupeInventaire(cle, ouvert) {
+            let det = document.createElement("details");
+            det.className = "groupe-inv";
+            let ouv = ouvert;
+            try { let v = localStorage.getItem("cyber_hack_grp_" + cle); if (v !== null) ouv = (v === "1"); } catch (e) {}
+            det.open = ouv;
+            let sm = document.createElement("summary");
+            sm.style.cssText = "cursor:pointer; color:#ffaa00; font-size:9px; letter-spacing:0; padding:4px 0; border-bottom:1px dashed rgba(255,170,0,0.45); text-align:left;";
+            sm.innerText = TITRES_GROUPES[cle];
+            det.addEventListener("toggle", function() { try { localStorage.setItem("cyber_hack_grp_" + cle, det.open ? "1" : "0"); } catch (e) {} });
+            let contenu = document.createElement("div");
+            contenu.style.cssText = "display:flex; flex-wrap:wrap; justify-content:center; padding:4px 0;";
+            det.append(sm, contenu);
+            panneauInventaire.appendChild(det);
+            groupesInv[cle] = contenu; contenu.resume = sm;
+            return contenu;
+        }
+        creerGroupeInventaire("outils", true);
+        creerGroupeInventaire("essentiels", true);
+        creerGroupeInventaire("couleurs", false);
+        creerGroupeInventaire("fonction", true);
+        creerGroupeInventaire("mobs", false);
+        function groupePourBloc(b) {
+            if (b.type === "solide") return groupesInv.couleurs;
+            if (["piece", "fin_niveau", "spawn", "checkpoint"].indexOf(b.type) >= 0) return groupesInv.essentiels;
+            return groupesInv.fonction;
+        }
+        function majTitresGroupes() {
+            Object.keys(groupesInv).forEach(function(k) {
+                let c = groupesInv[k];
+                let nb = c.querySelectorAll(".item-inventaire").length;
+                let libres = c.querySelectorAll(".badge-lock").length;
+                c.resume.innerText = TITRES_GROUPES[k] + " (" + nb + ")" + (libres > 0 ? "  🔒" + libres : "");
+            });
+        }
+        window.addEventListener("load", majTitresGroupes);
+
         outilsEdition.forEach(o => {
             let item = document.createElement("div");
             item.className = "item-inventaire";
@@ -3750,7 +3816,7 @@
                 elementActif.couleur = o.couleur;
                 elementActif.type = o.type;
             };
-            panneauInventaire.appendChild(item);
+            groupesInv.outils.appendChild(item);
         });
 
         // Bouclier (dev) : à côté du Bloqueur et du Supprimer. Visible seulement quand
@@ -3768,12 +3834,8 @@
             majBouclier();
             afficherAlerte(bouclierActif ? "🛡️ Bouclier ACTIVÉ : pièges et monstres ne te tuent plus (le vide, si)." : "🛡️ Bouclier désactivé.");
         };
-        panneauInventaire.appendChild(itemBouclier);
+        groupesInv.outils.appendChild(itemBouclier);
 
-        let sep = document.createElement("div");
-        sep.style.borderBottom = "1px solid #00ffcc";
-        sep.style.margin = "6px 0";
-        panneauInventaire.appendChild(sep);
 
         // --- Sauvegarde persistante des achats (blocs, skins & mobs) ---
         let achatsBlocs = {};
@@ -3810,7 +3872,8 @@
             { nom: "Pièce x1 (Commun)", couleur: "#ffee00", type: "piece", valeur: 1, symbole: "🪙1", prix: 0 },
             { nom: "Pièce x5 (Rare - Anti-Farm)", couleur: "#ffcc00", type: "piece", valeur: 5, symbole: "🪙5", prix: 3000 },
             { nom: "Pièce x10 (Épique - Anti-Farm)", couleur: "#ff8800", type: "piece", valeur: 10, symbole: "🪙10", prix: 7000 },
-            { nom: "Fin de Niveau (Légendaire - Clé)", couleur: "#ffffff", type: "fin_niveau", symbole: "🏆", prix: 900 },
+            { nom: "Fin de Niveau (Essentiel)", couleur: "#ffffff", type: "fin_niveau", symbole: "🏆", prix: 0, info: "Gratuit : l'arrivée du niveau" },
+            { nom: "Point de Départ (Essentiel)", couleur: "#00ff66", type: "spawn", symbole: "📍", prix: 0, info: "Gratuit : place le départ du niveau (un seul, invisible en jeu)" },
             { nom: "Piège Mortel (Épique - Utilitaire)", couleur: "#ff0000", type: "piege", symbole: "⚠️", prix: 350 },
             // ===== V5 : nouvelles couleurs (décoratives, collision normale) =====
             { nom: "Bleu Néon (Commun)", couleur: "#1e90ff", type: "solide", symbole: "", prix: 60 },
@@ -3825,12 +3888,23 @@
             { nom: "Obsidienne (Rare)", couleur: "#14141c", type: "solide", symbole: "", prix: 250 },
             { nom: "Or Antique (Rare)", couleur: "#d4af37", type: "solide", symbole: "", prix: 300 },
             { nom: "Émeraude Sombre (Rare)", couleur: "#046307", type: "solide", symbole: "", prix: 250 },
+            // ===== V5.1 : nouvelles couleurs =====
+            { nom: "Corail (Commun)", couleur: "#ff7f50", type: "solide", symbole: "", prix: 70 },
+            { nom: "Citron Vert (Commun)", couleur: "#bfff00", type: "solide", symbole: "", prix: 70 },
+            { nom: "Indigo (Peu Commun)", couleur: "#4b0082", type: "solide", symbole: "", prix: 130 },
+            { nom: "Bleu Marine (Peu Commun)", couleur: "#001f5b", type: "solide", symbole: "", prix: 130 },
+            { nom: "Cuivre (Rare)", couleur: "#b87333", type: "solide", symbole: "", prix: 220 },
+            { nom: "Perle (Rare)", couleur: "#f0ead6", type: "solide", symbole: "", prix: 220 },
+            { nom: "Magenta Laser (Rare)", couleur: "#ff00aa", type: "solide", symbole: "", prix: 260 },
             // ===== V5 : blocs fonctionnels =====
             { nom: "Plateforme Fragile (Rare - Utilitaire)", couleur: "#a0522d", type: "fragile", symbole: "🍂", prix: 600, info: "Tombe 0,6 s après qu'on s'est posé dessus, puis revient" },
             { nom: "Super Trampoline (Épique - Utilitaire)", couleur: "#ff3df5", type: "trampoline_max", symbole: "🚀", prix: 800, info: "Rebond presque deux fois plus haut" },
             { nom: "Convoyeur Gauche (Rare - Utilitaire)", couleur: "#5b6b86", type: "convoyeur_g", symbole: "◀️", prix: 650, info: "Pousse vers la gauche quand on marche dessus" },
             { nom: "Convoyeur Droite (Rare - Utilitaire)", couleur: "#5b6b86", type: "convoyeur_d", symbole: "▶️", prix: 650, info: "Pousse vers la droite quand on marche dessus" },
             { nom: "Boue Collante (Peu Commun - Utilitaire)", couleur: "#6b4423", type: "boue", symbole: "🟤", prix: 400, info: "Ralentit de moitié" },
+            { nom: "Plateforme Traversante (Rare - Utilitaire)", couleur: "#7fdbff", type: "traversant", symbole: "➖", prix: 500, info: "Une fine planche : on la traverse par en dessous, on se pose dessus par le haut. Elle occupe une case." },
+            { nom: "Bloc Clignotant (Rare - Utilitaire)", couleur: "#ffb347", type: "clignotant", symbole: "💡", prix: 550, info: "Solide 2 s puis disparaît 2 s, en boucle" },
+            { nom: "Portail de Retour (Épique - Utilitaire)", couleur: "#7d3cff", type: "portail", symbole: "🌌", prix: 700, info: "Te ramène au dernier point de sauvegarde, sans compter de mort" },
             { nom: "Colonne de Vent (Épique - Utilitaire)", couleur: "#9fd8ff", type: "vent", symbole: "🌀", prix: 900, info: "Zone sans collision qui fait monter. Empile-les en colonne" }
         ];
 
@@ -3843,6 +3917,7 @@
             item.style.backgroundColor = b.couleur;
             item.style.boxShadow = `0 0 6px ${b.couleur}`;
             item.innerText = b.symbole;
+            if (b.type === "traversant") { item.innerText = ""; item.classList.add("planche-inv"); }
             item.title = (b.acquis ? b.nom : `${b.nom} — 🪙${b.prix}`) + (b.info ? " — " + b.info : "");
 
             if (!b.acquis) {
@@ -3872,14 +3947,19 @@
                 elementActif.type = b.type;
                 elementActif.valeurPiece = b.valeur || 1;
             };
-            panneauInventaire.appendChild(item);
+            groupePourBloc(b).appendChild(item);
         });
 
         // --- Mobs achetables en boutique (placés en mode créatif comme des blocs) ---
         let mobsBoutique = [
             { nom: "Drone Basique (Peu Commun)", couleur: "#8892b0", symbole: "👾", vitesse: 1.2, prix: 400 },
             { nom: "Sentinelle Rapide (Rare)", couleur: "#ff0055", symbole: "🤖", vitesse: 2.5, prix: 900 },
-            { nom: "Garde Blindé (Épique)", couleur: "#3a4454", symbole: "🛡️", vitesse: 0.8, prix: 1400 }
+            { nom: "Garde Blindé (Épique)", couleur: "#3a4454", symbole: "🛡️", vitesse: 0.8, prix: 1400 },
+            // ===== V5.1 : nouveaux mobs =====
+            { nom: "Grenouille Bot (Peu Commun)", couleur: "#39ff14", symbole: "🐸", vitesse: 1.0, mode: "saut", prix: 600, info: "Patrouille en sautant" },
+            { nom: "Fantôme Cyber (Rare)", couleur: "#c8d6ff", symbole: "👻", vitesse: 1.0, mode: "sinus", prix: 1100, info: "Flotte en faisant des vagues" },
+            { nom: "Scorpion Cyber (Épique)", couleur: "#ff8800", symbole: "🦂", vitesse: 3.2, mode: "patrouille", prix: 1800, info: "Patrouille très rapide" },
+            { nom: "Dragon Mécanique (Légendaire)", couleur: "#ff0055", symbole: "🐉", vitesse: 1.8, mode: "sinus", prix: 2600, info: "Vole en vagues, rapide" }
         ];
 
         mobsBoutique.forEach(m => {
@@ -3890,7 +3970,7 @@
             item.style.backgroundColor = m.couleur;
             item.style.boxShadow = `0 0 6px ${m.couleur}`;
             item.innerText = m.symbole;
-            item.title = m.acquis ? m.nom : `${m.nom} — 🪙${m.prix}`;
+            item.title = (m.acquis ? m.nom : `${m.nom} — 🪙${m.prix}`) + (m.info ? " — " + m.info : "");
 
             if (!m.acquis) {
                 let lock = document.createElement("div");
@@ -3909,7 +3989,7 @@
                         verifierCompletionBoutique();
                         let l = item.querySelector(".badge-lock");
                         if (l) l.remove();
-                        item.title = m.nom;
+                        item.title = m.nom + (m.info ? " — " + m.info : "");
                     } else {
                         afficherAlerte(traductions[langueActuelle].alertePrix(m.prix));
                         return;
@@ -3919,8 +3999,9 @@
                 elementActif.type = "mob";
                 elementActif.vitesseMob = m.vitesse;
                 elementActif.symboleMob = m.symbole;
+                elementActif.modeMob = m.mode || "patrouille";
             };
-            panneauInventaire.appendChild(item);
+            groupesInv.mobs.appendChild(item);
         });
 
         // Débloque définitivement tous les blocs, skins et mobs de la boutique
@@ -4150,6 +4231,7 @@
             div.style.left = gx + "px";
             div.style.top = gy + "px";
             div.innerText = symboleBloc;
+            if (typeBloc === "traversant") { div.innerText = ""; div.classList.add("bloc-traversant"); }
             
             let blocObj = { 
                 x: gx, y: gy, width: TAILLE_BLOC, height: TAILLE_BLOC, 
@@ -4177,7 +4259,7 @@
             blocsMonde.push(blocObj);
         }
 
-        function creerMobPatrouilleur(xMin, xMax, yPos, vitesse, couleur, symbole) {
+        function creerMobPatrouilleur(xMin, xMax, yPos, vitesse, couleur, symbole, mode) {
             const TAILLE_MOB = 28; // un peu plus grand qu'un bloc (20px) pour bien le distinguer
             xMin = Math.max(0, xMin);
             let div = document.createElement("div");
@@ -4200,7 +4282,9 @@
                 vitesse: vitesse || 1.5,
                 direction: 1,
                 elementDom: div,
-                type: "mob"
+                type: "mob",
+                mode: mode || "patrouille",   // "patrouille" | "sinus" (vagues) | "saut" (bonds)
+                yBase: yPos, t: Math.random() * 6, vyS: 0
             };
 
             // Permet la suppression du mob avec l'outil "Supprimer" en mode créatif
@@ -4564,6 +4648,10 @@
             if (elementActif.type === "convoyeur_d") return "▶️";
             if (elementActif.type === "boue") return "🟤";
             if (elementActif.type === "vent") return "🌀";
+            if (elementActif.type === "traversant") return "➖";
+            if (elementActif.type === "clignotant") return "💡";
+            if (elementActif.type === "portail") return "🌌";
+            if (elementActif.type === "spawn") return "📍";
             return "";
         }
 
@@ -4616,6 +4704,24 @@
         let derniereCasePosee = null;
         let casesPoseesDansLeGlisse = new Set();
 
+        // Bloc 📍 Point de départ : un seul par niveau, invisible en jeu
+        function majVisibiliteSpawn() {
+            blocsMonde.forEach(b => { if (b.type === "spawn" && b.elementDom) b.elementDom.style.display = modeConstructionActif ? "flex" : "none"; });
+        }
+        function appliquerSpawnBloc(b) {
+            joueur.departX = b.x; joueur.departY = b.y;
+            joueur.spawnX = b.x; joueur.spawnY = b.y;
+        }
+        function placerSpawnBloc(nouveau) {
+            let anciens = blocsMonde.filter(b => b.type === "spawn" && b !== nouveau);
+            anciens.forEach(b => { if (b.elementDom) b.elementDom.remove(); });
+            blocsMonde = blocsMonde.filter(b => !anciens.includes(b));
+            traitSupprimes.push(...anciens);
+            appliquerSpawnBloc(nouveau);
+            majVisibiliteSpawn();
+            toast("📍 Point de départ déplacé ici");
+        }
+
         function poserBlocSurCase(gx, gy, forcer) {
             let cle = gx + "," + gy;
             if (!forcer) {
@@ -4627,6 +4733,7 @@
             creerBlocMondeDirect(gx, gy, elementActif.type, elementActif.couleur, symboleDuTypeActif(), elementActif.valeurPiece);
             glisseAModifie = true;
             traitAjoutes.push(blocsMonde[blocsMonde.length - 1]);
+            if (elementActif.type === "spawn") placerSpawnBloc(blocsMonde[blocsMonde.length - 1]);
         }
 
         // Efface tout ce qui occupe la case : blocs (doublons compris) et mobs
@@ -4719,7 +4826,7 @@
                 demanderNombre("Zone de patrouille du mob (en blocs, 1 à 10) :", 3, 10, function(nbBlocs) {
                     let xMin = gx - (nbBlocs * TAILLE_BLOC);
                     let xMax = gx + (nbBlocs * TAILLE_BLOC);
-                    creerMobPatrouilleur(xMin, xMax, gy, elementActif.vitesseMob, elementActif.couleur, elementActif.symboleMob);
+                    creerMobPatrouilleur(xMin, xMax, gy, elementActif.vitesseMob, elementActif.couleur, elementActif.symboleMob, elementActif.modeMob);
                     if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
                 });
             }
@@ -4911,7 +5018,8 @@
 
         function estBlocSolide(mur) {
             if (mur.type === "fragile" && mur.cache) return false; // plateforme tombée
-            return mur.type !== "piege" && mur.type !== "checkpoint" && mur.type !== "piece" && mur.type !== "fin_niveau" && mur.type !== "decor" && mur.type !== "fragment" && mur.type !== "vent";
+            if (mur.type === "clignotant" && !phaseClignote) return false; // bloc clignotant éteint
+            return mur.type !== "piege" && mur.type !== "checkpoint" && mur.type !== "piece" && mur.type !== "fin_niveau" && mur.type !== "decor" && mur.type !== "fragment" && mur.type !== "vent" && mur.type !== "spawn" && mur.type !== "portail";
         }
 
         function peutSauter() {
@@ -4926,6 +5034,13 @@
         }
 
         let surDeLaGlace = false;
+        let frameCompteur = 0, phaseClignote = true;   // V5.1 : blocs clignotants (2 s allumés / 2 s éteints)
+        function majClignotants(force) {
+            let p = (Math.floor(frameCompteur / 120) % 2) === 0;
+            if (p === phaseClignote && !force) return;
+            phaseClignote = p;
+            blocsMonde.forEach(b => { if (b.type === "clignotant" && b.elementDom) b.elementDom.style.opacity = p ? 1 : 0.15; });
+        }
         let surBoue = false;          // V5 : boue collante (ralentit)
         let pousseeConv = 0;          // V5 : convoyeur (poussée horizontale par image)
 
@@ -4954,6 +5069,8 @@
 
         function update() {
             if (!modeConstructionActif && !tacheActive) {
+                frameCompteur++; majClignotants(false);
+                if (joueur.portailCd > 0) joueur.portailCd--;
                 if (joueur.invincible > 0) {
                     joueur.invincible--;
                     joueur.element.style.opacity = (Math.floor(joueur.invincible / 6) % 2) ? 0.35 : 1;
@@ -5020,6 +5137,7 @@
                 joueur.x += joueur.vx + pousseeConv;
                 for (let mur of blocsMonde) {
                     if (!estBlocSolide(mur)) continue;
+                    if (mur.type === "traversant") continue;
                     if (joueur.x + joueur.width > mur.x && joueur.x < mur.x + mur.width &&
                         joueur.y + joueur.height > mur.y && joueur.y < mur.y + mur.height) {
                         let versDroite = joueur.vx > 0 || (joueur.vx === 0 && (joueur.x + joueur.width / 2) < (mur.x + mur.width / 2));
@@ -5041,6 +5159,16 @@
                         mob.direction *= -1;
                     }
                     mob.elementDom.style.left = mob.x + "px";
+                    if (mob.mode === "sinus") {
+                        mob.t += 0.05;
+                        mob.y = mob.yBase - 4 + Math.sin(mob.t) * 32;
+                        mob.elementDom.style.top = mob.y + "px";
+                    } else if (mob.mode === "saut") {
+                        mob.vyS += 0.4; mob.y += mob.vyS;
+                        let solMob = mob.yBase - 4;
+                        if (mob.y >= solMob) { mob.y = solMob; mob.vyS = -7.5; }
+                        mob.elementDom.style.top = mob.y + "px";
+                    }
 
                     if (!estProtege() && joueur.x < mob.x + mob.width - 4 && joueur.x + joueur.width > mob.x + 4 &&
                         joueur.y < mob.y + mob.height - 4 && joueur.y + joueur.height > mob.y + 4) {
@@ -5075,6 +5203,10 @@
                         }
                     }
                     if (mur.type === "fragile") gererFragile(mur);
+                    if (mur.type === "portail" && !(joueur.portailCd > 0) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        joueur.x = joueur.spawnX; joueur.y = joueur.spawnY; joueur.vx = 0; joueur.vy = 0; joueur.portailCd = 45;
+                        toast(tx(["🌌 Retour au point de sauvegarde", "🌌 Back to the checkpoint", "🌌 Zurück zum Checkpoint", "🌌 チェックポイントへ戻る"]));
+                    }
                     if (mur.type === "vent" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         joueur.vy -= 0.95; if (joueur.vy < -4.5) joueur.vy = -4.5; // courant d'air ascendant
                     }
@@ -5118,7 +5250,8 @@
                     if (estBlocSolide(mur)) {
                         // Collision VERTICALE uniquement (le X a déjà été résolu plus haut).
                         let jG = joueur.x, jD = joueur.x + joueur.width, jH = joueur.y, jB = joueur.y + joueur.height;
-                        if (jD > mur.x + 2 && jG < mur.x + mur.width - 2 && jB > mur.y && jH < mur.y + mur.height) {
+                        let traverse = mur.type === "traversant" && !(joueur.vy >= 0 && (jB - joueur.vy) <= mur.y + 1);
+                        if (!traverse && jD > mur.x + 2 && jG < mur.x + mur.width - 2 && jB > mur.y && jH < mur.y + mur.height) {
                             let auDessus = (jH + jB) / 2 < mur.y + mur.height / 2;
                             if (joueur.vy > 0 || (joueur.vy === 0 && auDessus)) {
                                 // Atterrissage sur le dessus
