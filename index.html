@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V3.1</title><!-- build V3: generation par sauts, missions, traduction instantanee -->
+    <title>CYBER_HACK // PROTOCOL — V5.0</title><!-- build V5.0 : nouveaux blocs, skins, blocs fonctionnels, missions, niveaux GitHub -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -621,7 +621,7 @@
         <button class="btn-mode-choix" onclick="fermerEcranTitre()">▶ JOUER</button>
         <button class="btn-mode-choix" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 15px rgba(255,170,0,0.3); padding:10px 22px; font-size:13px;" onclick="ouvrirFenetreTouches()">⌨️ TOUCHES &amp; COMMANDES</button>
         <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V3.1</p>
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V5.0</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -683,6 +683,7 @@
             <p style="color: #8892b0; font-size: 11px; margin-top: -8px;">Astuce : une fois dans un niveau, appuie sur <b>Échap</b> pour le quitter et revenir en génération aléatoire.</p>
             <div id="liste-niveaux"></div>
             <p id="statut-publics" style="color:#6b7a99; font-size:10px; margin:2px 0 8px 0;"></p>
+            <button class="btn-modal-action" id="btn-sync-github" onclick="synchroniserNiveauxGithub(true)" style="display:none; background-color:#00ff66; color:#0b0f19;">⬆ ENVOYER MES NIVEAUX 🌐/👥 SUR GITHUB</button>
             <button class="btn-modal-action" id="btn-config-github" onclick="ouvrirAssistantGithub()" style="display:none; background-color:#9d00ff; color:#fff;">🐙 CONFIGURER GITHUB (ÉCRITURE AUTO)</button>
             <button class="btn-modal-action" id="btn-export-publics" onclick="exporterNiveauxPublics()" style="display:none; background-color:#00ff66; color:#0b0f19;">📤 EXPORTER LES NIVEAUX PUBLICS (GITHUB)</button>
             <button class="btn-modal-action" id="btn-creer-niveau" onclick="creerNouveauNiveau()" style="display:block; background-color:#00ffcc; color:#0b0f19;">➕ CRÉER UN NIVEAU</button>
@@ -2008,6 +2009,15 @@
             if (b) b.style.display = testHistoireDebloque ? "" : "none";
         }
         window.addEventListener("load", majBoutonTestHistoire);
+        // V5 : fenêtre des nouveautés, affichée une seule fois par version
+        window.addEventListener("load", function() {
+            let vue = null; try { vue = localStorage.getItem("cyber_hack_version_vue"); } catch (e) {}
+            if (vue === "5.0") return;
+            try { localStorage.setItem("cyber_hack_version_vue", "5.0"); } catch (e) {}
+            setTimeout(function() {
+                afficherAlerte("🆕 V5.0 — Grosse mise à jour !\n\n🎨 12 nouvelles couleurs de blocs\n🧩 6 blocs fonctionnels : 🍂 plateforme fragile · 🚀 super trampoline · ◀️▶️ convoyeurs · 🟤 boue · 🌀 colonne de vent\n🙂 9 nouveaux skins\n🎯 24 missions différentes par thème en Mode Histoire\n🛠️ Éditeur de niveaux ouvert à tous (privé / public / communautaire)\n\nTout est dans l'inventaire 🎒 (mode créatif).");
+            }, 700);
+        });
         function nbVariantesMission(tache, z) {
             if (tache === "quiz") return QUIZ[z].length + " questions";
             if (tache === "bug") return SNIPPETS_BUG.length + " codes";
@@ -2438,7 +2448,28 @@
         async function lireJsonNiveau(url) {
             try { let r = await fetch(url, { cache: "no-store" }); if (!r.ok) return null; return await r.json(); } catch (e) { return null; }
         }
+        // Dev avec jeton : lecture DIRECTE dans le dépôt (immédiate, sans attendre GitHub Pages)
+        async function chargerViaApiGithub() {
+            let ex = await ghLire("niveaux/index.json");
+            if (!ex || !ex.content) return false;
+            let idx = JSON.parse(ghDec(ex.content));
+            let charge = async (liste, dossier) => (await Promise.all((liste || []).map(async f => {
+                let fi = await ghLire("niveaux/" + dossier + "/" + f);
+                if (!fi || !fi.content) return null;
+                let n; try { n = JSON.parse(ghDec(fi.content)); } catch (e) { return null; }
+                if (!niveauPublicValide(n)) return null;
+                n.fichier = f; if (!n.id) n.id = "f-" + f; return n;
+            }))).filter(Boolean);
+            niveauxPublics = await charge(idx.publics, "publics");
+            niveauxCommunautaires = await charge(idx.communautaires, "communautaires");
+            if (typeof idx.titre === "string") titrePublic = idx.titre.slice(0, 200);
+            derniereSynchro = new Date();
+            recalculerCredits();
+            if (document.getElementById("ecran-niveaux").style.display === "flex") rendreListeNiveaux();
+            return true;
+        }
         async function chargerNiveauxPublics() {
+            if (ghPret()) { try { if (await chargerViaApiGithub()) return; } catch (e) { /* on retombe sur le site */ } }
             if (!/^https?:$/.test(location.protocol)) return; // fichier ouvert en local : rien à synchroniser
             try {
                 let idx = await lireJsonNiveau("niveaux/index.json?t=" + Date.now());
@@ -2612,6 +2643,8 @@
             }
             journal("📄 niveaux/index.json prêt");
             journal("🎉 Terminé ! Les niveaux 🌐 publics et 👥 communautaires s'écrivent maintenant tout seuls dans ton dépôt.");
+            let enAttente = niveauxPersonnalises.filter(n => n.cible && !n.distant).length;
+            if (enAttente > 0) { journal("⬆ Envoi de " + enAttente + " niveau(x) déjà marqué(s) 🌐/👥…"); synchroniserNiveauxGithub(false); }
         }
         function ouvrirAssistantGithub() {
             if (!modeDevNiveauxDeverrouille) { afficherAlerte("Active d'abord le mode développeur avec /editeur."); return; }
@@ -2626,10 +2659,10 @@
             aide.style.cssText = "color:#8892b0; font-size:12px; line-height:1.55;";
             aide.innerHTML =
                 "<b style='color:#ffaa00'>Tu n'as rien à créer à la main</b> : pas de sous-dossier, pas de fichier. Le jeu crée tout seul <code>niveaux/publics</code> et <code>niveaux/communautaires</code> dans ton dépôt.<br><br>" +
-                "<b style='color:#ffaa00'>1.</b> Va sur GitHub → ta photo → <i>Settings</i> → <i>Developer settings</i> → <i>Personal access tokens</i> → <i>Fine-grained tokens</i> → <i>Generate new token</i>.<br>" +
-                "<b style='color:#ffaa00'>2.</b> <i>Repository access</i> : « Only select repositories » → choisis le dépôt de ton jeu.<br>" +
-                "<b style='color:#ffaa00'>3.</b> <i>Permissions → Repository permissions → Contents</i> : « <b>Read and write</b> ». Puis <i>Generate token</i> et copie-le.<br>" +
-                "<b style='color:#ffaa00'>4.</b> Colle-le ci-dessous (il reste dans ce navigateur, jamais dans le code), puis clique le bouton.<br><br>";
+                "<b style='color:#ffaa00'>1.</b> Clique ce lien (connecte-toi à GitHub si on te le demande) : <a href='https://github.com/settings/tokens/new?scopes=repo&description=cyber-hack-niveaux' target='_blank' rel='noopener' style='color:#00ffcc'>👉 créer mon jeton (déjà pré-rempli)</a><br>" +
+                "<b style='color:#ffaa00'>2.</b> Descends tout en bas de la page et clique le bouton vert <b>Generate token</b>.<br>" +
+                "<b style='color:#ffaa00'>3.</b> Copie le texte qui commence par <code>ghp_</code> (il ne s'affiche qu'une fois), colle-le dans « Jeton GitHub » ci-dessous.<br>" +
+                "<b style='color:#ffaa00'>4.</b> Écris le nom du dépôt (ex : <code>monpseudo/cyber-hack</code> : c'est ce qui est dans l'adresse de ton dépôt sur GitHub), puis clique le bouton vert en bas.<br><br>";
             let mk = function(label, valeur, ph, type) {
                 let l = document.createElement("div"); l.style.cssText = "color:#00ffcc; font-size:12px; margin-top:8px;"; l.innerText = label;
                 let i = document.createElement("input"); i.type = type || "text"; i.value = valeur || ""; i.placeholder = ph || "";
@@ -2691,6 +2724,7 @@
             n.distant = { dossier: dossier, fichier: fichier };
             sauvegarderNiveauxListe();
             ghStatut("✅ Publié sur GitHub : " + dossier + "/" + fichier);
+            try { await chargerViaApiGithub(); } catch (e) {}
         }
         async function depublierNiveau(n) {
             if (!ghPret() || !n.distant) return;
@@ -2704,6 +2738,14 @@
             await ghMajIndex(idx => { if (titreDevLocal) idx.titre = titreDevLocal; else delete idx.titre; });
             ghStatut("✅ Titre publié sur GitHub");
         }
+        // Envoie sur GitHub tous les niveaux marqués 🌐/👥 qui n'y sont pas encore
+        function synchroniserNiveauxGithub(tous) {
+            if (!ghPret()) { ghStatut("⚠️ Configure d'abord GitHub (bouton 🐙)."); return; }
+            let a = niveauxPersonnalises.filter(n => n.cible && (tous || !n.distant));
+            if (a.length === 0) { ghStatut("Rien à envoyer : tout est déjà sur GitHub."); return; }
+            a.forEach(n => ghEnfiler(() => publierNiveau(n)));
+        }
+        window.addEventListener("load", function() { setTimeout(function() { if (ghPret()) synchroniserNiveauxGithub(false); }, 1500); });
         let timersPublication = {};
         // Édition publique automatique : chaque modification d'un niveau marqué
         // public/communautaire est écrite toute seule dans le fichier GitHub.
@@ -2827,7 +2869,6 @@
             inp.focus(); inp.select();
         }
 
-        const ETATS_CIBLE = [null, "publics", "communautaires"];
         function renommerNiveau(n) {
             demanderTexte("Nom du niveau :", n.nom, function(nom) {
                 n.nom = nom;
@@ -2835,19 +2876,59 @@
                 planifierPublication(n); // renomme aussi le fichier GitHub
             });
         }
-        function changerCibleNiveau(n) {
-            if (!modeDevNiveauxDeverrouille) return;
-            let suivante = ETATS_CIBLE[(ETATS_CIBLE.indexOf(n.cible || null) + 1) % ETATS_CIBLE.length];
+        const NOMS_CIBLE = { publics: "🌐 PUBLIC", communautaires: "👥 COMMUNAUTAIRE" };
+        // Place un niveau : privé (reste dans CE navigateur) / public (le tien, sur GitHub) / communautaire (sur GitHub)
+        function placerNiveau(n, cible) {
             let ancienne = n.cible || null;
-            n.cible = suivante;
-            sauvegarderNiveauxListe(); rendreListeNiveaux();
-            if (suivante) planifierPublication(n);
-            else if (ancienne && n.distant && ghPret()) {
+            if (ancienne === cible) return;
+            n.cible = cible || null;
+            sauvegarderNiveauxListe();
+            if (cible) {
+                if (!ghPret()) { ghStatut("⚠️ Configure d'abord GitHub (bouton 🐙) : le niveau partira dès que ce sera fait."); }
+                else { ghStatut("⏳ Envoi de « " + n.nom + " » vers " + NOMS_CIBLE[cible] + "…"); }
+                planifierPublicationVite(n);
+            } else if (n.distant && ghPret()) {
                 let copie = { nom: n.nom, distant: n.distant };
                 n.distant = null; sauvegarderNiveauxListe();
-                ghEnfiler(() => depublierNiveau(copie));
+                ghEnfiler(async () => { await depublierNiveau(copie); try { await chargerViaApiGithub(); } catch (e) {} });
             }
+            mettreAJourBadgeNiveauPerso();
+            rendreListeNiveaux();
         }
+        function planifierPublicationVite(n) {
+            if (!ghPret()) return;
+            clearTimeout(timersPublication[n.id]);
+            ghEnfiler(() => publierNiveau(n));
+        }
+        function choisirDestinationNiveau(n) {
+            if (!modeDevNiveauxDeverrouille) return;
+            let fond = document.createElement("div");
+            fond.style.cssText = "position:fixed; inset:0; background:rgba(11,15,25,0.92); display:flex; align-items:center; justify-content:center; z-index:1006;";
+            let boite = document.createElement("div");
+            boite.className = "conteneur-parametres";
+            boite.style.cssText = "max-width:400px; width:92%; text-align:left;";
+            let h = document.createElement("h3"); h.style.cssText = "color:#00ffcc; margin-top:0;"; h.innerText = "📤 Où mettre « " + n.nom + " » ?";
+            boite.appendChild(h);
+            let choix = [
+                [null, "🔒 PRIVÉ", "Reste seulement dans ce navigateur. Personne d'autre ne le voit. (Si le niveau était en ligne, il est retiré de GitHub.)"],
+                ["publics", "🌐 PUBLIC", "Niveau officiel du développeur, écrit dans niveaux/publics sur GitHub. Tout le monde peut le jouer."],
+                ["communautaires", "👥 COMMUNAUTAIRE", "Niveau de la communauté, écrit dans niveaux/communautaires sur GitHub. Tout le monde peut le jouer."]
+            ];
+            choix.forEach(function(c) {
+                let actuel = (n.cible || null) === c[0];
+                let b = document.createElement("button");
+                b.className = "btn-modal-action";
+                b.style.cssText = "text-align:left; " + (actuel ? "background:#00ff66; color:#0b0f19;" : "background:#0b0f19; color:#00ffcc; border:1px solid #00ffcc;");
+                b.innerHTML = "<b>" + c[1] + (actuel ? "  ✔ actuel" : "") + "</b><br><span style='font-size:11px; font-weight:normal;'>" + c[2] + "</span>";
+                b.onclick = function() { fond.remove(); placerNiveau(n, c[0]); };
+                boite.appendChild(b);
+            });
+            let note = document.createElement("p"); note.style.cssText = "color:#8892b0; font-size:11px; line-height:1.4;";
+            note.innerText = "Ensuite, ✏️ ouvre le niveau en direct : chaque correction (bug, bloc…) est renvoyée toute seule sur GitHub.";
+            let f = document.createElement("button"); f.className = "btn-modal-action"; f.innerText = "FERMER"; f.onclick = function() { fond.remove(); };
+            boite.append(note, f); fond.appendChild(boite); document.body.appendChild(fond);
+        }
+
         // Ouvre un niveau public/communautaire en édition (dev) : une copie liée au
         // fichier GitHub est créée dans les niveaux locaux (ou retrouvée si elle existe).
         function editerNiveauDistant(niveau, dossier) {
@@ -2886,6 +2967,21 @@
                 }
                 liste.appendChild(ligneNiveau(niveau.nom, btns, "#3a4454"));
             });
+            // Dev : tes niveaux marqués dans cette catégorie mais pas encore (ou plus) sur GitHub
+            if (modeDevNiveauxDeverrouille) {
+                niveauxPersonnalises.forEach(function(n) {
+                    if (n.cible !== dossier) return;
+                    if (tableau.some(t => t.id === n.id || (n.distant && t.fichier === n.distant.fichier))) return;
+                    let btns = [
+                        boutonNiveau("▶", "Jouer", "#00ffcc", "#0b0f19", () => chargerNiveauObjet(n, null)),
+                        boutonNiveau("⬆", "Envoyer sur GitHub maintenant", "#00ff66", "#0b0f19", () => {
+                            if (!ghPret()) { afficherAlerte("Configure d'abord GitHub avec le bouton 🐙 CONFIGURER GITHUB."); return; }
+                            ghEnfiler(() => publierNiveau(n));
+                        })
+                    ];
+                    liste.appendChild(ligneNiveau("⏳ " + n.nom + "  (pas encore sur GitHub)", btns, "#ffaa00"));
+                });
+            }
         }
 
         function rendreListeNiveaux() {
@@ -2912,17 +3008,17 @@
                     boutonNiveau("⬇", "Télécharger (pour l'exporter)", "#3a4454", "#00ffcc", () => telechargerNiveau(niveau))
                 ];
                 if (modeDevNiveauxDeverrouille) {
-                    let etat = niveau.cible === "publics" ? "🌐" : niveau.cible === "communautaires" ? "👥" : "🔒";
-                    btns.push(boutonNiveau(etat, "Privé → Public → Communautaire (cliquer pour changer). Actuel : " + (niveau.cible || "privé"),
-                        niveau.cible ? "#00ff66" : "#3a4454", niveau.cible ? "#0b0f19" : "#8892b0", () => changerCibleNiveau(niveau)));
+                    btns.push(boutonNiveau("📤", "Choisir : privé / public / communautaire", niveau.cible ? "#00ff66" : "#9d00ff", niveau.cible ? "#0b0f19" : "#fff", () => choisirDestinationNiveau(niveau)));
                 }
                 btns.push(boutonNiveau("🗑️", "Supprimer", "#ff0055", "#fff", () => supprimerNiveau(index)));
-                let marque = niveau.cible === "publics" ? "  🌐" : niveau.cible === "communautaires" ? "  👥" : "";
+                let marque = !modeDevNiveauxDeverrouille ? "" : niveau.cible ? "  ·  " + NOMS_CIBLE[niveau.cible] + (niveau.distant ? " ✅ en ligne" : " ⏳") : "  ·  🔒 privé";
                 liste.appendChild(ligneNiveau(niveau.nom + marque, btns, "#00ffcc55"));
             });
 
             let btnExp = document.getElementById("btn-export-publics");
             if (btnExp) btnExp.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
+            let btnSync = document.getElementById("btn-sync-github");
+            if (btnSync) btnSync.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
             let btnGh = document.getElementById("btn-config-github");
             if (btnGh) btnGh.style.display = modeDevNiveauxDeverrouille ? "block" : "none";
             if (statut && modeDevNiveauxDeverrouille) statut.innerText = statutGithubTexte() + (derniereSynchro ? "  ·  Synchronisé à " + derniereSynchro.toLocaleTimeString() : "");
@@ -3266,6 +3362,10 @@
 
         function mettreAJourBadgeNiveauPerso() {
             hudNiveauPerso.style.display = modeNiveauPersonnaliseActif ? "inline" : "none";
+            let nEd = niveauEnEditionId !== null ? niveauxPersonnalises[niveauEnEditionId] : null;
+            if (nEd && nEd.cible) hudNiveauPerso.innerText = NOMS_CIBLE[nEd.cible] + " EN DIRECT — tes modifications partent sur GitHub (Échap pour quitter)";
+            else if (nEd) hudNiveauPerso.innerText = "🔒 NIVEAU PRIVÉ — Échap pour quitter";
+            else hudNiveauPerso.innerText = "🛠️ NIVEAU — Échap pour quitter";
             mettreAJourAccesInventaire();
             mettreAJourBoutonTailleZones();
             rafraichirMarqueursZones();
@@ -3711,7 +3811,27 @@
             { nom: "Pièce x5 (Rare - Anti-Farm)", couleur: "#ffcc00", type: "piece", valeur: 5, symbole: "🪙5", prix: 3000 },
             { nom: "Pièce x10 (Épique - Anti-Farm)", couleur: "#ff8800", type: "piece", valeur: 10, symbole: "🪙10", prix: 7000 },
             { nom: "Fin de Niveau (Légendaire - Clé)", couleur: "#ffffff", type: "fin_niveau", symbole: "🏆", prix: 900 },
-            { nom: "Piège Mortel (Épique - Utilitaire)", couleur: "#ff0000", type: "piege", symbole: "⚠️", prix: 350 }
+            { nom: "Piège Mortel (Épique - Utilitaire)", couleur: "#ff0000", type: "piege", symbole: "⚠️", prix: 350 },
+            // ===== V5 : nouvelles couleurs (décoratives, collision normale) =====
+            { nom: "Bleu Néon (Commun)", couleur: "#1e90ff", type: "solide", symbole: "", prix: 60 },
+            { nom: "Menthe Pixel (Commun)", couleur: "#98ffcc", type: "solide", symbole: "", prix: 90 },
+            { nom: "Jaune Volt (Commun)", couleur: "#f5e100", type: "solide", symbole: "", prix: 90 },
+            { nom: "Lavande Code (Peu Commun)", couleur: "#b19cd9", type: "solide", symbole: "", prix: 120 },
+            { nom: "Turquoise Océan (Peu Commun)", couleur: "#00868b", type: "solide", symbole: "", prix: 120 },
+            { nom: "Blanc Givré (Peu Commun)", couleur: "#e6f1ff", type: "solide", symbole: "", prix: 120 },
+            { nom: "Bronze Rouillé (Peu Commun)", couleur: "#cd7f32", type: "solide", symbole: "", prix: 180 },
+            { nom: "Rouge Sang (Peu Commun)", couleur: "#b00020", type: "solide", symbole: "", prix: 150 },
+            { nom: "Rose Bonbon (Rare)", couleur: "#ff69b4", type: "solide", symbole: "", prix: 200 },
+            { nom: "Obsidienne (Rare)", couleur: "#14141c", type: "solide", symbole: "", prix: 250 },
+            { nom: "Or Antique (Rare)", couleur: "#d4af37", type: "solide", symbole: "", prix: 300 },
+            { nom: "Émeraude Sombre (Rare)", couleur: "#046307", type: "solide", symbole: "", prix: 250 },
+            // ===== V5 : blocs fonctionnels =====
+            { nom: "Plateforme Fragile (Rare - Utilitaire)", couleur: "#a0522d", type: "fragile", symbole: "🍂", prix: 600, info: "Tombe 0,6 s après qu'on s'est posé dessus, puis revient" },
+            { nom: "Super Trampoline (Épique - Utilitaire)", couleur: "#ff3df5", type: "trampoline_max", symbole: "🚀", prix: 800, info: "Rebond presque deux fois plus haut" },
+            { nom: "Convoyeur Gauche (Rare - Utilitaire)", couleur: "#5b6b86", type: "convoyeur_g", symbole: "◀️", prix: 650, info: "Pousse vers la gauche quand on marche dessus" },
+            { nom: "Convoyeur Droite (Rare - Utilitaire)", couleur: "#5b6b86", type: "convoyeur_d", symbole: "▶️", prix: 650, info: "Pousse vers la droite quand on marche dessus" },
+            { nom: "Boue Collante (Peu Commun - Utilitaire)", couleur: "#6b4423", type: "boue", symbole: "🟤", prix: 400, info: "Ralentit de moitié" },
+            { nom: "Colonne de Vent (Épique - Utilitaire)", couleur: "#9fd8ff", type: "vent", symbole: "🌀", prix: 900, info: "Zone sans collision qui fait monter. Empile-les en colonne" }
         ];
 
         typesDeBlocs.forEach(b => {
@@ -3723,7 +3843,7 @@
             item.style.backgroundColor = b.couleur;
             item.style.boxShadow = `0 0 6px ${b.couleur}`;
             item.innerText = b.symbole;
-            item.title = b.acquis ? b.nom : `${b.nom} — 🪙${b.prix}`;
+            item.title = (b.acquis ? b.nom : `${b.nom} — 🪙${b.prix}`) + (b.info ? " — " + b.info : "");
 
             if (!b.acquis) {
                 let lock = document.createElement("div");
@@ -3742,7 +3862,7 @@
                         verifierCompletionBoutique();
                         let l = item.querySelector(".badge-lock");
                         if (l) l.remove();
-                        item.title = b.nom;
+                        item.title = b.nom + (b.info ? " — " + b.info : "");
                     } else {
                         afficherAlerte(traductions[langueActuelle].alertePrix(b.prix));
                         return;
@@ -3886,6 +4006,61 @@
                 fond: "#002b3d",
                 prix: 35000,
                 html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #00ffcc; box-shadow: 0 0 8px #00ffcc;"></div><div style="width: 3px; height: 3px; background: #00ffcc; box-shadow: 0 0 8px #00ffcc;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #00ffcc; border-radius: 50%;"></div>`
+            },
+            // ===== V5 : nouveaux skins =====
+            {
+                nom: "Ocean Pixel (Commun)",
+                fond: "#1e90ff",
+                prix: 200,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #ffffff; "></div><div style="width: 3px; height: 3px; background: #ffffff; "></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ffffff; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Solar Flare (Rare)",
+                fond: "#ffd400",
+                prix: 1200,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #7a3b00; border-radius: 50%; "></div><div style="width: 3px; height: 3px; background: #7a3b00; border-radius: 50%; "></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #7a3b00; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Ice Core (Rare)",
+                fond: "#bfefff",
+                prix: 1400,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #005f7a; transform: rotate(45deg); "></div><div style="width: 3px; height: 3px; background: #005f7a; transform: rotate(45deg); "></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #005f7a; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Toxic Slime (Épique)",
+                fond: "#7cfc00",
+                prix: 2200,
+                html: `<div style="position: absolute; top: 4px; width: 6px; height: 6px; background: #143300; border-radius: 50%; "></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #143300; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Royal Purple (Épique)",
+                fond: "#6a0dad",
+                prix: 2600,
+                html: `<div style="position: absolute; top: 5px; width: 14px; height: 3px; background: #ffd700; box-shadow: 0 0 6px #ffd700;"></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ffd700; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Steel Robot (Légendaire)",
+                fond: "#8a97a6",
+                prix: 4000,
+                html: `<div style="position: absolute; top: 5px; width: 14px; height: 3px; background: #ff2a2a; box-shadow: 0 0 6px #ff2a2a;"></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ff2a2a; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Candy Pop (Légendaire)",
+                fond: "#ff8fd0",
+                prix: 4500,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #ffffff; transform: rotate(45deg); "></div><div style="width: 3px; height: 3px; background: #ffffff; transform: rotate(45deg); "></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ffffff; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Obsidian King (Mythique)",
+                fond: "#101018",
+                prix: 9000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #ffd700; box-shadow: 0 0 6px #ffd700;"></div><div style="width: 3px; height: 3px; background: #ffd700; box-shadow: 0 0 6px #ffd700;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ffd700; border-radius: 50%;"></div>`
+            },
+            {
+                nom: "Aurora (Divin)",
+                fond: "#00ffa6",
+                prix: 15000,
+                html: `<div style="position: absolute; top: 4px; width: 6px; height: 6px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 6px #ffffff;"></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ffffff; border-radius: 50%;"></div>`
             }
         ];
 
@@ -4383,6 +4558,12 @@
             if (elementActif.type === "piece") return "🪙" + elementActif.valeurPiece;
             if (elementActif.type === "fin_niveau") return "🏆";
             if (elementActif.type === "piege") return "⚠️";
+            if (elementActif.type === "fragile") return "🍂";
+            if (elementActif.type === "trampoline_max") return "🚀";
+            if (elementActif.type === "convoyeur_g") return "◀️";
+            if (elementActif.type === "convoyeur_d") return "▶️";
+            if (elementActif.type === "boue") return "🟤";
+            if (elementActif.type === "vent") return "🌀";
             return "";
         }
 
@@ -4724,11 +4905,13 @@
             joueur.vx = 0;
             joueur.vy = 0;
             boostTimer = 0;
+            reinitialiserFragiles();
             joueur.invincible = 90;
         }
 
         function estBlocSolide(mur) {
-            return mur.type !== "piege" && mur.type !== "checkpoint" && mur.type !== "piece" && mur.type !== "fin_niveau" && mur.type !== "decor" && mur.type !== "fragment";
+            if (mur.type === "fragile" && mur.cache) return false; // plateforme tombée
+            return mur.type !== "piege" && mur.type !== "checkpoint" && mur.type !== "piece" && mur.type !== "fin_niveau" && mur.type !== "decor" && mur.type !== "fragment" && mur.type !== "vent";
         }
 
         function peutSauter() {
@@ -4743,6 +4926,24 @@
         }
 
         let surDeLaGlace = false;
+        let surBoue = false;          // V5 : boue collante (ralentit)
+        let pousseeConv = 0;          // V5 : convoyeur (poussée horizontale par image)
+
+        // V5 : plateforme fragile : tombe peu après qu'on s'est posé dessus, puis revient.
+        function gererFragile(mur) {
+            if (mur.cache) {
+                if (--mur.retour <= 0) { mur.cache = false; mur.compte = undefined; if (mur.elementDom) { mur.elementDom.style.opacity = 1; mur.elementDom.style.transform = ""; } }
+            } else if (mur.compte !== undefined) {
+                mur.compte--;
+                if (mur.elementDom) mur.elementDom.style.transform = "translateX(" + ((mur.compte % 4 < 2) ? -1 : 1) + "px)";
+                if (mur.compte <= 0) { mur.cache = true; mur.retour = 180; if (mur.elementDom) { mur.elementDom.style.opacity = 0.15; mur.elementDom.style.transform = ""; } }
+            }
+        }
+        function reinitialiserFragiles() {
+            blocsMonde.forEach(b => {
+                if (b.type === "fragile") { b.cache = false; b.compte = undefined; if (b.elementDom) { b.elementDom.style.opacity = 1; b.elementDom.style.transform = ""; } }
+            });
+        }
 
         // Vitesse de déplacement sur mobile : 80 % de celle du PC (modifiable ici)
         const FACTEUR_VITESSE_MOBILE = 0.8;
@@ -4790,6 +4991,7 @@
 
                 // Mobile (mode tactile choisi ou écran tactile) : déplacement plus lent
                 let fv = vitesseReduiteMobile() ? FACTEUR_VITESSE_MOBILE : 1;
+                if (surBoue) fv *= 0.5;
                 let vitesseCible = moveDir * joueur.speed * fv;
 
                 if (surDeLaGlace) {
@@ -4815,7 +5017,7 @@
                 // 1) On bouge en X puis on se recolle au mur touché (jamais de choix
                 //    ambigu entre "côté" et "dessus" : c'était la cause du bug où l'on
                 //    sautait contre un mur et se retrouvait téléporté / passait dessous).
-                joueur.x += joueur.vx;
+                joueur.x += joueur.vx + pousseeConv;
                 for (let mur of blocsMonde) {
                     if (!estBlocSolide(mur)) continue;
                     if (joueur.x + joueur.width > mur.x && joueur.x < mur.x + mur.width &&
@@ -4829,7 +5031,7 @@
                 joueur.vy += joueur.gravity;
                 joueur.y += joueur.vy;
                 joueur.isGrounded = false;
-                surDeLaGlace = false;
+                surDeLaGlace = false; surBoue = false; pousseeConv = 0;
 
                 if (joueur.y + joueur.height >= arene.clientHeight) respawnJoueur();
 
@@ -4871,6 +5073,10 @@
                         } else {
                             genererMapProcedurale();
                         }
+                    }
+                    if (mur.type === "fragile") gererFragile(mur);
+                    if (mur.type === "vent" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        joueur.vy -= 0.95; if (joueur.vy < -4.5) joueur.vy = -4.5; // courant d'air ascendant
                     }
                     if (mur.type === "piece" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         mur.ramasse = true;
@@ -4931,6 +5137,11 @@
                                 if (mur.type === "glace") {
                                     surDeLaGlace = true;
                                 }
+                                if (mur.type === "trampoline_max") { joueur.vy = joueur.jumpForce * 1.9; joueur.isGrounded = false; }
+                                if (mur.type === "boue") surBoue = true;
+                                if (mur.type === "convoyeur_g") pousseeConv = -1.6;
+                                if (mur.type === "convoyeur_d") pousseeConv = 1.6;
+                                if (mur.type === "fragile" && mur.compte === undefined) mur.compte = 36;
                             } else if (joueur.vy < 0) {
                                 // Cogne le dessous du bloc en montant
                                 joueur.y = mur.y + mur.height;
