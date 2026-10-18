@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V5.1</title><!-- build V5.1 : menus déroulants, spawn, nouveaux blocs et mobs -->
+    <title>CYBER_HACK // PROTOCOL — V6.4</title><!-- build V6.4 : nouveaux blocs fonctionnels + 27 succès -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -627,6 +627,8 @@
         #joystick-zone::before { content: "◀"; left: 8px; }
         #joystick-zone::after { content: "▶"; right: 8px; }
         #bouton-saut-tactile.appuye { background: rgba(255, 0, 85, 0.7); color: #fff; transform: scale(0.94); }
+            #monde { will-change: transform; }
+            body:not(.mode-creatif) .bloc-cache { opacity: 0.07; }
     </style>
 </head>
 <body>
@@ -637,7 +639,9 @@
         <button class="btn-mode-choix" onclick="fermerEcranTitre()">▶ JOUER</button>
         <button class="btn-mode-choix" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 15px rgba(255,170,0,0.3); padding:10px 22px; font-size:13px;" onclick="ouvrirFenetreTouches()">⌨️ TOUCHES &amp; COMMANDES</button>
         <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V5.1</p>
+        <button class="btn-mode-choix" style="border-color:#ffcc00; color:#ffcc00; box-shadow:0 0 12px rgba(255,204,0,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirJournal()">📜 JOURNAL DES MISES À JOUR</button>
+        <button class="btn-mode-choix" style="border-color:#ff0055; color:#ff0055; box-shadow:0 0 12px rgba(255,0,85,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirSucces()">🏅 SUCCÈS</button>
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V6.4</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -646,8 +650,8 @@
             <h2 style="color:#00ffcc;">⌨️ TOUCHES &amp; CONTRÔLES</h2>
             <p class="sous-titre">Appuie sur une touche : elle s'enfonce ci-dessous. Essaie, c'est satisfaisant.</p>
             <h3>🎮 DÉPLACEMENT</h3>
-            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="q">Q</span><span class="touche" data-k="d">D</span></div><div class="desc">Aller à gauche / à droite<small>Clavier AZERTY : le côté gauche du clavier, comme un vrai hacker.</small></div></div>
-            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="z">Z</span><span class="touche" data-k=" ">ESPACE</span></div><div class="desc">Sauter<small>Plus tu relâches tard, plus tu regrettes le piège en dessous. Inactif en mode création.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="q">Q</span><span class="touche" data-k="d">D</span><span class="touche" data-k="arrowleft">←</span><span class="touche" data-k="arrowright">→</span></div><div class="desc">Aller à gauche / à droite<small>Clavier AZERTY : le côté gauche du clavier, comme un vrai hacker.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="z">Z</span><span class="touche" data-k=" ">ESPACE</span><span class="touche" data-k="arrowup">↑</span></div><div class="desc">Sauter<small>Plus tu relâches tard, plus tu regrettes le piège en dessous. Inactif en mode création.</small></div></div>
             <div class="ligne-touche"><div class="touches"><span class="touche" data-k="mobile">📱</span></div><div class="desc">Mode mobile<small>Joystick + bouton de saut à l'écran.</small></div></div>
             <h3>🛠️ CRÉATION DE NIVEAU</h3>
             <div class="ligne-touche"><div class="touches"><span class="touche" data-k="e">E</span></div><div class="desc">Activer / quitter le mode création<small>Le monde se fige, tu deviens architecte.</small></div></div>
@@ -673,6 +677,20 @@
         </div>
     </div>
 
+    <div id="fenetre-journal" class="fenetre-info" onclick="if(event.target===this) fermerJournal()">
+        <div class="conteneur-parametres" style="max-height:88vh; overflow-y:auto;">
+            <h2 id="titre-journal" style="color:#ffcc00;"></h2>
+            <div id="liste-journal"></div>
+            <button class="btn-modal-action" style="margin-top:16px;" onclick="fermerJournal()">FERMER</button>
+        </div>
+    </div>
+    <div id="fenetre-succes" class="fenetre-info" onclick="if(event.target===this) fermerSucces()">
+        <div class="conteneur-parametres" style="max-height:88vh; overflow-y:auto; border-color:#ff0055;">
+            <h2 id="titre-succes" style="color:#ff0055;"></h2>
+            <div id="liste-succes"></div>
+            <button class="btn-modal-action" style="margin-top:16px;" onclick="fermerSucces()">FERMER</button>
+        </div>
+    </div>
     <div id="ecran-fin">
         <div class="conteneur-parametres" style="max-width: 480px;">
             <h2 style="color: #ffcc00; margin-top: 0;">🏆 PROTOCOLE TERMINÉ</h2>
@@ -788,6 +806,8 @@
             </select>
             <button class="btn-modal-action" onclick="rechargerPage()" id="btn-recharger-txt" style="background-color: #ffaa00; color: #0b0f19;">🔄 RECHARGER LA PAGE</button>
             <button class="btn-modal-action" onclick="ouvrirEcranTitre()" id="btn-revoir-titre-txt">🎬 VOIR L'ÉCRAN TITRE</button>
+            <button class="btn-modal-action" onclick="ouvrirJournal()" style="background-color:#ffcc00; color:#0b0f19;">📜 JOURNAL DES MISES À JOUR</button>
+            <button class="btn-modal-action" onclick="ouvrirSucces()" style="background-color:#ff0055; color:#fff;">🏅 SUCCÈS</button>
             <p style="color: #8892b0; font-size: 10px; margin: 10px 0 4px 0; text-align: left;">Niveaux créés par le développeur, à essayer librement :</p>
             <button class="btn-modal-action" id="btn-voir-fin" onclick="afficherEcranFin()" style="display:none; background-color:#ffcc00; color:#0b0f19;">🏆 VOIR LA FIN</button>
             <button class="btn-modal-action" id="btn-voir-credits" onclick="afficherCredits()" style="display:none; background-color:#00ffcc; color:#0b0f19;">🎬 CRÉDITS</button>
@@ -815,6 +835,8 @@
             <button id="btn-parametres" class="btn-hud-icone" onclick="ouvrirParametres()" title="Paramètres">⚙️</button>
         </div>
     </div>
+
+    <div id="barre-prog" style="width:100%; max-width:800px; height:5px; margin:0 auto 6px auto; background:#121826; border:1px solid rgba(0,255,204,0.35); box-sizing:border-box; position:relative;"><div id="barre-prog-fill" style="height:100%; width:0%; background:linear-gradient(90deg,#00ffcc,#ff0055);"></div></div>
 
     <div id="panneau-commande">
         <input type="text" id="input-commande">
@@ -943,7 +965,10 @@
             }
         };
 
-        let langueActuelle = localStorage.getItem("cyber_hack_langue") || "fr";
+        // Stockage sûr : ne plante jamais si le navigateur bloque / sature localStorage
+        function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+        function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+        let langueActuelle = lsGet("cyber_hack_langue") || "fr";
         document.getElementById("select-langue").value = langueActuelle;
 
         // Crédits personnalisés (commande cachée /title) — texte affiché dans l'écran
@@ -1006,6 +1031,9 @@
             "Échap": ["Esc", "Esc", "Esc"],
             "pour le quitter et revenir en génération aléatoire.": ["to leave it and return to random generation.", "um es zu verlassen und zur Zufallsgenerierung zurückzukehren.", "を押すと終了してランダム生成に戻る。"],
             "📤 EXPORTER LES NIVEAUX PUBLICS (GITHUB)": ["📤 EXPORT PUBLIC LEVELS (GITHUB)", "📤 ÖFFENTLICHE LEVEL EXPORTIEREN (GITHUB)", "📤 公開レベルを書き出す(GITHUB)"],
+            "⬆ ENVOYER MES NIVEAUX 🌐/👥 SUR GITHUB": ["⬆ SEND MY LEVELS 🌐/👥 TO GITHUB", "⬆ MEINE LEVEL 🌐/👥 AN GITHUB SENDEN", "⬆ 自分のレベル 🌐/👥 をGITHUBに送る"],
+            "🐙 CONFIGURER GITHUB (ÉCRITURE AUTO)": ["🐙 SET UP GITHUB (AUTO-WRITE)", "🐙 GITHUB EINRICHTEN (AUTO-SCHREIBEN)", "🐙 GITHUB設定(自動書き込み)"],
+            "📂 IMPORTER UN NIVEAU (.json)": ["📂 IMPORT A LEVEL (.json)", "📂 LEVEL IMPORTIEREN (.json)", "📂 レベルを読み込む(.json)"],
             "➕ CRÉER UN NIVEAU": ["➕ CREATE A LEVEL", "➕ LEVEL ERSTELLEN", "➕ レベルを作る"],
             "📐 TAILLE & ZONES": ["📐 SIZE & ZONES", "📐 GRÖSSE & ZONEN", "📐 サイズ&ゾーン"],
             "Valeurs en": ["Values in", "Werte in", "単位は"],
@@ -1107,6 +1135,127 @@
             [/^⚠️ (\d+) bloc\(s\) se trouvent au-delà de la nouvelle fin du niveau\.$/, ["⚠️ $1 block(s) are beyond the new end of the level.", "⚠️ $1 Block/Blöcke liegen hinter dem neuen Levelende.", "⚠️ $1個のブロックが新しいレベル終端の外にあります。"]],
             [/^Il te faut (\d+) 🪙 pour débloquer (cet élément|ce skin) !$/, ["You need $1 🪙 to unlock this item!", "Du brauchst $1 🪙, um dieses Element freizuschalten!", "このアイテムを解放するには $1 🪙 必要です!"]]
         ];
+        // ---- V5.3 : traductions complémentaires ----
+        Object.assign(I18N_DOM, {
+            "✖ QUITTER LE TEST": ["✖ QUIT TEST", "✖ TEST BEENDEN", "✖ テスト終了"],
+            "👥 NIVEAUX COMMUNAUTAIRES": ["👥 COMMUNITY LEVELS", "👥 COMMUNITY-LEVEL", "👥 コミュニティレベル"],
+            "Aucun niveau communautaire pour l'instant.": ["No community level yet.", "Noch kein Community-Level.", "コミュニティレベルはまだありません。"],
+            "💾 MES NIVEAUX (PRIVÉS, LOCAUX)": ["💾 MY LEVELS (PRIVATE, LOCAL)", "💾 MEINE LEVEL (PRIVAT, LOKAL)", "💾 マイレベル(非公開・ローカル)"],
+            "Aucun niveau. Crée-en un avec ➕.": ["No levels. Create one with ➕.", "Keine Level. Erstelle eins mit ➕.", "レベルがありません。➕で作成しよう。"],
+            "Renommer": ["Rename", "Umbenennen", "名前変更"],
+            "Dupliquer": ["Duplicate", "Duplizieren", "複製"],
+            "Télécharger": ["Download", "Herunterladen", "ダウンロード"],
+            "Télécharger (pour l'exporter)": ["Download (to export it)", "Herunterladen (zum Exportieren)", "ダウンロード(書き出し用)"],
+            "Choisir : privé / public / communautaire": ["Choose: private / public / community", "Wählen: privat / öffentlich / Community", "選択:非公開 / 公開 / コミュニティ"],
+            "Éditer (écrit tout seul dans GitHub)": ["Edit (writes to GitHub automatically)", "Bearbeiten (schreibt automatisch auf GitHub)", "編集(GitHubに自動書き込み)"],
+            "Supprimer de GitHub": ["Delete from GitHub", "Von GitHub löschen", "GitHubから削除"],
+            "Envoyer sur GitHub maintenant": ["Send to GitHub now", "Jetzt an GitHub senden", "今すぐGitHubに送る"],
+            "Tester cette mission": ["Test this mission", "Diese Mission testen", "このミッションをテスト"],
+            "Commande invalide.": ["Invalid command.", "Ungültiger Befehl.", "無効なコマンドです。"],
+            "Commande inconnue.": ["Unknown command.", "Unbekannter Befehl.", "不明なコマンドです。"],
+            "Fichier de niveau invalide.": ["Invalid level file.", "Ungültige Leveldatei.", "無効なレベルファイルです。"],
+            "📍 Point de départ déplacé ici": ["📍 Start point moved here", "📍 Startpunkt hierher verschoben", "📍 スタート地点をここに移動"],
+            "🧪 Test de l'histoire désactivé.": ["🧪 Story test off.", "🧪 Story-Test aus.", "🧪 ストーリーテストOFF。"],
+            "Gratuit : l'arrivée du niveau": ["Free: the level's finish", "Gratis: das Levelziel", "無料:レベルのゴール"],
+            "Gratuit : place le départ du niveau (un seul, invisible en jeu)": ["Free: sets the level's start (only one, invisible in play)", "Gratis: setzt den Levelstart (nur einer, im Spiel unsichtbar)", "無料:スタート地点を置く(1つだけ、プレイ中は非表示)"],
+            "Tombe 0,6 s après qu'on s'est posé dessus, puis revient": ["Falls 0.6 s after you land on it, then comes back", "Fällt 0,6 s nach dem Landen und kehrt dann zurück", "乗って0.6秒後に落ち、その後戻る"],
+            "Rebond presque deux fois plus haut": ["Bounces almost twice as high", "Fast doppelt so hoher Absprung", "ほぼ2倍の高さで跳ねる"],
+            "Pousse vers la gauche quand on marche dessus": ["Pushes you left when you walk on it", "Schiebt dich nach links, wenn du darauf gehst", "上を歩くと左へ押される"],
+            "Pousse vers la droite quand on marche dessus": ["Pushes you right when you walk on it", "Schiebt dich nach rechts, wenn du darauf gehst", "上を歩くと右へ押される"],
+            "Ralentit de moitié": ["Halves your speed", "Halbiert das Tempo", "速度が半分になる"],
+            "Une fine planche : on la traverse par en dessous, on se pose dessus par le haut. Elle occupe une case.": ["A thin plank: pass through from below, land on it from above. Takes one cell.", "Ein dünnes Brett: von unten durchlässig, von oben begehbar. Belegt ein Feld.", "薄い板:下からすり抜け、上から乗れる。1マス分。"],
+            "Solide 2 s puis disparaît 2 s, en boucle": ["Solid for 2 s, gone for 2 s, on a loop", "2 s fest, 2 s weg, im Wechsel", "2秒実体、2秒消える、を繰り返す"],
+            "Te ramène au dernier point de sauvegarde, sans compter de mort": ["Sends you back to the last checkpoint, no death counted", "Bringt dich zum letzten Checkpoint zurück, ohne Tod zu zählen", "最後のチェックポイントに戻す(死亡数は増えない)"],
+            "Zone sans collision qui fait monter. Empile-les en colonne": ["No-collision zone that lifts you up. Stack them in a column", "Zone ohne Kollision, die dich hochträgt. Als Säule stapeln", "当たり判定なしで上昇させる。縦に積もう"],
+            "Mortel 1,5 s, inoffensif 1,5 s, en boucle (il s'estompe quand il est éteint)": ["Deadly 1.5 s, harmless 1.5 s, on a loop (it fades when off)", "1,5 s tödlich, 1,5 s harmlos, im Wechsel (verblasst, wenn aus)", "1.5秒危険、1.5秒無害を繰り返す(消灯時は薄くなる)"],
+            "Zone sans collision : gravité faible, on flotte et on saute très haut": ["No-collision zone: low gravity, you float and jump very high", "Zone ohne Kollision: geringe Schwerkraft, du schwebst und springst sehr hoch", "当たり判定なし:低重力でふわふわ、とても高く跳べる"],
+            "Patrouille en sautant": ["Patrols by hopping", "Patrouilliert hüpfend", "跳ねながら巡回"],
+            "Flotte en faisant des vagues": ["Floats in waves", "Schwebt in Wellen", "波打って浮かぶ"],
+            "Patrouille très rapide": ["Very fast patrol", "Sehr schnelle Patrouille", "非常に速い巡回"],
+            "Vole en vagues, rapide": ["Flies in waves, fast", "Fliegt in Wellen, schnell", "波状に素早く飛ぶ"],
+            "Bondit vite d'un bout à l'autre": ["Hops quickly from end to end", "Hüpft schnell von Ende zu Ende", "端から端へ素早く跳ねる"],
+            "Vole en grandes vagues, très rapide": ["Flies in big waves, very fast", "Fliegt in großen Wellen, sehr schnell", "大きな波で非常に速く飛ぶ"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Cyan Data": ["Cyan Data", "Cyan-Daten", "シアンデータ"],
+            "Bleu Néon": ["Neon Blue", "Neonblau", "ネオンブルー"], "Menthe Pixel": ["Pixel Mint", "Pixel-Minze", "ピクセルミント"],
+            "Jaune Volt": ["Volt Yellow", "Volt-Gelb", "ボルトイエロー"], "Lavande Code": ["Code Lavender", "Code-Lavendel", "コードラベンダー"],
+            "Turquoise Océan": ["Ocean Turquoise", "Ozean-Türkis", "オーシャンターコイズ"], "Blanc Givré": ["Frosted White", "Frostweiß", "フロストホワイト"],
+            "Bronze Rouillé": ["Rusty Bronze", "Rostiges Bronze", "錆びたブロンズ"], "Rouge Sang": ["Blood Red", "Blutrot", "ブラッドレッド"],
+            "Rose Bonbon": ["Candy Pink", "Bonbonrosa", "キャンディピンク"], "Obsidienne": ["Obsidian", "Obsidian", "オブシディアン"],
+            "Or Antique": ["Antique Gold", "Antikgold", "アンティークゴールド"], "Émeraude Sombre": ["Dark Emerald", "Dunkler Smaragd", "ダークエメラルド"],
+            "Corail": ["Coral", "Koralle", "コーラル"], "Citron Vert": ["Lime", "Limette", "ライム"], "Indigo": ["Indigo", "Indigo", "インディゴ"],
+            "Bleu Marine": ["Navy Blue", "Marineblau", "ネイビー"], "Cuivre": ["Copper", "Kupfer", "カッパー"], "Perle": ["Pearl", "Perle", "パール"],
+            "Magenta Laser": ["Laser Magenta", "Laser-Magenta", "レーザーマゼンタ"],
+            "Plateforme Fragile": ["Fragile Platform", "Zerbrechliche Plattform", "もろい足場"],
+            "Super Trampoline": ["Super Trampoline", "Supertrampolin", "スーパートランポリン"],
+            "Convoyeur Gauche": ["Conveyor Left", "Förderband links", "コンベア(左)"], "Convoyeur Droite": ["Conveyor Right", "Förderband rechts", "コンベア(右)"],
+            "Boue Collante": ["Sticky Mud", "Klebriger Schlamm", "ねばねば泥"], "Plateforme Traversante": ["One-Way Platform", "Durchlässige Plattform", "すり抜け足場"],
+            "Bloc Clignotant": ["Blinking Block", "Blinkender Block", "点滅ブロック"], "Portail de Retour": ["Return Portal", "Rückkehrportal", "帰還ポータル"],
+            "Colonne de Vent": ["Wind Column", "Windsäule", "風の柱"], "Boost Pad": ["Boost Pad", "Boost-Pad", "ブーストパッド"],
+            "Checkpoint": ["Checkpoint", "Checkpoint", "チェックポイント"], "Point de Départ": ["Start Point", "Startpunkt", "スタート地点"],
+            "Laser Pulsant": ["Pulsing Laser", "Pulsierender Laser", "パルスレーザー"], "Zone Lunaire": ["Moon Zone", "Mondzone", "月面ゾーン"],
+            "Grenouille Bot": ["Frog Bot", "Frosch-Bot", "カエルボット"], "Fantôme Cyber": ["Cyber Ghost", "Cyber-Geist", "サイバーゴースト"],
+            "Scorpion Cyber": ["Cyber Scorpion", "Cyber-Skorpion", "サイバースコーピオン"], "Dragon Mécanique": ["Mechanical Dragon", "Mechanischer Drache", "機械ドラゴン"],
+            "Araignée Cyber": ["Cyber Spider", "Cyber-Spinne", "サイバースパイダー"], "OVNI Hacker": ["Hacker UFO", "Hacker-UFO", "ハッカーUFO"]
+        });
+        Object.assign(I18N_RARETES, { "Essentiel": ["Essential", "Wesentlich", "必須"] });
+        Object.assign(I18N_DOM, {
+            "Glisse de gauche à droite (±2,5 blocs) et emporte le joueur": ["Slides left and right (±2.5 blocks) and carries the player", "Gleitet hin und her (±2,5 Blöcke) und nimmt den Spieler mit", "左右に動き(±2.5ブロック)プレイヤーを運ぶ"],
+            "Ramasse-le pour un saut supplémentaire en l'air (revient après 3 s)": ["Grab it for one extra mid-air jump (comes back after 3 s)", "Einsammeln für einen zusätzlichen Sprung in der Luft (kehrt nach 3 s zurück)", "取ると空中で追加ジャンプ1回(3秒で復活)"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Plateforme Mobile": ["Moving Platform", "Bewegliche Plattform", "動く足場"],
+            "Orbe Double Saut": ["Double Jump Orb", "Doppelsprung-Orb", "ダブルジャンプオーブ"]
+        });
+        Object.assign(I18N_DOM, {
+            "Le toucher ouvre ou ferme toutes les Portes du niveau (remis à zéro à ta mort)": ["Touching it opens or closes every Door in the level (reset when you die)", "Berühren öffnet oder schließt alle Türen im Level (beim Tod zurückgesetzt)", "触れるとレベル内の全てのドアが開閉(死亡でリセット)"],
+            "Solide tant que l'Interrupteur n'est pas activé": ["Solid until the Switch is activated", "Fest, bis der Schalter aktiviert wird", "スイッチを入れるまで固体"],
+            "Te téléporte au Téléporteur A (et inversement)": ["Teleports you to Teleporter A (and back)", "Teleportiert dich zu Teleporter A (und zurück)", "テレポーターAへ転送(逆も可)"],
+            "Te téléporte au Téléporteur B (et inversement)": ["Teleports you to Teleporter B (and back)", "Teleportiert dich zu Teleporter B (und zurück)", "テレポーターBへ転送(逆も可)"],
+            "Vole en vagues rapides": ["Flies in fast waves", "Fliegt in schnellen Wellen", "素早い波状に飛ぶ"],
+            "Rampe lentement": ["Crawls slowly", "Kriecht langsam", "ゆっくり這う"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Interrupteur": ["Switch", "Schalter", "スイッチ"], "Porte": ["Door", "Tür", "ドア"],
+            "Téléporteur A": ["Teleporter A", "Teleporter A", "テレポーターA"], "Téléporteur B": ["Teleporter B", "Teleporter B", "テレポーターB"],
+            "Chauve-souris Cyber": ["Cyber Bat", "Cyber-Fledermaus", "サイバーバット"], "Ver Binaire": ["Binary Worm", "Binärwurm", "バイナリワーム"]
+        });
+        Object.assign(I18N_DOM, {
+            "📜 JOURNAL DES MISES À JOUR": ["📜 UPDATE LOG", "📜 UPDATE-JOURNAL", "📜 アップデート履歴"],
+            "🏅 SUCCÈS": ["🏅 ACHIEVEMENTS", "🏅 ERFOLGE", "🏅 実績"],
+            "Tire des projectiles vers toi quand tu es à portée. Solide : on peut marcher dessus": ["Fires projectiles at you when you're in range. Solid: you can stand on it", "Schießt auf dich, wenn du in Reichweite bist. Fest: man kann darauf stehen", "射程内に入ると弾を撃つ。固体で上に乗れる"],
+            "Monte et descend (±2,5 blocs) et emporte le joueur": ["Moves up and down (±2.5 blocks) and carries the player", "Fährt hoch und runter (±2,5 Blöcke) und nimmt den Spieler mit", "上下に動き(±2.5ブロック)プレイヤーを運ぶ"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Tourelle": ["Turret", "Geschützturm", "タレット"],
+            "Plateforme Verticale": ["Vertical Platform", "Vertikale Plattform", "縦移動足場"]
+        });
+        Object.assign(I18N_DOM, {
+            "Patrouille, puis fonce sur toi quand tu approches": ["Patrols, then charges at you when you get close", "Patrouilliert, stürmt dann auf dich zu, wenn du näher kommst", "巡回し、近づくと突進してくる"],
+            "Chasse à toute vitesse dès qu'il te repère": ["Chases at full speed as soon as it spots you", "Jagt mit voller Geschwindigkeit, sobald er dich entdeckt", "見つけた途端に全速力で追跡する"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Chasseur Cyber": ["Cyber Hunter", "Cyber-Jäger", "サイバーハンター"],
+            "Drone Traqueur": ["Tracker Drone", "Verfolger-Drohne", "トラッカードローン"]
+        });
+        Object.assign(I18N_DOM, {
+            "Ramasse-le : invincible 6 s (revient après 4 s)": ["Grab it: invincible for 6 s (comes back after 4 s)", "Einsammeln: 6 s unverwundbar (kehrt nach 4 s zurück)", "取ると6秒間無敵(4秒で復活)"],
+            "Ramasse-le : +60 % de vitesse pendant 5 s (revient après 4 s)": ["Grab it: +60% speed for 5 s (comes back after 4 s)", "Einsammeln: +60 % Tempo für 5 s (kehrt nach 4 s zurück)", "取ると5秒間速度+60%(4秒で復活)"],
+            "Zone sans collision qui pousse vers la gauche": ["No-collision zone that pushes you left", "Zone ohne Kollision, die nach links schiebt", "当たり判定なしで左へ押す"],
+            "Zone sans collision qui pousse vers la droite": ["No-collision zone that pushes you right", "Zone ohne Kollision, die nach rechts schiebt", "当たり判定なしで右へ押す"],
+            "Presque invisible en jeu, mortel au contact (visible en création)": ["Nearly invisible in play, deadly on contact (visible in creative)", "Im Spiel fast unsichtbar, tödlich bei Berührung (im Baumodus sichtbar)", "プレイ中はほぼ透明、触れると即死(作成中は表示)"],
+            "Solide : petit rebond à chaque atterrissage": ["Solid: small bounce on every landing", "Fest: kleiner Absprung bei jeder Landung", "固体:着地のたびに小さく跳ねる"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Orbe Bouclier": ["Shield Orb", "Schild-Orb", "シールドオーブ"], "Orbe Vitesse": ["Speed Orb", "Tempo-Orb", "スピードオーブ"],
+            "Courant d'Air Gauche": ["Air Current Left", "Luftstrom links", "気流(左)"], "Courant d'Air Droite": ["Air Current Right", "Luftstrom rechts", "気流(右)"],
+            "Piège Caché": ["Hidden Trap", "Versteckte Falle", "隠し罠"], "Gelée": ["Jelly", "Gelee", "ゼリー"]
+        });
+        I18N_RE.push(
+            [/^📄 Niveau dupliqué \(privé\) : (.*)$/, ["📄 Level duplicated (private): $1", "📄 Level dupliziert (privat): $1", "📄 レベルを複製(非公開):$1"]],
+            [/^(\d+) niveau\(x\) importé\(s\) dans tes niveaux locaux\.$/, ["$1 level(s) imported into your local levels.", "$1 Level in deine lokalen Level importiert.", "$1件のレベルをローカルレベルに読み込みました。"]]
+        );
         function trad(fr) {
             let idx = ({ fr: 0, en: 1, de: 2, ja: 3 })[langueActuelle] || 0;
             if (!idx || typeof fr !== "string") return fr;
@@ -1119,6 +1268,7 @@
             }
             let m = k.match(/^(.*?)( — 🪙\d+)$/);
             if (m) { let t = trad(m[1]); if (t !== m[1]) return fr.replace(k, t + m[2]); }
+            if (k.indexOf(" — ") > 0) { let ps = k.split(" — "), trs = ps.map(function(p) { return trad(p); }); if (trs.join(" — ") !== ps.join(" — ")) return fr.replace(k, trs.join(" — ")); }
             m = k.match(/^(.+?)(?: \(([^)]+)\))?$/);
             if (m) {
                 let base = I18N_NOMS[m[1]] ? I18N_NOMS[m[1]][idx - 1] : m[1];
@@ -1132,6 +1282,7 @@
             }
             return fr;
         }
+        function dansMonde(n) { let e = n && (n.nodeType === 1 ? n : n.parentNode); return !!(e && e.closest && e.closest("#monde")); }
         const _origTxtDOM = new WeakMap();
         function _trNoeudTexte(n) {
             if (n.parentNode && /^(SCRIPT|STYLE|TEXTAREA)$/.test(n.parentNode.nodeName)) return;
@@ -1159,7 +1310,7 @@
             if (racine.nodeType === 3) { _trNoeudTexte(racine); return; }
             if (racine.nodeType !== 1) return;
             _trAttr(racine);
-            let w = document.createTreeWalker(racine, 5), n; // 1 éléments + 4 textes
+            let w = document.createTreeWalker(racine, 5, { acceptNode: function(x) { return (x.nodeType === 1 && x.id === "monde") ? 2 : 1; } }), n; // ignore le monde (milliers de blocs)
             let liste = [];
             while ((n = w.nextNode())) liste.push(n);
             liste.forEach(function(x) { if (x.nodeType === 3) _trNoeudTexte(x); else _trAttr(x); });
@@ -1175,6 +1326,7 @@
                 let obs = new MutationObserver(function(muts) {
                     if (!(({ fr: 0, en: 1, de: 2, ja: 3 })[langueActuelle])) return;
                     muts.forEach(function(m) {
+                        if (dansMonde(m.target)) return;
                         if (m.type === "characterData") _trNoeudTexte(m.target);
                         else if (m.type === "attributes") _trAttr(m.target);
                         else m.addedNodes.forEach(function(nd) { _trArbre(nd); });
@@ -1186,10 +1338,11 @@
         } catch (e) {}
         // Les modales passent aussi par trad() (messages multi-lignes compris).
         (function() {
-            let _al = afficherAlerte, _co = demanderConfirmation, _nb = demanderNombre;
+            let _al = afficherAlerte, _co = demanderConfirmation, _nb = demanderNombre, _to = toast;
             afficherAlerte = function(m) { return _al(trad(m)); };
             demanderConfirmation = function(m, cb) { return _co(trad(m), cb); };
             demanderNombre = function(m, v, mx, cb) { return _nb(trad(m), v, mx, cb); };
+            toast = function(m) { return _to(trad(m)); };
         })();
 
         function appliquerTraductions() {
@@ -1222,8 +1375,9 @@
         }
 
         function changerLangue(langue) {
+            marquerLangue(langueActuelle); marquerLangue(langue);
             langueActuelle = langue;
-            localStorage.setItem("cyber_hack_langue", langue);
+            lsSet("cyber_hack_langue", langue);
             appliquerTraductions();
         }
 
@@ -2028,10 +2182,15 @@
         // V5 : fenêtre des nouveautés, affichée une seule fois par version
         window.addEventListener("load", function() {
             let vue = null; try { vue = localStorage.getItem("cyber_hack_version_vue"); } catch (e) {}
-            if (vue === "5.1") return;
-            try { localStorage.setItem("cyber_hack_version_vue", "5.1"); } catch (e) {}
+            if (vue === "6.4") return;
+            try { localStorage.setItem("cyber_hack_version_vue", "6.4"); } catch (e) {}
             setTimeout(function() {
-                afficherAlerte("🆕 V5.1 — Mise à jour !\n\n🗂️ Inventaire en menus déroulants : Outils · Essentiels · Couleurs · Fonctionnels · Mobs\n📍 Nouveau bloc Point de départ (gratuit) : place ton spawn où tu veux\n🏆 Fin de niveau maintenant gratuite\n⚙️ 3 nouveaux blocs : ➖ plateforme traversante · 💡 bloc clignotant · 🌌 portail de retour\n🎨 7 nouvelles couleurs\n👾 4 nouveaux mobs : 🐸 grenouille qui saute · 👻 fantôme qui flotte · 🦂 scorpion rapide · 🐉 dragon\n\nOuvre l'inventaire 🎒 pour tout voir.");
+                afficherAlerte(tx([
+                    "🆕 V6.4 — Mise à jour !\n\n🏅 27 nouveaux succès (blocs, compteurs, éditeur, boutique, langues…)\n🛡️ Orbe Bouclier et 💨 Orbe Vitesse\n⬅️➡️ Courants d'Air latéraux\n☠️ Piège Caché, 🟣 Gelée\n📜 Tout est dans le Journal des mises à jour",
+                    "🆕 V6.4 — Update!\n\n🏅 27 new achievements (blocks, counters, editor, shop, languages…)\n🛡️ Shield Orb and 💨 Speed Orb\n⬅️➡️ Side Air Currents\n☠️ Hidden Trap, 🟣 Jelly\n📜 Everything is in the Update Log",
+                    "🆕 V6.4 — Update!\n\n🏅 27 neue Erfolge (Blöcke, Zähler, Editor, Shop, Sprachen…)\n🛡️ Schild-Orb und 💨 Tempo-Orb\n⬅️➡️ Seitliche Luftströme\n☠️ Versteckte Falle, 🟣 Gelee\n📜 Alles im Update-Journal",
+                    "🆕 V6.4 — アップデート!\n\n🏅 新しい実績27個(ブロック・カウンター・エディタ・ショップ・言語…)\n🛡️ シールドオーブと💨 スピードオーブ\n⬅️➡️ 横向きの気流\n☠️ 隠し罠、🟣 ゼリー\n📜 全てアップデート履歴に載っています"
+                ]));
             }, 700);
         });
         function nbVariantesMission(tache, z) {
@@ -2172,7 +2331,7 @@
             if (typeof a === "string") return a;
             let i = ({ fr: 0, en: 1, de: 2, ja: 3 })[langueActuelle];
             if (i === undefined) i = 0;
-            return a[i] !== undefined ? a[i] : a[0];
+            return a[i] !== undefined ? a[i] : (a[1] !== undefined ? a[1] : a[0]);
         }
         function toast(msg) {
             try {
@@ -2254,7 +2413,11 @@
                 M("cocher", "🔍", ["OSINT : coche les sources publiques", "OSINT: tick the public sources"], ["Sources publiques listées", "Public sources listed"],
                     { q: ["Coche les informations PUBLIQUES utiles à un enquêteur (OSINT).", "Tick the PUBLIC information useful to an investigator (OSINT)."], items: [[["Profil public sur un réseau social", "Public social-media profile"], true], [["Site web de l'entreprise", "Company website"], true], [["Mot de passe du Wi-Fi interne", "Internal Wi-Fi password"], false], [["Offres d'emploi publiées", "Published job offers"], true], [["Contenu d'un coffre-fort chiffré", "Contents of an encrypted vault"], false], [["Registre WHOIS d'un domaine", "WHOIS record of a domain"], true]] }),
                 M("calcul", "🧮", ["Valeur maximale d'un octet IP", "Maximum value of an IP octet"], ["Limite trouvée", "Limit found"],
-                    { q: ["Dans une adresse IPv4, quelle est la plus grande valeur possible d'un nombre (un octet) ?", "In an IPv4 address, what is the largest possible value of one number (one octet)?"], rep: [255] })
+                    { q: ["Dans une adresse IPv4, quelle est la plus grande valeur possible d'un nombre (un octet) ?", "In an IPv4 address, what is the largest possible value of one number (one octet)?"], rep: [255] }),
+                M("calcul", "🧮", ["Combien de bits dans 4 octets ?", "How many bits in 4 bytes?"], ["Calcul validé", "Calculation validated"],
+                    { q: ["Combien y a-t-il de bits dans 4 octets ?", "How many bits are there in 4 bytes?"], rep: [32] }),
+                M("lacune", "🌍", ["Complète : DNS", "Complete: DNS"], ["DNS compris", "DNS understood"],
+                    { phrase: ["Le ____ traduit un nom de domaine en adresse IP (3 lettres).", "The ____ turns a domain name into an IP address (3 letters)."], reponses: ["dns"] })
             ],
             [ // ───── Zone 2 — INTRUSION : mots de passe, phishing, social engineering
                 M("vf", "✅", ["Vrai ou faux : mots de passe", "True or false: passwords"], ["Mots de passe maîtrisés", "Passwords mastered"],
@@ -2401,7 +2564,7 @@
             afficherAlerte(modeHistoireActif ? tx(["📖 Mode Histoire activé : récupère les 💽 fragments de chaque zone, puis réussis la mission pour débloquer la suivante.", "📖 Story Mode on: collect the 💽 fragments in each zone, then complete the mission to unlock the next one.", "📖 Story-Modus aktiv: Sammle die 💽-Fragmente jeder Zone und schließe dann die Mission ab, um die nächste freizuschalten.", "📖 ストーリーモード:各ゾーンの💽を集め、ミッションを達成して次へ進め。"]) : tx(["🎮 Retour au Mode Normal.", "🎮 Back to Normal Mode.", "🎮 Zurück zum Normalmodus.", "🎮 通常モードに戻った。"]));
             if (!modeNiveauPersonnaliseActif && typeof genererMapProcedurale === "function") genererMapProcedurale();
         }
-        let modeDevNiveauxDeverrouille = localStorage.getItem("cyber_hack_dev_unlocked") === "true";
+        let modeDevNiveauxDeverrouille = lsGet("cyber_hack_dev_unlocked") === "true";
 
         // =====================================================================
         // NIVEAUX PUBLICS (fichier universel) + titre partagé + droits de création
@@ -2430,8 +2593,34 @@
             creditsPersonnalises = titreDevLocal || titrePublic || CREDITS_PAR_DEFAUT;
             appliquerTraductions();
         }
+        // Nettoie un niveau venu de l'extérieur (GitHub, import, stockage abîmé) :
+        // supprime les entrées cassées au lieu de planter au chargement.
+        function nettoyerNiveauDonnees(n) {
+            const num = v => typeof v === "number" && isFinite(v);
+            const col = c => typeof c === "string" && /^(#[0-9a-fA-F]{3,8}|[a-zA-Z]{3,20}|(rgb|hsl)a?\([\d\s.,%]+\))$/.test(c) ? c : undefined;
+            let blocs = [];
+            (Array.isArray(n.blocs) ? n.blocs : []).forEach(b => {
+                if (!b || typeof b !== "object" || !num(b.x) || !num(b.y)) return;
+                if (typeof b.type !== "string" || !/^[a-z0-9_]{1,30}$/.test(b.type)) return;
+                if (blocs.length >= 30000) return;
+                blocs.push({ x: b.x, y: b.y, type: b.type, couleur: col(b.couleur), symbole: typeof b.symbole === "string" ? b.symbole.slice(0, 6) : "", valeur: num(b.valeur) ? b.valeur : 1 });
+            });
+            // un seul point de départ : le dernier gagne
+            let dernierSpawn = -1; blocs.forEach((b, i) => { if (b.type === "spawn") dernierSpawn = i; });
+            blocs = blocs.filter((b, i) => b.type !== "spawn" || i === dernierSpawn);
+            let mobs = [];
+            (Array.isArray(n.mobs) ? n.mobs : []).forEach(m => {
+                if (!m || typeof m !== "object" || !num(m.xMin) || !num(m.xMax) || !num(m.y)) return;
+                if (mobs.length >= 2000) return;
+                mobs.push(Object.assign({}, m, { vitesse: num(m.vitesse) ? m.vitesse : 2, symbole: typeof m.symbole === "string" ? m.symbole.slice(0, 4) : "👾" }));
+            });
+            n.blocs = blocs; n.mobs = mobs;
+            if (!num(n.spawnX)) n.spawnX = 60;
+            if (!num(n.spawnY)) n.spawnY = 180;
+            return n;
+        }
         function niveauPublicValide(n) {
-            return n && typeof n.nom === "string" && Array.isArray(n.blocs);
+            return !!(n && typeof n === "object" && typeof n.nom === "string" && Array.isArray(n.blocs));
         }
         // --- Dossiers sur GitHub (même dépôt, même branche que index.html) ---
         //   niveaux/index.json                      → liste + titre (lu par le jeu)
@@ -2440,7 +2629,267 @@
         // Chaque niveau = UN fichier. Renommer le niveau renomme le fichier.
         let niveauxCommunautaires = [];
         let derniereMajIndex = null;
+        let derniereMajIndexApi = null;
 
+        Object.assign(I18N_NOMS, {
+            "Pièce x100": ["Coin x100", "Münze x100", "コイン x100"],
+            "Saumon": ["Salmon", "Lachs", "サーモン"], "Sable Digital": ["Digital Sand", "Digitaler Sand", "デジタルサンド"],
+            "Ciel Pâle": ["Pale Sky", "Blasser Himmel", "ペールスカイ"], "Vert Forêt": ["Forest Green", "Waldgrün", "フォレストグリーン"],
+            "Pourpre Royal": ["Royal Purple", "Königspurpur", "ロイヤルパープル"], "Rubis": ["Ruby", "Rubin", "ルビー"],
+            "Saphir": ["Sapphire", "Saphir", "サファイア"], "Argent Chrome": ["Chrome Silver", "Chromsilber", "クロームシルバー"],
+            "Plasma Violet": ["Violet Plasma", "Violettes Plasma", "バイオレットプラズマ"], "Or Rose": ["Rose Gold", "Roségold", "ローズゴールド"]
+        });
+        const JOURNAL_MAJ = [
+            { v: "6.4", titre: ["27 succès et blocs fonctionnels", "27 achievements and functional blocks", "27 Erfolge und Funktionsblöcke", "実績27個と機能ブロック"], t: [
+                "🏅 27 nouveaux succès (45 au total) : blocs, compteurs, éditeur, boutique, langues…\n🛡️ Orbe Bouclier : invincible 6 s\n💨 Orbe Vitesse : +60 % de vitesse pendant 5 s\n⬅️➡️ Courants d'Air Gauche / Droite : zones qui poussent sur le côté\n☠️ Piège Caché : presque invisible en jeu, visible en création\n🟣 Gelée : petit rebond à chaque atterrissage",
+                "🏅 27 new achievements (45 in total): blocks, counters, editor, shop, languages…\n🛡️ Shield Orb: invincible for 6 s\n💨 Speed Orb: +60% speed for 5 s\n⬅️➡️ Air Current Left / Right: zones that push you sideways\n☠️ Hidden Trap: nearly invisible in play, visible in creative\n🟣 Jelly: small bounce on every landing",
+                "🏅 27 neue Erfolge (45 insgesamt): Blöcke, Zähler, Editor, Shop, Sprachen…\n🛡️ Schild-Orb: 6 s unverwundbar\n💨 Tempo-Orb: +60 % Tempo für 5 s\n⬅️➡️ Luftstrom links / rechts: Zonen, die dich seitlich schieben\n☠️ Versteckte Falle: im Spiel fast unsichtbar, im Baumodus sichtbar\n🟣 Gelee: kleiner Absprung bei jeder Landung",
+                "🏅 新しい実績27個(合計45):ブロック・カウンター・エディタ・ショップ・言語…\n🛡️ シールドオーブ:6秒間無敵\n💨 スピードオーブ:5秒間速度+60%\n⬅️➡️ 気流(左/右):横に押す範囲\n☠️ 隠し罠:プレイ中はほぼ透明、作成中は表示\n🟣 ゼリー:着地のたびに小さく跳ねる"] },
+            { v: "6.3", titre: ["Pièce x100, couleurs et skins", "Coin x100, colors and skins", "Münze x100, Farben und Skins", "コイン x100・カラー・スキン"], t: [
+                "🪙 Pièce x100 : 1 chance sur 5 d'en trouver une par niveau généré (0 ou 1 max), 100 000 🪙 en boutique\n🎨 Nouvelles couleurs de blocs\n🎭 4 nouveaux skins",
+                "🪙 Coin x100: 1 in 5 chance of one per generated level (0 or 1 max), 100,000 🪙 in the shop\n🎨 New block colors\n🎭 4 new skins",
+                "🪙 Münze x100: 1 zu 5 Chance pro generiertem Level (0 oder 1), 100.000 🪙 im Shop\n🎨 Neue Blockfarben\n🎭 4 neue Skins",
+                "🪙 コイン x100:生成レベルごとに5分の1の確率で0〜1個、ショップ価格100,000 🪙\n🎨 新しいブロックカラー\n🎭 新スキン4種"] },
+            { v: "6.2", titre: ["Succès DEV et nouveaux succès", "DEV achievement and new achievements", "DEV-Erfolg und neue Erfolge", "DEV実績と新実績"], t: [
+                "🏅 3 nouveaux succès : DEV (ouvrir la console), Hacker en action, Pause café\n🧮 2 missions de plus en zone 1\n🔧 Vérification générale du code",
+                "🏅 3 new achievements: DEV (open the console), Hacker at Work, Coffee Break\n🧮 2 more missions in zone 1\n🔧 General code check",
+                "🏅 3 neue Erfolge: DEV (Konsole öffnen), Hacker bei der Arbeit, Kaffeepause\n🧮 2 weitere Missionen in Zone 1\n🔧 Allgemeine Code-Prüfung",
+                "🏅 新実績3つ:DEV(コンソールを開く)、ハッカー始動、休憩\n🧮 ゾーン1にミッション2つ追加\n🔧 コード全体の確認"] },
+            { v: "6.1", titre: ["Mobs chasseurs, rectangle, progression", "Chasing mobs, rectangle, progress", "Verfolger, Rechteck, Fortschritt", "追跡モブ・矩形・進行バー"], t: [
+                "🐺 Mobs chasseurs : Chasseur Cyber, 🛰️ Drone Traqueur (patrouillent puis foncent sur toi)\n▭ Outil Rectangle (éditeur) : glisse pour remplir une zone avec le dernier bloc choisi, annulable avec Ctrl+Z\n📏 Barre de progression du niveau sous le HUD, avec les frontières de zones\n🏅 3 nouveaux succès (15 au total)",
+                "🐺 Chasing mobs: Cyber Hunter, 🛰️ Tracker Drone (patrol, then charge at you)\n▭ Rectangle tool (editor): drag to fill an area with the last chosen block, undo with Ctrl+Z\n📏 Level progress bar under the HUD, with zone borders\n🏅 3 new achievements (15 in total)",
+                "🐺 Verfolger-Mobs: Cyber-Jäger, 🛰️ Verfolger-Drohne (patrouillieren, dann Sturmangriff)\n▭ Rechteck-Werkzeug (Editor): ziehen, um einen Bereich mit dem zuletzt gewählten Block zu füllen, Rückgängig mit Strg+Z\n📏 Level-Fortschrittsbalken unter dem HUD, mit Zonengrenzen\n🏅 3 neue Erfolge (15 insgesamt)",
+                "🐺 追跡モブ:サイバーハンター、🛰️ トラッカードローン(巡回して突進)\n▭ 矩形ツール(エディタ):ドラッグで直前のブロックで範囲を埋める。Ctrl+Zで取り消し\n📏 HUD下にレベル進行バー(ゾーン境界つき)\n🏅 新しい実績3つ(合計15)"] },
+            { v: "6.0", titre: ["GROSSE mise à jour", "BIG update", "GROSSES Update", "大型アップデート"], t: [
+                "📜 Journal des mises à jour (ce bouton)\n🏅 12 succès à débloquer (bouton SUCCÈS)\n🔫 Tourelle : tire sur toi quand tu es à portée\n↕️ Plateforme Verticale : monte, descend et te porte\n🔧 /coin définit maintenant vraiment ton argent (il l'ajoutait avant)",
+                "📜 Update log (this button)\n🏅 12 achievements to unlock (ACHIEVEMENTS button)\n🔫 Turret: shoots at you when you're in range\n↕️ Vertical Platform: moves up and down and carries you\n🔧 /coin now really sets your money (it used to add it)",
+                "📜 Update-Journal (dieser Knopf)\n🏅 12 Erfolge zum Freischalten (Knopf ERFOLGE)\n🔫 Geschützturm: schießt auf dich in Reichweite\n↕️ Vertikale Plattform: fährt hoch und runter und trägt dich\n🔧 /coin setzt dein Geld jetzt wirklich (vorher addierte es)",
+                "📜 アップデート履歴(このボタン)\n🏅 解除できる実績12個(実績ボタン)\n🔫 タレット:射程内で撃ってくる\n↕️ 縦移動足場:上下に動いて運ぶ\n🔧 /coinが所持金を本当に設定するように(以前は加算されていた)"] },
+            { v: "5.5", titre: ["Interrupteurs, portes, téléporteurs", "Switches, doors, teleporters", "Schalter, Türen, Teleporter", "スイッチ・ドア・テレポーター"], t: [
+                "🔘 Interrupteur + 🚪 Portes : le toucher ouvre ou ferme toutes les portes\n🅰️🅱️ Téléporteurs : A mène à B et inversement\n⏸️ Pause : touche P (ou clic) ; automatique si tu changes d'onglet\n🦇 Chauve-souris Cyber, 🪱 Ver Binaire",
+                "🔘 Switch + 🚪 Doors: touching it opens or closes every door\n🅰️🅱️ Teleporters: A leads to B and back\n⏸️ Pause: P key (or click); automatic when you switch tabs\n🦇 Cyber Bat, 🪱 Binary Worm",
+                "🔘 Schalter + 🚪 Türen: Berühren öffnet oder schließt alle Türen\n🅰️🅱️ Teleporter: A führt zu B und zurück\n⏸️ Pause: Taste P (oder Klick); automatisch beim Tabwechsel\n🦇 Cyber-Fledermaus, 🪱 Binärwurm",
+                "🔘 スイッチ+🚪ドア:触れると全てのドアが開閉\n🅰️🅱️ テレポーター:AからB、BからAへ\n⏸️ ポーズ:Pキー(またはクリック)。タブ切替で自動\n🦇 サイバーバット、🪱 バイナリワーム"] },
+            { v: "5.4", titre: ["Double saut, plateformes mobiles, records", "Double jump, moving platforms, records", "Doppelsprung, bewegliche Plattformen, Rekorde", "ダブルジャンプ・動く足場・記録"], t: [
+                "🔵 Orbe Double Saut : un saut de plus en l'air\n↔️ Plateforme Mobile\n🏆 Records par niveau (temps + morts), chrono remis à zéro à chaque tour\n🎨 4 nouveaux skins",
+                "🔵 Double Jump Orb: one extra mid-air jump\n↔️ Moving Platform\n🏆 Per-level records (time + deaths), timer restarts each lap\n🎨 4 new skins",
+                "🔵 Doppelsprung-Orb: ein zusätzlicher Sprung in der Luft\n↔️ Bewegliche Plattform\n🏆 Level-Rekorde (Zeit + Tode), Uhr startet jede Runde neu\n🎨 4 neue Skins",
+                "🔵 ダブルジャンプオーブ:空中で追加ジャンプ1回\n↔️ 動く足場\n🏆 レベル別記録(タイム+死亡数)、周回ごとにタイマーリセット\n🎨 新スキン4種"] },
+            { v: "5.3", titre: ["Fluidité et traductions", "Smoothness and translations", "Flüssigkeit und Übersetzungen", "軽量化と翻訳"], t: [
+                "⚡ Fin des ralentissements dans les gros niveaux (publics ou créés)\n🌍 Traductions complétées (niveaux, blocs, mobs, infobulles, messages)\n🔧 Colonne de Vent corrigée ; chaque bloc garde son bon symbole\n⚡ Laser Pulsant, 🌙 Zone Lunaire\n🕷️ Araignée Cyber, 🛸 OVNI Hacker",
+                "⚡ No more slowdowns in big levels (public or custom)\n🌍 Translations completed (levels, blocks, mobs, tooltips, messages)\n🔧 Wind Column fixed; every block keeps its right symbol\n⚡ Pulsing Laser, 🌙 Moon Zone\n🕷️ Cyber Spider, 🛸 Hacker UFO",
+                "⚡ Keine Ruckler mehr in großen Leveln (öffentlich oder selbst gebaut)\n🌍 Übersetzungen vervollständigt (Level, Blöcke, Mobs, Tooltips, Meldungen)\n🔧 Windsäule repariert; jeder Block behält sein Symbol\n⚡ Pulsierender Laser, 🌙 Mondzone\n🕷️ Cyber-Spinne, 🛸 Hacker-UFO",
+                "⚡ 大きなレベル(公開・自作)での重さを解消\n🌍 翻訳を拡充(レベル、ブロック、モブ、ツールチップ、メッセージ)\n🔧 風の柱を修正、各ブロックが正しい記号を表示\n⚡ パルスレーザー、🌙 月面ゾーン\n🕷️ サイバースパイダー、🛸 ハッカーUFO"] },
+            { v: "5.2", titre: ["Solidité", "Robustness", "Stabilität", "安定性"], t: [
+                "🛡️ Plus de plantage si le navigateur bloque la sauvegarde ou si un niveau est abîmé\n⌨️ Les flèches ← → ↑ déplacent et font sauter, comme Q D Z\n📄 Bouton Dupliquer sur les niveaux privés\n🧱 Plateformes fragiles remises à neuf en mode création ; annuler un point de départ le replace ; un seul point de départ par niveau\n🐙 GitHub : synchro moins gourmande, gros niveaux (> 1 Mo) chargés\n🌍 Boutons GitHub / import traduits",
+                "🛡️ No more crashes if the browser blocks saving or a level is damaged\n⌨️ Arrow keys ← → ↑ move and jump, like Q D Z\n📄 Duplicate button on private levels\n🧱 Fragile platforms reset in creative mode; undoing a start point puts it back; one start point per level\n🐙 GitHub: lighter sync, big levels (> 1 MB) now loaded\n🌍 GitHub / import buttons translated",
+                "🛡️ Kein Absturz mehr, wenn der Browser das Speichern blockiert oder ein Level beschädigt ist\n⌨️ Pfeiltasten ← → ↑ bewegen und springen, wie Q D Z\n📄 Duplizieren-Knopf für private Level\n🧱 Zerbrechliche Plattformen im Baumodus zurückgesetzt; Rückgängig bei Startpunkt setzt ihn zurück; ein Startpunkt pro Level\n🐙 GitHub: schlankere Synchronisierung, große Level (> 1 MB) werden geladen\n🌍 GitHub-/Import-Knöpfe übersetzt",
+                "🛡️ ブラウザが保存を拒否したりレベルが壊れていてもクラッシュしない\n⌨️ 矢印キー ← → ↑ で移動・ジャンプ(Q D Zと同じ)\n📄 非公開レベルに複製ボタン\n🧱 もろい足場を作成モードでリセット。スタート地点の取り消しが正しく戻る。レベルごとにスタート地点は1つ\n🐙 GitHub:同期を軽量化、1MB超の大きなレベルも読み込み\n🌍 GitHub/読み込みボタンを翻訳"] },
+            { v: "5.0 → 5.1", titre: ["Blocs fonctionnels et mobs", "Functional blocks and mobs", "Funktionsblöcke und Mobs", "機能ブロックとモブ"], t: [
+                "🎨 Nouvelles couleurs de blocs et nouveaux skins\n🍂 Plateforme Fragile, 🚀 Super Trampoline, ◀️▶️ Convoyeurs, 🟤 Boue Collante, ➖ Plateforme Traversante, 💡 Bloc Clignotant, 🌌 Portail de Retour, 🌀 Colonne de Vent\n🐸 Grenouille Bot, 👻 Fantôme Cyber, 🦂 Scorpion Cyber, 🐉 Dragon Mécanique\n📂 Inventaire en menus déroulants\n🆕 Fenêtre des nouveautés",
+                "🎨 New block colors and new skins\n🍂 Fragile Platform, 🚀 Super Trampoline, ◀️▶️ Conveyors, 🟤 Sticky Mud, ➖ One-Way Platform, 💡 Blinking Block, 🌌 Return Portal, 🌀 Wind Column\n🐸 Frog Bot, 👻 Cyber Ghost, 🦂 Cyber Scorpion, 🐉 Mechanical Dragon\n📂 Inventory in drop-down menus\n🆕 What's-new window",
+                "🎨 Neue Blockfarben und neue Skins\n🍂 Zerbrechliche Plattform, 🚀 Supertrampolin, ◀️▶️ Förderbänder, 🟤 Klebriger Schlamm, ➖ Durchlässige Plattform, 💡 Blinkender Block, 🌌 Rückkehrportal, 🌀 Windsäule\n🐸 Frosch-Bot, 👻 Cyber-Geist, 🦂 Cyber-Skorpion, 🐉 Mechanischer Drache\n📂 Inventar in Aufklappmenüs\n🆕 Neuigkeiten-Fenster",
+                "🎨 新しいブロックカラーとスキン\n🍂 もろい足場、🚀 スーパートランポリン、◀️▶️ コンベア、🟤 ねばねば泥、➖ すり抜け足場、💡 点滅ブロック、🌌 帰還ポータル、🌀 風の柱\n🐸 カエルボット、👻 サイバーゴースト、🦂 サイバースコーピオン、🐉 機械ドラゴン\n📂 インベントリをプルダウン化\n🆕 新着情報ウィンドウ"] },
+            { v: "< 5.0", titre: ["Les bases", "The basics", "Die Grundlagen", "基本"], t: [
+                "🎮 Jeu de plateforme cyber en 4 zones\n📖 Mode Histoire avec fragments 💽 et mini-jeux de piratage\n🛠️ Éditeur de niveaux, console de commandes, niveaux publics et communautaires\n🛒 Boutique de blocs, skins et mobs\n🌍 4 langues, mode mobile tactile",
+                "🎮 Cyber platformer in 4 zones\n📖 Story Mode with 💽 fragments and hacking mini-games\n🛠️ Level editor, command console, public and community levels\n🛒 Shop for blocks, skins and mobs\n🌍 4 languages, touch mobile mode",
+                "🎮 Cyber-Plattformspiel in 4 Zonen\n📖 Story-Modus mit 💽-Fragmenten und Hacking-Minispielen\n🛠️ Leveleditor, Befehlskonsole, öffentliche und Community-Level\n🛒 Shop für Blöcke, Skins und Mobs\n🌍 4 Sprachen, mobiler Touch-Modus",
+                "🎮 4ゾーンのサイバープラットフォーマー\n📖 💽の断片とハッキングミニゲームのストーリーモード\n🛠️ レベルエディタ、コマンドコンソール、公開・コミュニティレベル\n🛒 ブロック・スキン・モブのショップ\n🌍 4言語、タッチ操作のモバイルモード"] }
+        ];
+        function ouvrirJournal() {
+            let c = document.getElementById("liste-journal"); c.innerHTML = "";
+            document.getElementById("titre-journal").innerText = tx(["📜 JOURNAL DES MISES À JOUR", "📜 UPDATE LOG", "📜 UPDATE-JOURNAL", "📜 アップデート履歴"]);
+            JOURNAL_MAJ.forEach(function(e, i) {
+                let d = document.createElement("details"); d.open = (i === 0); d.style.cssText = "margin:8px 0;";
+                let sm = document.createElement("summary"); sm.style.cssText = "color:#ffaa00; cursor:pointer; font-size:13px; padding:4px 0; border-bottom:1px dashed rgba(255,170,0,0.4);";
+                sm.innerText = "V" + e.v + " — " + tx(e.titre);
+                let p = document.createElement("div"); p.style.cssText = "color:#ccd6f6; font-size:12px; line-height:1.55; white-space:pre-line; padding:6px 2px;";
+                p.innerText = tx(e.t);
+                d.append(sm, p); c.appendChild(d);
+            });
+            document.getElementById("fenetre-journal").style.display = "flex";
+            debloquerSucces("lecteur");
+        }
+        function fermerJournal() { document.getElementById("fenetre-journal").style.display = "none"; }
+
+        const SUCCES = [
+            { id: "piece1", n: ["Premier butin", "First Loot", "Erste Beute", "初めての戦利品"], d: ["Ramasse une pièce.", "Pick up a coin.", "Sammle eine Münze ein.", "コインを1枚拾う。"] },
+            { id: "pieces100", n: ["Cagnotte", "Piggy Bank", "Sparschwein", "貯金箱"], d: ["Ramasse 100 pièces au total.", "Collect 100 coins in total.", "Sammle insgesamt 100 Münzen.", "合計100枚のコインを集める。"] },
+            { id: "mort1", n: ["Bienvenue au club", "Welcome to the Club", "Willkommen im Club", "ようこそ"], d: ["Meurs une fois.", "Die once.", "Stirb einmal.", "1回死ぬ。"] },
+            { id: "morts50", n: ["Increvable", "Unkillable", "Unverwüstlich", "不死身"], d: ["Meurs 50 fois au total.", "Die 50 times in total.", "Stirb insgesamt 50 Mal.", "合計50回死ぬ。"] },
+            { id: "fin_proc", n: ["Sortie trouvée", "Exit Found", "Ausgang gefunden", "出口発見"], d: ["Termine une carte aléatoire.", "Finish a random map.", "Beende eine Zufallskarte.", "ランダムマップをクリアする。"] },
+            { id: "sans_mort", n: ["Fantôme", "Ghost", "Geist", "ゴースト"], d: ["Termine une carte aléatoire sans mourir.", "Finish a random map without dying.", "Beende eine Zufallskarte ohne zu sterben.", "死なずにランダムマップをクリアする。"] },
+            { id: "fin_niveau", n: ["Joueur de niveaux", "Level Runner", "Level-Spieler", "レベルランナー"], d: ["Termine un niveau personnalisé ou public.", "Finish a custom or public level.", "Beende ein eigenes oder öffentliches Level.", "カスタム/公開レベルをクリアする。"] },
+            { id: "double_saut", n: ["Deuxième souffle", "Second Wind", "Zweiter Atem", "セカンドウィンド"], d: ["Utilise un Orbe Double Saut.", "Use a Double Jump Orb.", "Nutze einen Doppelsprung-Orb.", "ダブルジャンプオーブを使う。"] },
+            { id: "teleport", n: ["Téléporté", "Beamed Up", "Gebeamt", "テレポート"], d: ["Utilise un téléporteur.", "Use a teleporter.", "Nutze einen Teleporter.", "テレポーターを使う。"] },
+            { id: "interrupteur", n: ["Sésame, ouvre-toi", "Open Sesame", "Sesam, öffne dich", "開けゴマ"], d: ["Actionne un interrupteur.", "Flip a switch.", "Betätige einen Schalter.", "スイッチを入れる。"] },
+            { id: "architecte", n: ["Architecte", "Architect", "Architekt", "建築家"], d: ["Pose un bloc en mode création.", "Place a block in creative mode.", "Setze einen Block im Kreativmodus.", "クリエイティブでブロックを置く。"] },
+            { id: "tourelle", n: ["Sous le feu", "Under Fire", "Unter Beschuss", "砲火の下"], d: ["Fais-toi toucher par une tourelle.", "Get hit by a turret.", "Lass dich von einem Geschützturm treffen.", "タレットに撃たれる。"] },
+            { id: "pieces1000", n: ["Millionnaire", "Millionaire", "Millionär", "大富豪"], d: ["Ramasse 1000 pièces au total.", "Collect 1000 coins in total.", "Sammle insgesamt 1000 Münzen.", "合計1000枚のコインを集める。"] },
+            { id: "zone4", n: ["Au cœur du système", "Heart of the System", "Im Herzen des Systems", "システムの中枢へ"], d: ["Atteins la zone 4 en génération aléatoire.", "Reach zone 4 in random generation.", "Erreiche Zone 4 in der Zufallsgenerierung.", "ランダム生成でゾーン4に到達する。"] },
+            { id: "chasse", n: ["Chassé", "Hunted", "Gejagt", "追われる者"], d: ["Fais-toi attraper par un mob chasseur.", "Get caught by a chasing mob.", "Lass dich von einem verfolgenden Mob erwischen.", "追跡モブに捕まる。"] },
+            { id: "dev", n: ["Accès développeur", "Developer Access", "Entwicklerzugang", "開発者アクセス"], d: ["Ouvre le panneau de commandes (succès DEV).", "Open the command panel (DEV achievement).", "Öffne das Befehlspanel (DEV-Erfolg).", "コマンドパネルを開く(DEV実績)。"] },
+            { id: "mission", n: ["Hacker en action", "Hacker at Work", "Hacker bei der Arbeit", "ハッカー始動"], d: ["Réussis une mission du Mode Histoire.", "Complete a Story Mode mission.", "Schließe eine Story-Mission ab.", "ストーリーの任務を達成する。"] },
+            { id: "pause", n: ["Pause café", "Coffee Break", "Kaffeepause", "休憩"], d: ["Mets le jeu en pause avec P.", "Pause the game with P.", "Pausiere das Spiel mit P.", "Pキーでポーズする。"] },
+            { id: "glace", n: ["Patineur", "Skater", "Eisläufer", "スケーター"], d: ["Pose-toi sur de la glace.", "Land on ice.", "Lande auf Eis.", "氷の上に乗る。"] },
+            { id: "trampo", n: ["Boing !", "Boing!", "Boing!", "ボヨン!"], d: ["Rebondis sur un trampoline.", "Bounce on a trampoline.", "Springe auf einem Trampolin.", "トランポリンで跳ねる。"] },
+            { id: "boost", n: ["Turbo", "Turbo", "Turbo", "ターボ"], d: ["Utilise un Boost Pad.", "Use a Boost Pad.", "Nutze ein Boost-Pad.", "ブーストパッドを使う。"] },
+            { id: "vent", n: ["Planeur", "Glider", "Gleiter", "グライダー"], d: ["Laisse-toi porter par une Colonne de Vent.", "Get carried by a Wind Column.", "Lass dich von einer Windsäule tragen.", "風の柱に運ばれる。"] },
+            { id: "lune", n: ["Astronaute", "Astronaut", "Astronaut", "宇宙飛行士"], d: ["Entre dans une Zone Lunaire.", "Enter a Moon Zone.", "Betritt eine Mondzone.", "月面ゾーンに入る。"] },
+            { id: "orbe_bouclier", n: ["Intouchable", "Untouchable", "Unantastbar", "無敵の人"], d: ["Ramasse un Orbe Bouclier.", "Pick up a Shield Orb.", "Sammle einen Schild-Orb ein.", "シールドオーブを取る。"] },
+            { id: "orbe_vitesse", n: ["Éclair", "Lightning", "Blitz", "稲妻"], d: ["Ramasse un Orbe Vitesse.", "Pick up a Speed Orb.", "Sammle einen Tempo-Orb ein.", "スピードオーブを取る。"] },
+            { id: "gelee", n: ["Rebondi", "Bouncy", "Hüpfend", "ぷるぷる"], d: ["Rebondis sur une Gelée.", "Bounce on a Jelly block.", "Springe auf einem Gelee-Block.", "ゼリーブロックで跳ねる。"] },
+            { id: "vent_lat", n: ["Vent de côté", "Crosswind", "Seitenwind", "横風"], d: ["Subis un Courant d'Air latéral.", "Get pushed by a side air current.", "Lass dich von einem seitlichen Luftstrom schieben.", "横向きの気流に押される。"] },
+            { id: "piege_cache", n: ["Piège !", "Trap!", "Falle!", "罠だ!"], d: ["Tombe dans un Piège Caché.", "Fall for a Hidden Trap.", "Tappe in eine versteckte Falle.", "隠し罠にかかる。"] },
+            { id: "checkpoint", n: ["Prudent", "Cautious", "Vorsichtig", "慎重派"], d: ["Active un checkpoint.", "Activate a checkpoint.", "Aktiviere einen Checkpoint.", "チェックポイントを有効にする。"] },
+            { id: "morts100", n: ["Têtu", "Stubborn", "Dickköpfig", "頑固者"], d: ["Meurs 100 fois au total.", "Die 100 times in total.", "Stirb insgesamt 100 Mal.", "合計100回死ぬ。"] },
+            { id: "pieces5000", n: ["Banquier", "Banker", "Bankier", "銀行家"], d: ["Ramasse 5000 pièces au total.", "Collect 5000 coins in total.", "Sammle insgesamt 5000 Münzen.", "合計5000枚のコインを集める。"] },
+            { id: "gros_lot", n: ["Gros lot", "Jackpot", "Jackpot", "大当たり"], d: ["Ramasse une pièce x100.", "Pick up a x100 coin.", "Sammle eine x100-Münze ein.", "コインx100を取る。"] },
+            { id: "cartes10", n: ["Habitué", "Regular", "Stammgast", "常連"], d: ["Termine 10 cartes aléatoires.", "Finish 10 random maps.", "Beende 10 Zufallskarten.", "ランダムマップを10回クリアする。"] },
+            { id: "niveaux5", n: ["Explorateur", "Explorer", "Entdecker", "探検家"], d: ["Termine 5 niveaux personnalisés ou publics.", "Finish 5 custom or public levels.", "Beende 5 eigene oder öffentliche Level.", "カスタム/公開レベルを5回クリアする。"] },
+            { id: "sauts500", n: ["Kangourou", "Kangaroo", "Känguru", "カンガルー"], d: ["Saute 500 fois.", "Jump 500 times.", "Springe 500 Mal.", "500回ジャンプする。"] },
+            { id: "temps1h", n: ["Accro", "Hooked", "Süchtig", "やめられない"], d: ["Joue 1 heure au total.", "Play for 1 hour in total.", "Spiele insgesamt 1 Stunde.", "合計1時間プレイする。"] },
+            { id: "blocs500", n: ["Bâtisseur", "Builder", "Baumeister", "ビルダー"], d: ["Pose 500 blocs en mode création.", "Place 500 blocks in creative mode.", "Setze 500 Blöcke im Kreativmodus.", "クリエイティブで500個ブロックを置く。"] },
+            { id: "rectangle", n: ["Géomètre", "Surveyor", "Landvermesser", "測量士"], d: ["Remplis une zone avec l'outil Rectangle.", "Fill an area with the Rectangle tool.", "Fülle einen Bereich mit dem Rechteck-Werkzeug.", "矩形ツールで範囲を埋める。"] },
+            { id: "annuler", n: ["Droit à l'erreur", "Right to Err", "Recht auf Fehler", "やり直し"], d: ["Annule une action avec Ctrl+Z.", "Undo an action with Ctrl+Z.", "Mache eine Aktion mit Strg+Z rückgängig.", "Ctrl+Zで操作を取り消す。"] },
+            { id: "lecteur", n: ["Archiviste", "Archivist", "Archivar", "記録係"], d: ["Ouvre le Journal des mises à jour.", "Open the Update Log.", "Öffne das Update-Journal.", "アップデート履歴を開く。"] },
+            { id: "polyglotte", n: ["Polyglotte", "Polyglot", "Polyglott", "マルチリンガル"], d: ["Utilise les 4 langues du jeu.", "Use all 4 game languages.", "Nutze alle 4 Spielsprachen.", "ゲームの4言語をすべて使う。"] },
+            { id: "achat", n: ["Premier achat", "First Purchase", "Erster Kauf", "初めての購入"], d: ["Achète un élément de la boutique.", "Buy something from the shop.", "Kaufe etwas im Shop.", "ショップで何か買う。"] },
+            { id: "collection", n: ["Collectionneur", "Collector", "Sammler", "コレクター"], d: ["Possède 25 éléments payants.", "Own 25 paid items.", "Besitze 25 kostenpflichtige Elemente.", "有料アイテムを25個持つ。"] },
+            { id: "vide", n: ["Le vide t'appelle", "The Void Calls", "Der Abgrund ruft", "奈落の呼び声"], d: ["Tombe dans le vide.", "Fall into the void.", "Falle in den Abgrund.", "奈落に落ちる。"] },
+            { id: "record", n: ["Chronomètre", "Stopwatch", "Stoppuhr", "ストップウォッチ"], d: ["Établis un record sur un niveau.", "Set a record on a level.", "Stelle einen Rekord in einem Level auf.", "レベルで記録を作る。"] }
+        ];
+        let succesObtenus = {}, compteursVie = {};
+        try { succesObtenus = JSON.parse(localStorage.getItem("cyber_hack_succes")) || {}; } catch (e) { succesObtenus = {}; }
+        try { compteursVie = JSON.parse(localStorage.getItem("cyber_hack_compteurs")) || {}; } catch (e) { compteursVie = {}; }
+        function debloquerSucces(id) {
+            if (succesObtenus[id]) return;
+            succesObtenus[id] = true; lsSet("cyber_hack_succes", JSON.stringify(succesObtenus));
+            let su = SUCCES.find(x => x.id === id);
+            if (su) toast("🏅 " + tx(su.n));
+        }
+        function verifierSuccesCompteurs(cle, n) {
+            let v = compteursVie[cle] || 0;
+            if (cle === "pieces") { if (n >= 100) debloquerSucces("gros_lot"); if (v >= 5000) debloquerSucces("pieces5000"); }
+            if (cle === "morts" && v >= 100) debloquerSucces("morts100");
+            if (cle === "cartes" && v >= 10) debloquerSucces("cartes10");
+            if (cle === "niveaux" && v >= 5) debloquerSucces("niveaux5");
+            if (cle === "sauts" && v >= 500) debloquerSucces("sauts500");
+            if (cle === "secondes" && v >= 3600) debloquerSucces("temps1h");
+            if (cle === "blocs" && v >= 500) debloquerSucces("blocs500");
+        }
+        // Compteur léger pour les actions très fréquentes : écriture groupée (pas un lsSet par saut / par bloc)
+        let _attenteEcritureCompteurs = null;
+        function compterLeger(cle, n) {
+            compteursVie[cle] = (compteursVie[cle] || 0) + n;
+            verifierSuccesCompteurs(cle, n);
+            if (!_attenteEcritureCompteurs) _attenteEcritureCompteurs = setTimeout(function() { _attenteEcritureCompteurs = null; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie)); }, 2000);
+        }
+        function marquerLangue(l) {
+            if (!l || compteursVie["lang_" + l]) return;
+            compteursVie["lang_" + l] = 1; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie));
+            if (compteursVie.lang_fr && compteursVie.lang_en && compteursVie.lang_de && compteursVie.lang_ja) debloquerSucces("polyglotte");
+        }
+        setInterval(function() { if (!document.hidden && !jeuEnPause && !modeConstructionActif && !tacheActive) compterLeger("secondes", 1); }, 1000);
+        function compter(cle, n) {
+            compteursVie[cle] = (compteursVie[cle] || 0) + n; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie));
+            verifierSuccesCompteurs(cle, n);
+            if (cle === "pieces") { debloquerSucces("piece1"); if (compteursVie.pieces >= 100) debloquerSucces("pieces100"); if (compteursVie.pieces >= 1000) debloquerSucces("pieces1000"); }
+            if (cle === "morts") { debloquerSucces("mort1"); if (compteursVie.morts >= 50) debloquerSucces("morts50"); }
+        }
+        function ouvrirSucces() {
+            let c = document.getElementById("liste-succes"); c.innerHTML = "";
+            let nb = SUCCES.filter(x => succesObtenus[x.id]).length;
+            document.getElementById("titre-succes").innerText = tx(["🏅 SUCCÈS", "🏅 ACHIEVEMENTS", "🏅 ERFOLGE", "🏅 実績"]) + "  " + nb + "/" + SUCCES.length;
+            let stat = document.createElement("div"); stat.style.cssText = "color:#8892b0; font-size:11px; margin-bottom:8px;";
+            stat.innerText = "🪙 " + (compteursVie.pieces || 0) + "   💀 " + (compteursVie.morts || 0);
+            c.appendChild(stat);
+            SUCCES.forEach(function(x) {
+                let ok = !!succesObtenus[x.id];
+                let l = document.createElement("div");
+                l.style.cssText = "display:flex; gap:8px; align-items:center; padding:6px; margin:4px 0; border-radius:4px; background:#0b0f19; border:1px solid " + (ok ? "#00ff66" : "#3a4454") + "; opacity:" + (ok ? 1 : 0.6) + ";";
+                let ic = document.createElement("span"); ic.style.fontSize = "18px"; ic.innerText = ok ? "🏅" : "🔒";
+                let tb = document.createElement("div");
+                let t1 = document.createElement("div"); t1.style.cssText = "color:" + (ok ? "#00ff66" : "#c5cde3") + "; font-size:13px; font-weight:bold;"; t1.innerText = tx(x.n);
+                let t2 = document.createElement("div"); t2.style.cssText = "color:#8892b0; font-size:11px;"; t2.innerText = tx(x.d);
+                tb.append(t1, t2); l.append(ic, tb); c.appendChild(l);
+            });
+            document.getElementById("fenetre-succes").style.display = "flex";
+        }
+        function fermerSucces() { document.getElementById("fenetre-succes").style.display = "none"; }
+
+        // ---- Tourelles : tirent sur le joueur à portée ----
+        let dernierPct = -1;
+        function majTicksProg() {
+            let b = document.getElementById("barre-prog"); if (!b) return;
+            b.querySelectorAll(".tick").forEach(t => t.remove());
+            zonesX.forEach(z => { let t = document.createElement("div"); t.className = "tick"; t.style.cssText = "position:absolute; top:-2px; bottom:-2px; width:2px; background:#ffaa00; left:" + (z / maxWorldWidth * 100) + "%;"; b.appendChild(t); });
+            dernierPct = -1;
+        }
+        // ---- Outil Rectangle (éditeur) ----
+        let dernierBloc = { couleur: "#00ffcc", type: "solide", symbole: "", valeurPiece: 1 };
+        let rectEnCours = null, rectApercu = null;
+        function majApercuRect() {
+            if (!rectEnCours) { if (rectApercu) { rectApercu.remove(); rectApercu = null; } return; }
+            if (!rectApercu) {
+                rectApercu = document.createElement("div");
+                rectApercu.style.cssText = "position:absolute; border:2px dashed #00ffcc; background:rgba(0,255,204,0.12); pointer-events:none; z-index:60; box-sizing:border-box;";
+                monde.appendChild(rectApercu);
+            }
+            let r = rectEnCours, T = TAILLE_BLOC;
+            rectApercu.style.left = Math.min(r.x0, r.x1) + "px"; rectApercu.style.top = Math.min(r.y0, r.y1) + "px";
+            rectApercu.style.width = (Math.abs(r.x1 - r.x0) + T) + "px"; rectApercu.style.height = (Math.abs(r.y1 - r.y0) + T) + "px";
+        }
+        function appliquerRect() {
+            let r = rectEnCours, T = TAILLE_BLOC; if (!r) return;
+            if (dernierBloc.type === "spawn") { toast(tx(["⚠️ Le point de départ ne se remplit pas : un seul par niveau", "⚠️ The start point can't be filled: only one per level", "⚠️ Der Startpunkt lässt sich nicht füllen: nur einer pro Level", "⚠️ スタート地点は範囲に置けません(1レベルに1つ)"])); return; }
+            let c0 = Math.min(r.x0, r.x1) / T, c1 = Math.max(r.x0, r.x1) / T, r0 = Math.min(r.y0, r.y1) / T, r1 = Math.max(r.y0, r.y1) / T;
+            if ((c1 - c0 + 1) * (r1 - r0 + 1) > 3000) { toast(tx(["⚠️ Zone trop grande (3000 cases max)", "⚠️ Area too big (3000 cells max)", "⚠️ Bereich zu groß (max. 3000 Felder)", "⚠️ 範囲が大きすぎます(最大3000マス)"])); return; }
+            let sauve = { couleur: elementActif.couleur, type: elementActif.type, symbole: elementActif.symbole, valeurPiece: elementActif.valeurPiece };
+            Object.assign(elementActif, dernierBloc);
+            for (let c = c0; c <= c1; c++) for (let rr = r0; rr <= r1; rr++) poserBlocSurCase(c * T, rr * T, true);
+            Object.assign(elementActif, sauve);
+            debloquerSucces("rectangle");
+        }
+        let projectiles = [];
+        function viderProjectiles() { projectiles.forEach(p => p.el.remove()); projectiles = []; }
+        function mettreAJourTourelles() {
+            for (let i = 0; i < blocsMonde.length; i++) {
+                let b = blocsMonde[i];
+                if (b.type !== "tourelle") continue;
+                if (b.cdT > 0) { b.cdT--; continue; }
+                if (projectiles.length < 12 && Math.abs(joueur.x - b.x) < 320 && Math.abs(joueur.y - b.y) < 140) {
+                    let dir = joueur.x < b.x ? -1 : 1;
+                    let el = document.createElement("div");
+                    el.style.cssText = "position:absolute; left:0; top:0; width:10px; height:10px; border-radius:50%; background:#ff5500; box-shadow:0 0 8px #ff5500; pointer-events:none;";
+                    monde.appendChild(el);
+                    projectiles.push({ x: dir > 0 ? b.x + b.width : b.x - 10, y: b.y + 5, vx: dir * 3.2, vie: 170, el: el });
+                    b.cdT = 110;
+                }
+            }
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                let p = projectiles[i]; p.x += p.vx; p.vie--;
+                let fin = p.vie <= 0 || blocsMonde.some(b => estBlocSolide(b) && b.x < p.x + 10 && b.x + b.width > p.x && b.y < p.y + 10 && b.y + b.height > p.y);
+                if (!fin && joueur.x < p.x + 10 && joueur.x + joueur.width > p.x && joueur.y < p.y + 10 && joueur.y + joueur.height > p.y) {
+                    fin = true;
+                    if (!estProtege()) { debloquerSucces("tourelle"); respawnJoueur(); break; } // respawnJoueur vide la liste
+                }
+                if (fin) { p.el.remove(); projectiles.splice(i, 1); }
+                else p.el.style.transform = "translate3d(" + p.x + "px," + p.y + "px,0)";
+            }
+        }
+        let niveauCourantNom = "";
+        function lireRecords() { try { return JSON.parse(localStorage.getItem("cyber_hack_records")) || {}; } catch (e) { return {}; } }
+        function formaterTemps(t) { return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); }
+        function suffixeRecord(nom) { let r = lireRecords()[nom]; return r ? "  ·  ⏱️ " + formaterTemps(r.t) + " 💀" + r.m : ""; }
+        function enregistrerRecordNiveau() {
+            if (protecteurCmd || bouclierActif || !niveauCourantNom) return;
+            debloquerSucces("fin_niveau"); compter("niveaux", 1);
+            let t = stats.tempsSecondes, m = stats.morts, recs = lireRecords(), r = recs[niveauCourantNom];
+            let meilleur = !r || t < r.t || (t === r.t && m < r.m);
+            if (meilleur) { recs[niveauCourantNom] = { t: t, m: m }; lsSet("cyber_hack_records", JSON.stringify(recs)); debloquerSucces("record"); }
+            toast("🏁 " + formaterTemps(t) + " — 💀 " + m + (meilleur ? " — 🏆 " + tx(["Record !", "Record!", "Rekord!", "新記録!"]) : ""));
+        }
         function nouvelId() { return "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
         function slugNiveau(t) {
             let s = String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
@@ -2469,16 +2918,19 @@
             let ex = await ghLire("niveaux/index.json");
             if (!ex || !ex.content) return false;
             let idx = JSON.parse(ghDec(ex.content));
+            // Rien n'a changé depuis le dernier passage : on n'utilise pas les requêtes de l'API pour rien
+            if (idx.maj && idx.maj === derniereMajIndexApi) return true;
             let charge = async (liste, dossier) => (await Promise.all((liste || []).map(async f => {
-                let fi = await ghLire("niveaux/" + dossier + "/" + f);
-                if (!fi || !fi.content) return null;
-                let n; try { n = JSON.parse(ghDec(fi.content)); } catch (e) { return null; }
+                let txt = await ghLireTexte("niveaux/" + dossier + "/" + f);
+                if (!txt) return null;
+                let n; try { n = JSON.parse(txt); } catch (e) { return null; }
                 if (!niveauPublicValide(n)) return null;
                 n.fichier = f; if (!n.id) n.id = "f-" + f; return n;
             }))).filter(Boolean);
             niveauxPublics = await charge(idx.publics, "publics");
             niveauxCommunautaires = await charge(idx.communautaires, "communautaires");
             if (typeof idx.titre === "string") titrePublic = idx.titre.slice(0, 200);
+            derniereMajIndexApi = idx.maj || null;
             derniereSynchro = new Date();
             recalculerCredits();
             if (document.getElementById("ecran-niveaux").style.display === "flex") rendreListeNiveaux();
@@ -2530,6 +2982,17 @@
             document.body.appendChild(a); a.click(); a.remove();
             setTimeout(() => URL.revokeObjectURL(a.href), 2000);
         }
+        function dupliquerNiveau(n) {
+            let c = JSON.parse(JSON.stringify(n));
+            delete c.public; delete c.cible; delete c.distant; delete c.fichier;
+            c.id = nouvelId();
+            let base = (n.nom || "Niveau") + " (copie)", nom = base, k = 2;
+            while (niveauxPersonnalises.some(o => o.nom === nom)) nom = base + " " + k++;
+            c.nom = nom;
+            niveauxPersonnalises.push(c);
+            sauvegarderNiveauxListe(); rendreListeNiveaux();
+            toast("📄 Niveau dupliqué (privé) : " + nom);
+        }
         function telechargerNiveau(n) {
             let c = JSON.parse(JSON.stringify(n)); delete c.public; delete c.cible; delete c.distant;
             telechargerJson(c, slugNiveau(n.nom) + ".json");
@@ -2546,7 +3009,7 @@
                     liste.filter(niveauPublicValide).forEach(n => {
                         let c = JSON.parse(JSON.stringify(n));
                         delete c.public; delete c.cible; delete c.distant; delete c.fichier;
-                        c.id = nouvelId();
+                        c.id = nouvelId(); nettoyerNiveauDonnees(c);
                         if (niveauxPersonnalises.some(o => o.nom === c.nom)) c.nom = c.nom + " (import)";
                         niveauxPersonnalises.push(c); ajoutes++;
                     });
@@ -2565,7 +3028,9 @@
             try { cfg = JSON.parse(localStorage.getItem("cyber_hack_gh_cfg")) || {}; } catch (e) {}
             if (!cfg.repo && /\.github\.io$/.test(location.hostname)) {
                 let owner = location.hostname.split(".")[0];
-                cfg.repo = owner + "/" + (location.pathname.split("/")[1] || owner + ".github.io");
+                let seg = location.pathname.split("/")[1] || "";
+                if (!seg || /\.html?$/i.test(seg)) seg = owner + ".github.io";
+                cfg.repo = owner + "/" + seg;
             }
             let token = "";
             try { token = localStorage.getItem("cyber_hack_gh_token") || ""; } catch (e) {}
@@ -2609,6 +3074,16 @@
             let b = await ghBranche();
             return await ghApi("GET", "/contents/" + chemin.split("/").map(encodeURIComponent).join("/") + "?ref=" + encodeURIComponent(b));
         }
+        // Lecture du texte brut (fonctionne aussi pour les fichiers > 1 Mo)
+        async function ghLireTexte(chemin) {
+            chemin = ghChemin(chemin);
+            let c = ghConfig(), b = await ghBranche();
+            let r = await fetch("https://api.github.com/repos/" + c.repo + "/contents/" + chemin.split("/").map(encodeURIComponent).join("/") + "?ref=" + encodeURIComponent(b), {
+                headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github.raw+json" }
+            });
+            if (!r.ok) return null;
+            return await r.text();
+        }
         async function ghEcrire(chemin, texte, message) {
             let b = await ghBranche();
             let cheminLogique = chemin; chemin = ghChemin(chemin);
@@ -2639,7 +3114,7 @@
             modifier(idx);
             idx.maj = new Date().toISOString();
             await ghEcrire("niveaux/index.json", JSON.stringify(idx), "Index des niveaux");
-            derniereMajIndex = null; // forcera le rechargement au prochain passage
+            derniereMajIndexApi = null; derniereMajIndex = null; // forcera le rechargement au prochain passage
         }
         // --- Assistant GitHub : tout se configure ici, sans toucher au dépôt à la main ---
         async function ghInitialiser(journal) {
@@ -2809,7 +3284,7 @@
         if (!Array.isArray(niveauxPersonnalises)) niveauxPersonnalises = [];
 
         function sauvegarderNiveauxListe() {
-            localStorage.setItem("cyber_hack_niveaux_dev", JSON.stringify(niveauxPersonnalises));
+            lsSet("cyber_hack_niveaux_dev", JSON.stringify(niveauxPersonnalises));
         }
         // Migration : identifiant unique par niveau + ancien drapeau "public"
         niveauxPersonnalises.forEach(n => {
@@ -2826,7 +3301,7 @@
             if (niveauEnEditionId === null || !niveauxPersonnalises[niveauEnEditionId]) return;
             let n = niveauxPersonnalises[niveauEnEditionId];
             n.blocs = blocsMonde.filter(b => b.type !== "mur_zone").map(b => ({
-                x: b.x, y: b.y, type: b.type, couleur: b.couleur, symbole: b.symbole, valeur: b.valeur
+                x: (b.baseX !== undefined ? b.baseX : b.x), y: (b.baseY !== undefined ? b.baseY : b.y), type: b.type, couleur: b.couleur, symbole: b.symbole, valeur: b.valeur
             }));
             n.mobs = mobsMonde.map(m => ({
                 xMin: m.xMin, xMax: m.xMax, y: (m.yBase !== undefined ? m.yBase : m.y + 4), vitesse: m.vitesse, symbole: m.elementDom.innerText, mode: m.mode || "patrouille"
@@ -2894,7 +3369,7 @@
                 planifierPublication(n); // renomme aussi le fichier GitHub
             });
         }
-        const NOMS_CIBLE = { publics: "🌐 PUBLIC", communautaires: "👥 COMMUNAUTAIRE" };
+        const NOMS_CIBLE = { get publics() { return tx(["🌐 PUBLIC", "🌐 PUBLIC", "🌐 ÖFFENTLICH", "🌐 公開"]); }, get communautaires() { return tx(["👥 COMMUNAUTAIRE", "👥 COMMUNITY", "👥 COMMUNITY", "👥 コミュニティ"]); } };
         // Place un niveau : privé (reste dans CE navigateur) / public (le tien, sur GitHub) / communautaire (sur GitHub)
         function placerNiveau(n, cible) {
             let ancienne = n.cible || null;
@@ -2983,7 +3458,7 @@
                     btns.push(boutonNiveau("✏️", "Éditer (écrit tout seul dans GitHub)", "#ffaa00", "#0b0f19", () => editerNiveauDistant(niveau, dossier)));
                     btns.push(boutonNiveau("🗑️", "Supprimer de GitHub", "#ff0055", "#fff", () => supprimerNiveauDistant(niveau, dossier)));
                 }
-                liste.appendChild(ligneNiveau(niveau.nom, btns, "#3a4454"));
+                liste.appendChild(ligneNiveau(niveau.nom + suffixeRecord(niveau.nom), btns, "#3a4454"));
             });
             // Dev : tes niveaux marqués dans cette catégorie mais pas encore (ou plus) sur GitHub
             if (modeDevNiveauxDeverrouille) {
@@ -2997,7 +3472,7 @@
                             ghEnfiler(() => publierNiveau(n));
                         })
                     ];
-                    liste.appendChild(ligneNiveau("⏳ " + n.nom + "  (pas encore sur GitHub)", btns, "#ffaa00"));
+                    liste.appendChild(ligneNiveau("⏳ " + n.nom + "  (" + tx(["pas encore sur GitHub", "not on GitHub yet", "noch nicht auf GitHub", "GitHub未反映"]) + ")", btns, "#ffaa00"));
                 });
             }
         }
@@ -3023,14 +3498,15 @@
                     boutonNiveau("▶", "Jouer", "#00ffcc", "#0b0f19", () => chargerNiveauPersonnalise(index, false)),
                     boutonNiveau("✏️", "Éditer", "#ffaa00", "#0b0f19", () => chargerNiveauPersonnalise(index, true)),
                     boutonNiveau("🏷️", "Renommer", "#3a4454", "#00ffcc", () => renommerNiveau(niveau)),
+                    boutonNiveau("📄", "Dupliquer", "#3a4454", "#00ffcc", () => dupliquerNiveau(niveau)),
                     boutonNiveau("⬇", "Télécharger (pour l'exporter)", "#3a4454", "#00ffcc", () => telechargerNiveau(niveau))
                 ];
                 if (modeDevNiveauxDeverrouille) {
                     btns.push(boutonNiveau("📤", "Choisir : privé / public / communautaire", niveau.cible ? "#00ff66" : "#9d00ff", niveau.cible ? "#0b0f19" : "#fff", () => choisirDestinationNiveau(niveau)));
                 }
                 btns.push(boutonNiveau("🗑️", "Supprimer", "#ff0055", "#fff", () => supprimerNiveau(index)));
-                let marque = !modeDevNiveauxDeverrouille ? "" : niveau.cible ? "  ·  " + NOMS_CIBLE[niveau.cible] + (niveau.distant ? " ✅ en ligne" : " ⏳") : "  ·  🔒 privé";
-                liste.appendChild(ligneNiveau(niveau.nom + marque, btns, "#00ffcc55"));
+                let marque = !modeDevNiveauxDeverrouille ? "" : niveau.cible ? "  ·  " + NOMS_CIBLE[niveau.cible] + (niveau.distant ? " ✅ " + tx(["en ligne", "online", "online", "オンライン"]) : " ⏳") : "  ·  🔒 " + tx(["privé", "private", "privat", "非公開"]);
+                liste.appendChild(ligneNiveau(niveau.nom + marque + suffixeRecord(niveau.nom), btns, "#00ffcc55"));
             });
 
             let btnExp = document.getElementById("btn-export-publics");
@@ -3080,10 +3556,19 @@
 
         // Charge n'importe quel niveau (local ou public). editIdx = index LOCAL si on
         // l'édite (dev), sinon null : un niveau public ne s'édite jamais directement.
+        // Anciens niveaux : si plusieurs blocs se superposent sur une case, on garde le dernier posé.
+        function dedoublonnerBlocs(blocs) {
+            let derniers = new Map();
+            blocs.forEach((b, i) => { if (b.type !== "mur_zone") derniers.set(b.x + "," + b.y, i); });
+            return blocs.filter((b, i) => b.type === "mur_zone" || derniers.get(b.x + "," + b.y) === i);
+        }
         function chargerNiveauObjet(niveau, editIdx) {
+            if (!niveau || typeof niveau !== "object") return;
+            nettoyerNiveauDonnees(niveau);
             modeTestCreation = false;
             nettoyerMondeComplet();
-            niveau.blocs.forEach(b => creerBlocMondeDirect(b.x, b.y, b.type, b.couleur, b.symbole || "", b.valeur || 1));
+            chargementRapide = true; // déjà dédoublonné : évite un balayage O(n²) à chaque bloc
+            try { dedoublonnerBlocs(niveau.blocs).forEach(b => creerBlocMondeDirect(b.x, b.y, b.type, b.couleur, b.symbole || "", b.valeur || 1)); } finally { chargementRapide = false; }
             (niveau.mobs || []).forEach(m => creerMobPatrouilleur(m.xMin, m.xMax, m.y, m.vitesse, "#8892b0", m.symbole || "👾", m.mode));
             joueur.departX = niveau.spawnX || 60; // point de départ réel du niveau (les checkpoints modifient spawnX/spawnY)
             joueur.departY = niveau.spawnY || 180;
@@ -3096,6 +3581,7 @@
             // sauvegarde ensuite ; un simple "▶ Jouer" laisse niveauEnEditionId à
             // null, donc rien de ce que le joueur fait n'est jamais sauvegardé.
             niveauEnEditionId = editIdx;
+            niveauCourantNom = niveau.nom || "";
             modeNiveauPersonnaliseActif = true;
             mettreAJourBadgeNiveauPerso();
             fermerEcranNiveaux();
@@ -3129,6 +3615,9 @@
             if (btn) btn.style.display = tout ? "block" : "none";
             let btnCredits = document.getElementById("btn-voir-credits");
             if (btnCredits) btnCredits.style.display = tout ? "block" : "none";
+            let nbPayes = typesDeBlocs.filter(b => b.prix > 0 && b.acquis).length + listeSkins.filter(s => s.prix > 0 && s.acquis).length + mobsBoutique.filter(m => m.acquis).length;
+            if (nbPayes >= 1) debloquerSucces("achat");
+            if (nbPayes >= 25) debloquerSucces("collection");
         }
 
         // Le message « création verrouillée » ne s'affiche que la toute première fois.
@@ -3152,7 +3641,11 @@
             btnNiveaux.style.display = displayVal;
             mettreAJourAccesInventaire();
             majVisibiliteSpawn();
-            if (modeConstructionActif) { phaseClignote = true; blocsMonde.forEach(b => { if (b.type === "clignotant" && b.elementDom) b.elementDom.style.opacity = 1; }); }
+            if (modeConstructionActif) { try { reinitialiserFragiles(); } catch (e) {} }
+            if (modeConstructionActif) { blocsMonde.forEach(b => { if (b.type === "mobile_h") { b.x = b.baseX; if (b.elementDom) b.elementDom.style.left = b.x + "px"; } if (b.type === "mobile_v") { b.y = b.baseY; if (b.elementDom) b.elementDom.style.top = b.y + "px"; }
+                if (b.type === "orbe" || b.type === "orbe_bouclier" || b.type === "orbe_vitesse") { b.reviensA = 0; if (b.elementDom) b.elementDom.style.display = "flex"; } }); joueur.sautExtra = 0; majAuraSaut(); }
+            if (modeConstructionActif) { portesOuvertes = false; majPortes(); viderProjectiles(); }
+            if (modeConstructionActif) { phaseClignote = true; phasePulse = true; blocsMonde.forEach(b => { if ((b.type === "clignotant" || b.type === "pulsant") && b.elementDom) b.elementDom.style.opacity = 1; }); }
             if (modeConstructionActif && !creationAutorisee() && !messageCreationDejaVu()) {
                 afficherAlerte(tx(["🔒 Création verrouillée en génération procédurale. Tu peux changer de skin. Appuie sur RESET MAP pour une carte de test, ou édite un niveau.", "🔒 Creation is locked in procedural generation. You can still change skins. Press RESET MAP for a test map, or edit a level.", "🔒 Bauen ist in der prozeduralen Generierung gesperrt. Skins kannst du weiterhin ändern. Drücke RESET MAP für eine Testkarte oder bearbeite ein Level.", "🔒 自動生成マップでは作成できません。スキンは変更可能。テストマップはRESET MAP、またはレベルを編集してください。"]));
             }
@@ -3169,6 +3662,7 @@
                 panelCmd.style.display = "none";
             } else {
                 panelCmd.style.display = "block";
+                debloquerSucces("dev");
                 document.getElementById("input-commande").focus();
             }
         }
@@ -3240,7 +3734,7 @@
                 if (!isNaN(montant)) {
                     if (montant > 9999999999) montant = 9999999999;
                     if (montant < 0) montant = 0;
-                    mettreAJourBanque(montant);
+                    mettreAJourBanque(montant - piecesGlobales);
                     document.getElementById("input-commande").value = "";
                     document.getElementById("panneau-commande").style.display = "none";
                 } else {
@@ -3340,7 +3834,7 @@
                 // tant que ce mode n'est pas activé). Ne s'affiche jamais dans le message
                 // "Commande inconnue" ci-dessous. Persiste même après un Hard Reset.
                 modeDevNiveauxDeverrouille = !modeDevNiveauxDeverrouille;
-                localStorage.setItem("cyber_hack_dev_unlocked", modeDevNiveauxDeverrouille ? "true" : "false");
+                lsSet("cyber_hack_dev_unlocked", modeDevNiveauxDeverrouille ? "true" : "false");
                 rendreListeNiveaux();
                 afficherAlerte(modeDevNiveauxDeverrouille
                     ? "🛠️ Mode développeur activé : tu peux éditer les niveaux publics et communautaires (écriture auto sur GitHub : tape /github pour la configurer)."
@@ -3383,15 +3877,16 @@
         const hudChrono = document.getElementById("hud-chrono");
         const hudPieces = document.getElementById("hud-pieces");
         const hudMorts = document.getElementById("hud-morts");
-        const hudPhase = document.getElementById("hud-phase");
+        const hudPhaseEl = document.getElementById("hud-phase");
+        const hudPhase = { set innerText(v) { if (v !== dernierHudPhase) { dernierHudPhase = v; hudPhaseEl.innerText = v; } } };
         const hudNiveauPerso = document.getElementById("hud-niveau-perso");
 
         function mettreAJourBadgeNiveauPerso() {
             hudNiveauPerso.style.display = modeNiveauPersonnaliseActif ? "inline" : "none";
             let nEd = niveauEnEditionId !== null ? niveauxPersonnalises[niveauEnEditionId] : null;
-            if (nEd && nEd.cible) hudNiveauPerso.innerText = NOMS_CIBLE[nEd.cible] + " EN DIRECT — tes modifications partent sur GitHub (Échap pour quitter)";
-            else if (nEd) hudNiveauPerso.innerText = "🔒 NIVEAU PRIVÉ — Échap pour quitter";
-            else hudNiveauPerso.innerText = "🛠️ NIVEAU — Échap pour quitter";
+            if (nEd && nEd.cible) hudNiveauPerso.innerText = NOMS_CIBLE[nEd.cible] + tx([" EN DIRECT — tes modifications partent sur GitHub (Échap pour quitter)", " LIVE — your edits go to GitHub (Esc to leave)", " LIVE — deine Änderungen gehen an GitHub (Esc zum Verlassen)", " ライブ — 変更はGitHubに送られる(Escで終了)"]);
+            else if (nEd) hudNiveauPerso.innerText = tx(["🔒 NIVEAU PRIVÉ — Échap pour quitter", "🔒 PRIVATE LEVEL — Esc to leave", "🔒 PRIVATES LEVEL — Esc zum Verlassen", "🔒 非公開レベル — Escで終了"]);
+            else hudNiveauPerso.innerText = tx(["🛠️ NIVEAU — Échap pour quitter", "🛠️ LEVEL — Esc to leave", "🛠️ LEVEL — Esc zum Verlassen", "🛠️ レベル — Escで終了"]);
             mettreAJourAccesInventaire();
             mettreAJourBoutonTailleZones();
             rafraichirMarqueursZones();
@@ -3399,11 +3894,11 @@
 
         const TAILLE_BLOC = 20;
 
-        let piecesGlobales = parseInt(localStorage.getItem("cyber_hack_banque")) || 0;
+        let piecesGlobales = parseInt(lsGet("cyber_hack_banque")) || 0;
         function mettreAJourBanque(montant) {
             piecesGlobales += montant;
             if (piecesGlobales > 9999999999) piecesGlobales = 9999999999;
-            localStorage.setItem("cyber_hack_banque", piecesGlobales);
+            lsSet("cyber_hack_banque", piecesGlobales);
             valeurBanque.innerText = piecesGlobales;
         }
         valeurBanque.innerText = piecesGlobales;
@@ -3647,6 +4142,7 @@
 
         // Lignes pointillées orange dans le monde (visibles seulement en édition)
         function rafraichirMarqueursZones() {
+            majTicksProg();
             marqueursZones.forEach(m => m.remove());
             marqueursZones = [];
             if (!(modeConstructionActif && niveauEnEditionId !== null)) return;
@@ -3660,7 +4156,7 @@
                 let m = document.createElement("div");
                 m.style.cssText = "position:absolute; top:0; height:100%; width:0; border-left:2px dashed #ffaa00; pointer-events:none; z-index:50; left:" + d.x + "px;";
                 let t = document.createElement("span");
-                t.innerText = d.label;
+                t.innerText = trad(d.label);
                 t.style.cssText = "position:absolute; top:2px; font-size:8px; font-weight:bold; color:#ffaa00; white-space:nowrap; " + (d.fin ? "right:4px;" : "left:4px;");
                 m.appendChild(t);
                 monde.appendChild(m);
@@ -3749,7 +4245,7 @@
         };
 
         setInterval(() => {
-            if (!modeConstructionActif && stats.chronoActif) {
+            if (!modeConstructionActif && !jeuEnPause && stats.chronoActif) {
                 stats.tempsSecondes++;
                 let min = Math.floor(stats.tempsSecondes / 60).toString().padStart(2, '0');
                 let sec = (stats.tempsSecondes % 60).toString().padStart(2, '0');
@@ -3764,7 +4260,8 @@
 
         let outilsEdition = [
             { nom: "Supprimer", couleur: "#ff0000", type: "outil_supprimer", symbole: "❌", prix: 0, acquis: true },
-            { nom: "Bloqueur", couleur: "#555555", type: "outil_bloquer", symbole: "🔒", prix: 0, acquis: true }
+            { nom: "Bloqueur", couleur: "#555555", type: "outil_bloquer", symbole: "🔒", prix: 0, acquis: true },
+            { nom: "Rectangle", couleur: "#8892b0", type: "outil_rect", symbole: "▭", prix: 0, acquis: true }
         ];
 
         // ===== Menus déroulants de l'inventaire (V5.1) =====
@@ -3846,13 +4343,13 @@
         try { achatsMobs = JSON.parse(localStorage.getItem("cyber_hack_mobs")) || {}; } catch (e) { achatsMobs = {}; }
 
         function sauvegarderAchatsBlocs() {
-            localStorage.setItem("cyber_hack_achats", JSON.stringify(achatsBlocs));
+            lsSet("cyber_hack_achats", JSON.stringify(achatsBlocs));
         }
         function sauvegarderAchatsSkins() {
-            localStorage.setItem("cyber_hack_skins", JSON.stringify(achatsSkins));
+            lsSet("cyber_hack_skins", JSON.stringify(achatsSkins));
         }
         function sauvegarderAchatsMobs() {
-            localStorage.setItem("cyber_hack_mobs", JSON.stringify(achatsMobs));
+            lsSet("cyber_hack_mobs", JSON.stringify(achatsMobs));
         }
 
         // Prix fixés selon la rareté : blocs décoratifs (Commun/Peu Commun) = pas chers,
@@ -3872,6 +4369,7 @@
             { nom: "Pièce x1 (Commun)", couleur: "#ffee00", type: "piece", valeur: 1, symbole: "🪙1", prix: 0 },
             { nom: "Pièce x5 (Rare - Anti-Farm)", couleur: "#ffcc00", type: "piece", valeur: 5, symbole: "🪙5", prix: 3000 },
             { nom: "Pièce x10 (Épique - Anti-Farm)", couleur: "#ff8800", type: "piece", valeur: 10, symbole: "🪙10", prix: 7000 },
+            { nom: "Pièce x100 (Divin - Anti-Farm)", couleur: "#ff2bd6", type: "piece", valeur: 100, symbole: "🪙100", prix: 100000, info: "Ultra rare : 1 niveau généré sur 5 en contient une" },
             { nom: "Fin de Niveau (Essentiel)", couleur: "#ffffff", type: "fin_niveau", symbole: "🏆", prix: 0, info: "Gratuit : l'arrivée du niveau" },
             { nom: "Point de Départ (Essentiel)", couleur: "#00ff66", type: "spawn", symbole: "📍", prix: 0, info: "Gratuit : place le départ du niveau (un seul, invisible en jeu)" },
             { nom: "Piège Mortel (Épique - Utilitaire)", couleur: "#ff0000", type: "piege", symbole: "⚠️", prix: 350 },
@@ -3905,7 +4403,35 @@
             { nom: "Plateforme Traversante (Rare - Utilitaire)", couleur: "#7fdbff", type: "traversant", symbole: "➖", prix: 500, info: "Une fine planche : on la traverse par en dessous, on se pose dessus par le haut. Elle occupe une case." },
             { nom: "Bloc Clignotant (Rare - Utilitaire)", couleur: "#ffb347", type: "clignotant", symbole: "💡", prix: 550, info: "Solide 2 s puis disparaît 2 s, en boucle" },
             { nom: "Portail de Retour (Épique - Utilitaire)", couleur: "#7d3cff", type: "portail", symbole: "🌌", prix: 700, info: "Te ramène au dernier point de sauvegarde, sans compter de mort" },
-            { nom: "Colonne de Vent (Épique - Utilitaire)", couleur: "#9fd8ff", type: "vent", symbole: "🌀", prix: 900, info: "Zone sans collision qui fait monter. Empile-les en colonne" }
+            { nom: "Colonne de Vent (Épique - Utilitaire)", couleur: "#9fd8ff", type: "vent", symbole: "🌀", prix: 900, info: "Zone sans collision qui fait monter. Empile-les en colonne" },
+            { nom: "Laser Pulsant (Rare - Utilitaire)", couleur: "#ff3b3b", type: "pulsant", symbole: "⚡", prix: 650, info: "Mortel 1,5 s, inoffensif 1,5 s, en boucle (il s'estompe quand il est éteint)" },
+            { nom: "Zone Lunaire (Épique - Utilitaire)", couleur: "#c8d6ff", type: "lune", symbole: "🌙", prix: 800, info: "Zone sans collision : gravité faible, on flotte et on saute très haut" },
+            { nom: "Orbe Double Saut (Épique - Utilitaire)", couleur: "#3fa9ff", type: "orbe", symbole: "🔵", prix: 750, info: "Ramasse-le pour un saut supplémentaire en l'air (revient après 3 s)" },
+            { nom: "Plateforme Mobile (Épique - Utilitaire)", couleur: "#ff9f1c", type: "mobile_h", symbole: "↔️", prix: 900, info: "Glisse de gauche à droite (±2,5 blocs) et emporte le joueur" },
+            { nom: "Interrupteur (Épique - Utilitaire)", couleur: "#2ecc71", type: "interrupteur", symbole: "🔘", prix: 800, info: "Le toucher ouvre ou ferme toutes les Portes du niveau (remis à zéro à ta mort)" },
+            { nom: "Porte (Épique - Utilitaire)", couleur: "#8e44ad", type: "porte", symbole: "🚪", prix: 600, info: "Solide tant que l'Interrupteur n'est pas activé" },
+            { nom: "Téléporteur A (Épique - Utilitaire)", couleur: "#e84393", type: "tp_a", symbole: "🅰️", prix: 900, info: "Te téléporte au Téléporteur B (et inversement)" },
+            { nom: "Téléporteur B (Épique - Utilitaire)", couleur: "#e84393", type: "tp_b", symbole: "🅱️", prix: 900, info: "Te téléporte au Téléporteur A (et inversement)" },
+            { nom: "Tourelle (Épique - Utilitaire)", couleur: "#d35400", type: "tourelle", symbole: "🔫", prix: 1100, info: "Tire des projectiles vers toi quand tu es à portée. Solide : on peut marcher dessus" },
+            { nom: "Plateforme Verticale (Épique - Utilitaire)", couleur: "#ffbe0b", type: "mobile_v", symbole: "↕️", prix: 900, info: "Monte et descend (±2,5 blocs) et emporte le joueur" },
+            // ===== V6.4 : blocs fonctionnels =====
+            { nom: "Orbe Bouclier (Épique - Utilitaire)", couleur: "#00d4ff", type: "orbe_bouclier", symbole: "🛡️", prix: 900, info: "Ramasse-le : invincible 6 s (revient après 4 s)" },
+            { nom: "Orbe Vitesse (Épique - Utilitaire)", couleur: "#ffd23f", type: "orbe_vitesse", symbole: "💨", prix: 800, info: "Ramasse-le : +60 % de vitesse pendant 5 s (revient après 4 s)" },
+            { nom: "Courant d'Air Gauche (Rare - Utilitaire)", couleur: "#a0d8ef", type: "vent_g", symbole: "⬅️", prix: 600, info: "Zone sans collision qui pousse vers la gauche" },
+            { nom: "Courant d'Air Droite (Rare - Utilitaire)", couleur: "#a0d8ef", type: "vent_d", symbole: "➡️", prix: 600, info: "Zone sans collision qui pousse vers la droite" },
+            { nom: "Piège Caché (Épique - Utilitaire)", couleur: "#7a0000", type: "piege_cache", symbole: "☠️", prix: 700, info: "Presque invisible en jeu, mortel au contact (visible en création)" },
+            { nom: "Gelée (Rare - Utilitaire)", couleur: "#c77dff", type: "gelee", symbole: "🟣", prix: 550, info: "Solide : petit rebond à chaque atterrissage" },
+            // ===== V6.3 : nouvelles couleurs =====
+            { nom: "Saumon (Commun)", couleur: "#fa8072", type: "solide", symbole: "", prix: 70 },
+            { nom: "Sable Digital (Commun)", couleur: "#e8d8a0", type: "solide", symbole: "", prix: 70 },
+            { nom: "Ciel Pâle (Commun)", couleur: "#87ceeb", type: "solide", symbole: "", prix: 80 },
+            { nom: "Vert Forêt (Peu Commun)", couleur: "#228b22", type: "solide", symbole: "", prix: 130 },
+            { nom: "Pourpre Royal (Peu Commun)", couleur: "#6a0dad", type: "solide", symbole: "", prix: 150 },
+            { nom: "Rubis (Rare)", couleur: "#e0115f", type: "solide", symbole: "", prix: 260 },
+            { nom: "Saphir (Rare)", couleur: "#0f52ba", type: "solide", symbole: "", prix: 260 },
+            { nom: "Argent Chrome (Rare)", couleur: "#c0c0c0", type: "solide", symbole: "", prix: 280 },
+            { nom: "Plasma Violet (Épique)", couleur: "#cc00ff", type: "solide", symbole: "", prix: 450 },
+            { nom: "Or Rose (Épique)", couleur: "#e6a0a8", type: "solide", symbole: "", prix: 450 }
         ];
 
         typesDeBlocs.forEach(b => {
@@ -3946,6 +4472,8 @@
                 elementActif.couleur = b.couleur;
                 elementActif.type = b.type;
                 elementActif.valeurPiece = b.valeur || 1;
+                elementActif.symbole = b.symbole || "";
+                dernierBloc = { couleur: b.couleur, type: b.type, symbole: b.symbole || "", valeurPiece: b.valeur || 1 };
             };
             groupePourBloc(b).appendChild(item);
         });
@@ -3959,7 +4487,13 @@
             { nom: "Grenouille Bot (Peu Commun)", couleur: "#39ff14", symbole: "🐸", vitesse: 1.0, mode: "saut", prix: 600, info: "Patrouille en sautant" },
             { nom: "Fantôme Cyber (Rare)", couleur: "#c8d6ff", symbole: "👻", vitesse: 1.0, mode: "sinus", prix: 1100, info: "Flotte en faisant des vagues" },
             { nom: "Scorpion Cyber (Épique)", couleur: "#ff8800", symbole: "🦂", vitesse: 3.2, mode: "patrouille", prix: 1800, info: "Patrouille très rapide" },
-            { nom: "Dragon Mécanique (Légendaire)", couleur: "#ff0055", symbole: "🐉", vitesse: 1.8, mode: "sinus", prix: 2600, info: "Vole en vagues, rapide" }
+            { nom: "Dragon Mécanique (Légendaire)", couleur: "#ff0055", symbole: "🐉", vitesse: 1.8, mode: "sinus", prix: 2600, info: "Vole en vagues, rapide" },
+            { nom: "Araignée Cyber (Rare)", couleur: "#6a0dad", symbole: "🕷️", vitesse: 2.0, mode: "saut", prix: 1000, info: "Bondit vite d'un bout à l'autre" },
+            { nom: "OVNI Hacker (Épique)", couleur: "#00ffcc", symbole: "🛸", vitesse: 2.6, mode: "sinus", prix: 2000, info: "Vole en grandes vagues, très rapide" },
+            { nom: "Chauve-souris Cyber (Peu Commun)", couleur: "#4b0082", symbole: "🦇", vitesse: 2.2, mode: "sinus", prix: 700, info: "Vole en vagues rapides" },
+            { nom: "Ver Binaire (Rare)", couleur: "#00ff66", symbole: "🪱", vitesse: 0.9, mode: "patrouille", prix: 800, info: "Rampe lentement" },
+            { nom: "Chasseur Cyber (Épique)", couleur: "#7f5539", symbole: "🐺", vitesse: 1.6, mode: "chasse", prix: 1500, info: "Patrouille, puis fonce sur toi quand tu approches" },
+            { nom: "Drone Traqueur (Légendaire)", couleur: "#2b2d42", symbole: "🛰️", vitesse: 2.2, mode: "chasse", prix: 2400, info: "Chasse à toute vitesse dès qu'il te repère" }
         ];
 
         mobsBoutique.forEach(m => {
@@ -4142,9 +4676,46 @@
                 fond: "#00ffa6",
                 prix: 15000,
                 html: `<div style="position: absolute; top: 4px; width: 6px; height: 6px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 6px #ffffff;"></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #ffffff; border-radius: 50%;"></div>`
+            },
+            // ===== V6.3 : nouveaux skins =====
+            {
+                nom: "Pixel Ninja (Épique)",
+                fond: "#1b1b24",
+                prix: 2500,
+                html: `<div style="position: absolute; top: 3px; width: 100%; height: 4px; background: #ff0055;"></div><div style="display: flex; gap: 3px; position: absolute; top: 9px;"><div style="width: 3px; height: 2px; background: #ffffff;"></div><div style="width: 3px; height: 2px; background: #ffffff;"></div></div>`
+            },
+            {
+                nom: "Robot Doré (Légendaire)",
+                fond: "#d4af37",
+                prix: 5000,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #00ffff; box-shadow: 0 0 3px #00ffff;"></div><div style="width: 3px; height: 3px; background: #00ffff; box-shadow: 0 0 3px #00ffff;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 2px; background: #5a4400;"></div>`
+            },
+            {
+                nom: "Fantôme Glitch (Légendaire)",
+                fond: "#b388ff",
+                prix: 6500,
+                html: `<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 4px; background: #000; border-radius: 50%;"></div><div style="width: 3px; height: 4px; background: #000; border-radius: 50%;"></div></div><div style="position: absolute; bottom: 0; width: 100%; height: 3px; background: repeating-linear-gradient(90deg, #b388ff 0 3px, transparent 3px 5px);"></div>`
+            },
+            {
+                nom: "Cristal Quantique (Divin)",
+                fond: "#7df9ff",
+                prix: 20000,
+                html: `<div style="position: absolute; top: 3px; width: 6px; height: 6px; background: #ffffff; transform: rotate(45deg); box-shadow: 0 0 8px #ffffff;"></div><div style="position: absolute; bottom: 3px; width: 3px; height: 3px; background: #ff2bd6; border-radius: 50%; box-shadow: 0 0 5px #ff2bd6;"></div>`
             }
         ];
 
+        (function() {
+            function h(c) {
+                let g = " box-shadow: 0 0 6px " + c + ";";
+                return '<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: ' + c + ';' + g + '"></div><div style="width: 3px; height: 3px; background: ' + c + ';' + g + '"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid ' + c + '; border-radius: 50%;"></div>';
+            }
+            listeSkins.push(
+                { nom: "Lava Core (Rare)", fond: "#ff4500", prix: 1600, html: h("#ffe600") },
+                { nom: "Frost Byte (Épique)", fond: "#7fe0ff", prix: 2800, html: h("#003a5c") },
+                { nom: "Void Walker (Mythique)", fond: "#1a0033", prix: 9500, html: h("#ff00ff") },
+                { nom: "Golden Hacker (Suprême)", fond: "#ffd700", prix: 22000, html: h("#ff0055") }
+            );
+        })();
         listeSkins.forEach((skin) => {
             // Débloqué si prix = 0 (skin de départ) OU si déjà acheté et sauvegardé
             skin.acquis = (skin.prix === 0) || (achatsSkins[skin.nom] === true);
@@ -4204,10 +4775,29 @@
         };
 
         joueur.element.className = "cyber-block";
+        joueur.element.style.left = "0px";
+        joueur.element.style.top = "0px";
+        joueur.element.style.willChange = "transform";
         joueur.element.style.cursor = "default";
         joueur.element.style.backgroundColor = "#ffffff";
         joueur.element.innerHTML = listeSkins[0].html;
         monde.appendChild(joueur.element);
+        // Caméra + joueur déplacés par transform (GPU) : plus de re-layout de milliers de blocs à chaque image
+        function appliquerCameraDom() {
+            monde.style.transform = "translate3d(" + (-Math.round(cameraX)) + "px,0,0)";
+            joueur.element.style.transform = "translate3d(" + joueur.x + "px," + joueur.y + "px,0)";
+        }
+        // Seuls les blocs proches du joueur sont testés (collisions, pièces, pièges...)
+        function blocsProchesDuJoueur() {
+            let g = joueur.x - 80, d = joueur.x + joueur.width + 80, res = [];
+            for (let i = 0; i < blocsMonde.length; i++) {
+                let b = blocsMonde[i];
+                if ((b.x + b.width > g && b.x < d) || (b.type === "fragile" && (b.cache || b.compte !== undefined))) res.push(b);
+            }
+            return res;
+        }
+        let dernierHudPhase = null;
+        function definirPhaseBg(c) { if (arene.className !== c) arene.className = c; }
 
         function nettoyerMondeComplet() {
             let tousLesBlocs = monde.getElementsByClassName("cyber-block");
@@ -4224,7 +4814,21 @@
             stats.piecesRecuperees = 0;
         }
 
+        let chargementRapide = false;
         function creerBlocMondeDirect(gx, gy, typeBloc, couleurBloc, symboleBloc, valPiece) {
+            // UN SEUL bloc par case : le dernier posé remplace l'ancien (plus de superposition,
+            // et c'est toujours le bloc le plus récent qui applique ses propriétés).
+            if (typeBloc !== "mur_zone" && !chargementRapide) {
+                let anciens = null;
+                for (let i = 0; i < blocsMonde.length; i++) {
+                    let o = blocsMonde[i];
+                    if (o.x === gx && o.y === gy && o.type !== "mur_zone") { (anciens = anciens || []).push(o); }
+                }
+                if (anciens) {
+                    anciens.forEach(o => { if (o.elementDom) o.elementDom.remove(); });
+                    blocsMonde = blocsMonde.filter(o => anciens.indexOf(o) < 0);
+                }
+            }
             let div = document.createElement("div");
             div.className = "cyber-block";
             div.style.backgroundColor = couleurBloc;
@@ -4232,11 +4836,12 @@
             div.style.top = gy + "px";
             div.innerText = symboleBloc;
             if (typeBloc === "traversant") { div.innerText = ""; div.classList.add("bloc-traversant"); }
+            if (typeBloc === "piege_cache") div.classList.add("bloc-cache");
             
             let blocObj = { 
                 x: gx, y: gy, width: TAILLE_BLOC, height: TAILLE_BLOC, 
                 type: typeBloc, couleur: couleurBloc, symbole: symboleBloc,
-                valeur: valPiece, ramasse: false, elementDom: div 
+                valeur: valPiece, ramasse: false, baseX: gx, baseY: gy, elementDom: div 
             };
 
             div.onclick = function(e) {
@@ -4265,10 +4870,11 @@
             let div = document.createElement("div");
             div.className = "cyber-mob";
             div.style.backgroundColor = "transparent";
-            div.style.left = xMin + "px";
+            div.style.left = "0px";
             // Centré verticalement sur la même ligne qu'un bloc classique, malgré
             // la taille plus grande, pour ne pas "flotter" par rapport au sol.
-            div.style.top = (yPos - (TAILLE_MOB - TAILLE_BLOC) / 2) + "px";
+            div.style.top = "0px";
+            div.style.transform = "translate3d(" + xMin + "px," + (yPos - (TAILLE_MOB - TAILLE_BLOC) / 2) + "px,0)";
             div.innerText = symbole || "👾";
             monde.appendChild(div);
 
@@ -4577,6 +5183,7 @@
             modeNiveauPersonnaliseActif = false;
             niveauEnEditionId = null;
             modeTestCreation = false; // génération procédurale : création verrouillée
+            niveauCourantNom = "";
             mettreAJourBadgeNiveauPerso();
             reinitialiserParametresNiveau();
             bandesJonction = [];
@@ -4629,30 +5236,30 @@
             });
             creerBlocMondeDirect(finMapX, groundY, "fin_niveau", "#ffffff", "🏆", 1);
 
+            // V6.3 : pièce x100 — 1 chance sur 5 par niveau (0 ou 1 max), à un endroit libre
+            // ou à la place d'une pièce déjà posée.
+            if (Math.random() < 0.2) {
+                let existantes = blocsMonde.filter(b => b.type === "piece" && b.x > 300 && b.x < finMapX - 300);
+                let libres = bandesJonction.filter(c => c.x > 300 && c.x < finMapX - 300 &&
+                    !blocsMonde.some(o => o.x === c.x && o.y === c.y - T_GEN) && !blocsMonde.some(o => o.x === c.x && o.y === c.y - 2 * T_GEN));
+                if (existantes.length && (!libres.length || Math.random() < 0.5)) {
+                    let c = existantes[rnd(0, existantes.length - 1)];
+                    if (c.elementDom) c.elementDom.remove();
+                    blocsMonde = blocsMonde.filter(o => o !== c);
+                    creerBlocMondeDirect(c.x, c.y, "piece", "#ff2bd6", "🪙100", 100);
+                } else if (libres.length) {
+                    let c = libres[rnd(0, libres.length - 1)];
+                    creerBlocMondeDirect(c.x, c.y - T_GEN, "piece", "#ff2bd6", "🪙100", 100);
+                }
+            }
+
             nouvelleCarteDepart();
             recalculerTotalPieces();
         }
 
         // --- Pose de blocs : clic simple OU clic maintenu + glisser ---
         function symboleDuTypeActif() {
-            if (elementActif.type === "glace") return "❄️";
-            if (elementActif.type === "trampoline") return "⏫";
-            if (elementActif.type === "boost") return "⏩";
-            if (elementActif.type === "checkpoint") return "🏁";
-            if (elementActif.type === "piece") return "🪙" + elementActif.valeurPiece;
-            if (elementActif.type === "fin_niveau") return "🏆";
-            if (elementActif.type === "piege") return "⚠️";
-            if (elementActif.type === "fragile") return "🍂";
-            if (elementActif.type === "trampoline_max") return "🚀";
-            if (elementActif.type === "convoyeur_g") return "◀️";
-            if (elementActif.type === "convoyeur_d") return "▶️";
-            if (elementActif.type === "boue") return "🟤";
-            if (elementActif.type === "vent") return "🌀";
-            if (elementActif.type === "traversant") return "➖";
-            if (elementActif.type === "clignotant") return "💡";
-            if (elementActif.type === "portail") return "🌌";
-            if (elementActif.type === "spawn") return "📍";
-            return "";
+            return elementActif.symbole || "";
         }
 
         function caseSousPointeur(e) {
@@ -4668,7 +5275,7 @@
         }
 
         function outilDePoseActif() {
-            return modeConstructionActif && creationAutorisee() && elementActif.type !== "outil_supprimer" && elementActif.type !== "outil_bloquer" && elementActif.type !== "outil_bouclier" && elementActif.type !== "mob";
+            return modeConstructionActif && creationAutorisee() && elementActif.type !== "outil_supprimer" && elementActif.type !== "outil_bloquer" && elementActif.type !== "outil_bouclier" && elementActif.type !== "mob" && elementActif.type !== "outil_rect";
         }
 
         function outilEffaceActif() {
@@ -4681,12 +5288,16 @@
         function annulerDerniereAction() {
             let h = historiqueEdition.pop();
             if (!h) return;
+            debloquerSucces("annuler");
             h.ajoutes.forEach(b => { if (b.elementDom) b.elementDom.remove(); });
             blocsMonde = blocsMonde.filter(b => !h.ajoutes.includes(b));
             h.supprimes.forEach(o => {
                 if (o.type === "mob") mobsMonde.push(o); else blocsMonde.push(o);
                 if (o.elementDom) monde.appendChild(o.elementDom);
             });
+            let sp = blocsMonde.filter(b => b.type === "spawn").pop();
+            if (sp) appliquerSpawnBloc(sp);
+            majVisibiliteSpawn();
             recalculerTotalPieces();
             if (niveauEnEditionId !== null) sauvegarderNiveauEnCours();
         }
@@ -4722,17 +5333,29 @@
             toast("📍 Point de départ déplacé ici");
         }
 
+        // Le bloc posé REMPLACE celui qui occupait déjà la case (jamais de superposition) :
+        // c'est le dernier posé qui s'applique, avec ses propres propriétés.
+        function memeBlocQueActif(b) {
+            return b.type === elementActif.type && b.couleur === elementActif.couleur && (b.symbole || "") === (symboleDuTypeActif() || "")
+                && (b.type !== "piece" || b.valeur === elementActif.valeurPiece);
+        }
         function poserBlocSurCase(gx, gy, forcer) {
             let cle = gx + "," + gy;
-            if (!forcer) {
-                // Pendant le glisser : pas de doublon sur une case déjà posée ou occupée
-                if (casesPoseesDansLeGlisse.has(cle)) return;
-                if (blocsMonde.some(b => b.x === gx && b.y === gy)) return;
-            }
+            // Pendant le glisser : une case déjà traitée dans ce même trait n'est pas refaite
+            if (!forcer && casesPoseesDansLeGlisse.has(cle)) return;
             casesPoseesDansLeGlisse.add(cle);
+            let occupants = blocsMonde.filter(b => b.x === gx && b.y === gy && b.type !== "mur_zone");
+            if (occupants.length === 1 && memeBlocQueActif(occupants[0])) return; // exactement le même bloc : rien à changer
+            if (occupants.length > 0) {
+                occupants.forEach(b => { if (b.elementDom) b.elementDom.remove(); });
+                blocsMonde = blocsMonde.filter(b => !occupants.includes(b));
+                traitSupprimes.push(...occupants);
+                glisseAModifie = true;
+            }
             creerBlocMondeDirect(gx, gy, elementActif.type, elementActif.couleur, symboleDuTypeActif(), elementActif.valeurPiece);
             glisseAModifie = true;
             traitAjoutes.push(blocsMonde[blocsMonde.length - 1]);
+            debloquerSucces("architecte"); compterLeger("blocs", 1);
             if (elementActif.type === "spawn") placerSpawnBloc(blocsMonde[blocsMonde.length - 1]);
         }
 
@@ -4777,6 +5400,7 @@
         function finirGlisse(e) {
             if (!glisseEnCours) return;
             glisseEnCours = false;
+            if (rectEnCours) { appliquerRect(); rectEnCours = null; majApercuRect(); }
             derniereCasePosee = null;
             casesPoseesDansLeGlisse.clear();
             try { if (e && e.pointerId !== undefined) arene.releasePointerCapture(e.pointerId); } catch (err) {}
@@ -4792,6 +5416,14 @@
 
         arene.addEventListener("pointerdown", function(e) {
             if (e.button !== undefined && e.button !== 0) return;
+            if (modeConstructionActif && creationAutorisee() && elementActif.type === "outil_rect") {
+                let c = caseSousPointeur(e);
+                rectEnCours = { x0: c.gx, y0: c.gy, x1: c.gx, y1: c.gy };
+                glisseEnCours = true; glisseEfface = false; glisseAModifie = false; casesPoseesDansLeGlisse.clear();
+                majApercuRect();
+                try { arene.setPointerCapture(e.pointerId); } catch (err) {}
+                e.preventDefault(); return;
+            }
             if (!outilDePoseActif() && !outilEffaceActif()) return;
             glisseEnCours = true;
             glisseEfface = outilEffaceActif();
@@ -4806,6 +5438,7 @@
 
         arene.addEventListener("pointermove", function(e) {
             if (!glisseEnCours) return;
+            if (rectEnCours) { let c = caseSousPointeur(e); rectEnCours.x1 = c.gx; rectEnCours.y1 = c.gy; majApercuRect(); return; }
             // Si l'outil a changé en cours de route, on arrête proprement
             if (glisseEfface ? !outilEffaceActif() : !outilDePoseActif()) { finirGlisse(e); return; }
             let { gx, gy } = caseSousPointeur(e);
@@ -4843,6 +5476,7 @@
             modeNiveauPersonnaliseActif = false;
             niveauEnEditionId = null;
             modeTestCreation = true; // carte de test : inventaire et pose de blocs activés
+            niveauCourantNom = "";
             mettreAJourBadgeNiveauPerso();
 
             reinitialiserParametresNiveau();
@@ -4928,10 +5562,7 @@
         ["touchend", "touchcancel"].forEach(ev => boutonSautTactile.addEventListener(ev, () => boutonSautTactile.classList.remove("appuye")));
         boutonSautTactile.addEventListener("touchstart", (e) => {
             boutonSautTactile.classList.add("appuye");
-            if (!modeConstructionActif && peutSauter()) {
-                joueur.vy = joueur.jumpForce;
-                joueur.isGrounded = false;
-            }
+            if (!modeConstructionActif) tenterSaut(false);
             e.preventDefault();
         });
 
@@ -4945,12 +5576,15 @@
             }
 
             if (tacheActive) { touches.q = false; touches.d = false; return; }
-            if (e.key === "q" || e.key === "Q") touches.q = true;
-            if (e.key === "d" || e.key === "D") touches.d = true;
-            if ((e.key === "z" || e.key === "Z" || e.key === " ") && !modeConstructionActif && peutSauter()) {
-                joueur.vy = joueur.jumpForce;
-                joueur.isGrounded = false;
+            let champ = document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+            let fleche = e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowUp";
+            if (fleche && !champ && !modeConstructionActif) e.preventDefault();
+            if (e.key === "q" || e.key === "Q" || (e.key === "ArrowLeft" && !champ)) touches.q = true;
+            if (e.key === "d" || e.key === "D" || (e.key === "ArrowRight" && !champ)) touches.d = true;
+            if ((e.key === "z" || e.key === "Z" || e.key === " " || (e.key === "ArrowUp" && !champ)) && !modeConstructionActif) {
+                tenterSaut(e.repeat);
             }
+            if ((e.key === "p" || e.key === "P") && !champ && !e.repeat && !modeConstructionActif) { basculerPause(); if (jeuEnPause) debloquerSucces("pause"); }
             if (e.key === "e" || e.key === "E") {
                 basculerModeCreatif();
             }
@@ -4990,22 +5624,23 @@
             joueur.isGrounded = false;
             boostTimer = 0;
             surDeLaGlace = false;
-            joueur.invincible = 45; // laisse le temps de se poser
+            joueur.invincible = 45; joueur.sautExtra = 0; vitesseBoost = 0; majAuraSaut(); viderProjectiles(); if (portesOuvertes) { portesOuvertes = false; majPortes(); } // laisse le temps de se poser
             // Caméra et sprite placés tout de suite : aucune image dans le vide
             cameraX = Math.max(0, Math.min(joueur.x - Math.min(300, arene.clientWidth * 0.4), maxWorldWidth - arene.clientWidth));
-            monde.style.left = -cameraX + "px";
-            joueur.element.style.left = joueur.x + "px";
-            joueur.element.style.top = joueur.y + "px";
+            appliquerCameraDom();
         }
         // À appeler à CHAQUE changement de carte (génération, niveau, reset, fin de niveau)
         function nouvelleCarteDepart() {
             reinitialiserCheckpoints();
             reinitialiserMorts();
+            stats.tempsSecondes = 0; hudChrono.innerText = "⏱️ 00:00";
             teleporterAuDepart();
         }
 
         function respawnJoueur() {
             stats.morts++;
+            compter("morts", 1);
+            viderProjectiles();
             afficherMorts();
             joueur.x = joueur.spawnX;
             joueur.y = joueur.spawnY;
@@ -5013,18 +5648,25 @@
             joueur.vy = 0;
             boostTimer = 0;
             reinitialiserFragiles();
-            joueur.invincible = 90;
+            joueur.invincible = 90; joueur.sautExtra = 0; vitesseBoost = 0; majAuraSaut(); if (portesOuvertes) { portesOuvertes = false; majPortes(); }
         }
 
+        const TYPES_NON_SOLIDES = new Set(["piege", "checkpoint", "piece", "fin_niveau", "decor", "fragment", "vent", "spawn", "portail", "lune", "pulsant", "orbe", "interrupteur", "tp_a", "tp_b", "orbe_bouclier", "orbe_vitesse", "vent_g", "vent_d", "piege_cache"]);
         function estBlocSolide(mur) {
-            if (mur.type === "fragile" && mur.cache) return false; // plateforme tombée
+            if (mur.type === "fragile" && mur.cache) return false;
+            if (mur.type === "porte" && portesOuvertes) return false; // plateforme tombée
             if (mur.type === "clignotant" && !phaseClignote) return false; // bloc clignotant éteint
-            return mur.type !== "piege" && mur.type !== "checkpoint" && mur.type !== "piece" && mur.type !== "fin_niveau" && mur.type !== "decor" && mur.type !== "fragment" && mur.type !== "vent" && mur.type !== "spawn" && mur.type !== "portail";
+            return !TYPES_NON_SOLIDES.has(mur.type);
         }
 
+        function majAuraSaut() { joueur.element.style.boxShadow = joueur.sautExtra > 0 ? "0 0 10px 3px #3fa9ff" : ""; }
+        function tenterSaut(repetition) {
+            if (peutSauter()) { joueur.vy = joueur.jumpForce; joueur.isGrounded = false; compterLeger("sauts", 1); }
+            else if (!repetition && joueur.sautExtra > 0) { joueur.sautExtra--; joueur.vy = joueur.jumpForce * 0.95; joueur.isGrounded = false; majAuraSaut(); debloquerSucces("double_saut"); }
+        }
         function peutSauter() {
             if (joueur.isGrounded) return true;
-            for (let mur of blocsMonde) {
+            for (let mur of blocsProchesDuJoueur()) {
                 if (estBlocSolide(mur)) {
                     if (joueur.x + joueur.width > mur.x + 2 && joueur.x < mur.x + mur.width - 2 &&
                         Math.abs((joueur.y + joueur.height) - mur.y) <= 3 && joueur.vy >= 0) return true;
@@ -5034,12 +5676,43 @@
         }
 
         let surDeLaGlace = false;
-        let frameCompteur = 0, phaseClignote = true;   // V5.1 : blocs clignotants (2 s allumés / 2 s éteints)
+        let frameCompteur = 0, phaseClignote = true, phasePulse = true;
+        let portesOuvertes = false, jeuEnPause = false, vitesseBoost = 0;
+        function majPortes() {
+            blocsMonde.forEach(b => {
+                if (!b.elementDom) return;
+                if (b.type === "porte") b.elementDom.style.opacity = portesOuvertes ? 0.2 : 1;
+                else if (b.type === "interrupteur") b.elementDom.style.filter = portesOuvertes ? "brightness(1.7)" : "";
+            });
+        }
+        function basculerPortes() {
+            if (portesOuvertes && blocsProchesDuJoueur().some(b => b.type === "porte" && joueur.x < b.x + b.width && joueur.x + joueur.width > b.x && joueur.y < b.y + b.height && joueur.y + joueur.height > b.y)) return; // jamais coincé dans une porte
+            portesOuvertes = !portesOuvertes; majPortes(); debloquerSucces("interrupteur");
+            toast(portesOuvertes ? tx(["🔓 Portes ouvertes", "🔓 Doors open", "🔓 Türen offen", "🔓 ドア開放"]) : tx(["🔒 Portes fermées", "🔒 Doors closed", "🔒 Türen geschlossen", "🔒 ドア閉鎖"]));
+        }
+        function basculerPause() {
+            jeuEnPause = !jeuEnPause;
+            touches.q = false; touches.d = false; joystickDirection = 0;
+            let o = document.getElementById("overlay-pause");
+            if (!o) {
+                o = document.createElement("div"); o.id = "overlay-pause";
+                o.style.cssText = "position:fixed; inset:0; background:rgba(11,15,25,0.7); color:#ffcc00; font-size:26px; display:none; align-items:center; justify-content:center; z-index:1001; font-family:'Courier New',monospace; text-align:center; white-space:pre-line;";
+                o.onclick = basculerPause; document.body.appendChild(o);
+            }
+            o.innerText = tx(["⏸️ PAUSE\n(P ou clic pour reprendre)", "⏸️ PAUSED\n(P or click to resume)", "⏸️ PAUSE\n(P oder Klick zum Fortsetzen)", "⏸️ ポーズ\n(Pまたはクリックで再開)"]);
+            o.style.display = jeuEnPause ? "flex" : "none";
+        }
+        document.addEventListener("visibilitychange", function() { if (document.hidden && !modeConstructionActif && !jeuEnPause) basculerPause(); });   // V5.1 : blocs clignotants (2 s allumés / 2 s éteints)
         function majClignotants(force) {
             let p = (Math.floor(frameCompteur / 120) % 2) === 0;
-            if (p === phaseClignote && !force) return;
-            phaseClignote = p;
-            blocsMonde.forEach(b => { if (b.type === "clignotant" && b.elementDom) b.elementDom.style.opacity = p ? 1 : 0.15; });
+            let q = (Math.floor(frameCompteur / 90) % 2) === 0;
+            if (p === phaseClignote && q === phasePulse && !force) return;
+            phaseClignote = p; phasePulse = q;
+            blocsMonde.forEach(b => {
+                if (!b.elementDom) return;
+                if (b.type === "clignotant") b.elementDom.style.opacity = p ? 1 : 0.15;
+                else if (b.type === "pulsant") b.elementDom.style.opacity = q ? 1 : 0.2;
+            });
         }
         let surBoue = false;          // V5 : boue collante (ralentit)
         let pousseeConv = 0;          // V5 : convoyeur (poussée horizontale par image)
@@ -5068,7 +5741,7 @@
         }
 
         function update() {
-            if (!modeConstructionActif && !tacheActive) {
+            if (!modeConstructionActif && !tacheActive && !jeuEnPause) {
                 frameCompteur++; majClignotants(false);
                 if (joueur.portailCd > 0) joueur.portailCd--;
                 if (joueur.invincible > 0) {
@@ -5078,17 +5751,18 @@
                 }
                 let indexZoneActuelle;
                 if (joueur.x < zonesX[0]) {
-                    arene.className = "phase-1-bg";
+                    definirPhaseBg("phase-1-bg");
                     indexZoneActuelle = 0;
                 } else if (joueur.x < zonesX[1]) {
-                    arene.className = "phase-2-bg";
+                    definirPhaseBg("phase-2-bg");
                     indexZoneActuelle = 1;
                 } else if (joueur.x < zonesX[2]) {
-                    arene.className = "phase-3-bg";
+                    definirPhaseBg("phase-3-bg");
                     indexZoneActuelle = 2;
                 } else {
-                    arene.className = "phase-4-bg";
+                    definirPhaseBg("phase-4-bg");
                     indexZoneActuelle = 3;
+                    if (!modeNiveauPersonnaliseActif && !modeTestCreation) debloquerSucces("zone4");
                 }
 
                 if (modeHistoireActif) {
@@ -5108,6 +5782,7 @@
 
                 // Mobile (mode tactile choisi ou écran tactile) : déplacement plus lent
                 let fv = vitesseReduiteMobile() ? FACTEUR_VITESSE_MOBILE : 1;
+                if (vitesseBoost > 0) { vitesseBoost--; fv *= 1.6; }
                 if (surBoue) fv *= 0.5;
                 let vitesseCible = moveDir * joueur.speed * fv;
 
@@ -5135,7 +5810,23 @@
                 //    ambigu entre "côté" et "dessus" : c'était la cause du bug où l'on
                 //    sautait contre un mur et se retrouvait téléporté / passait dessous).
                 joueur.x += joueur.vx + pousseeConv;
-                for (let mur of blocsMonde) {
+                const listeParcourue = blocsMonde;
+                const proches = blocsProchesDuJoueur();
+                for (let k = 0; k < proches.length; k++) {
+                    let pb = proches[k];
+                    if (pb.type === "mobile_v") {
+                        let ny = pb.baseY + Math.round(Math.sin(frameCompteur / 50) * 50);
+                        pb.dy = ny - pb.y; pb.y = ny;
+                        if (pb.elementDom) pb.elementDom.style.top = ny + "px";
+                    }
+                    if (pb.type === "mobile_h") {
+                        let nx = pb.baseX + Math.round(Math.sin(frameCompteur / 45) * 50);
+                        pb.dx = nx - pb.x; pb.x = nx;
+                        if (pb.elementDom) pb.elementDom.style.left = nx + "px";
+                        if (joueur.sur === pb) joueur.x += pb.dx; // le joueur est emporté
+                    }
+                }
+                for (let mur of proches) {
                     if (!estBlocSolide(mur)) continue;
                     if (mur.type === "traversant") continue;
                     if (joueur.x + joueur.width > mur.x && joueur.x < mur.x + mur.width &&
@@ -5149,35 +5840,44 @@
                 joueur.vy += joueur.gravity;
                 joueur.y += joueur.vy;
                 joueur.isGrounded = false;
-                surDeLaGlace = false; surBoue = false; pousseeConv = 0;
+                surDeLaGlace = false; surBoue = false; pousseeConv = 0; joueur.sur = null;
 
-                if (joueur.y + joueur.height >= arene.clientHeight) respawnJoueur();
+                if (joueur.y + joueur.height >= arene.clientHeight) { debloquerSucces("vide"); respawnJoueur(); }
 
                 mobsMonde.forEach(mob => {
-                    mob.x += mob.vitesse * mob.direction;
-                    if (mob.x <= mob.xMin || mob.x >= mob.xMax) {
-                        mob.direction *= -1;
+                    if (mob.mode === "chasse") {
+                        let ddx = joueur.x - mob.x;
+                        if (Math.abs(ddx) < 240 && Math.abs(joueur.y - mob.y) < 140) { mob.direction = ddx > 0 ? 1 : -1; mob.x += mob.vitesse * 1.5 * mob.direction; }
+                        else { mob.x += mob.vitesse * mob.direction; if (mob.x <= mob.xMin || mob.x >= mob.xMax) mob.direction *= -1; }
+                        mob.x = Math.max(mob.xMin, Math.min(mob.xMax, mob.x));
+                    } else {
+                        mob.x += mob.vitesse * mob.direction;
+                        if (mob.x <= mob.xMin || mob.x >= mob.xMax) {
+                            mob.direction *= -1;
+                        }
                     }
-                    mob.elementDom.style.left = mob.x + "px";
+                    const mobVisible = mob.x + mob.width > cameraX - 60 && mob.x < cameraX + arene.clientWidth + 60;
                     if (mob.mode === "sinus") {
                         mob.t += 0.05;
                         mob.y = mob.yBase - 4 + Math.sin(mob.t) * 32;
-                        mob.elementDom.style.top = mob.y + "px";
+                        
                     } else if (mob.mode === "saut") {
                         mob.vyS += 0.4; mob.y += mob.vyS;
                         let solMob = mob.yBase - 4;
                         if (mob.y >= solMob) { mob.y = solMob; mob.vyS = -7.5; }
-                        mob.elementDom.style.top = mob.y + "px";
+                        
                     }
+
+                    if (mobVisible) mob.elementDom.style.transform = "translate3d(" + mob.x + "px," + mob.y + "px,0)";
 
                     if (!estProtege() && joueur.x < mob.x + mob.width - 4 && joueur.x + joueur.width > mob.x + 4 &&
                         joueur.y < mob.y + mob.height - 4 && joueur.y + joueur.height > mob.y + 4) {
-                        respawnJoueur();
+                        if (mob.mode === "chasse") debloquerSucces("chasse"); respawnJoueur();
                     }
                 });
 
-                const listeParcourue = blocsMonde;
-                listeParcourue.forEach(mur => {
+                let enVent = false, enLune = false, ventLat = 0;
+                proches.forEach(mur => {
                     if (listeParcourue !== blocsMonde) return; // la carte vient de changer : on ignore les anciens blocs
                     if (mur.type === "fin_niveau" && (modeNiveauPersonnaliseActif || !modeHistoireActif || missionsFaites[3]) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         if (modeNiveauPersonnaliseActif) {
@@ -5186,6 +5886,7 @@
                             // échec — juste la fin du parcours) plutôt que de générer
                             // une nouvelle map procédurale par-dessus le niveau testé.
                             // Retour au départ RÉEL du niveau (et non au dernier checkpoint).
+                            enregistrerRecordNiveau();
                             nouvelleCarteDepart(); // morts à 0, checkpoints remis à neuf, TP instantané
                             // Les pièces redeviennent ramassables à chaque nouveau tour
                             // (sinon, une fois le niveau bouclé une fois, elles restent
@@ -5199,6 +5900,7 @@
                             stats.piecesRecuperees = 0;
                             recalculerTotalPieces();
                         } else {
+                            debloquerSucces("fin_proc"); compter("cartes", 1); if (stats.morts === 0 && !protecteurCmd) debloquerSucces("sans_mort");
                             genererMapProcedurale();
                         }
                     }
@@ -5208,11 +5910,12 @@
                         toast(tx(["🌌 Retour au point de sauvegarde", "🌌 Back to the checkpoint", "🌌 Zurück zum Checkpoint", "🌌 チェックポイントへ戻る"]));
                     }
                     if (mur.type === "vent" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
-                        joueur.vy -= 0.95; if (joueur.vy < -4.5) joueur.vy = -4.5; // courant d'air ascendant
+                        enVent = true; debloquerSucces("vent"); // appliqué une seule fois par image, après la boucle
                     }
                     if (mur.type === "piece" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         mur.ramasse = true;
                         stats.piecesRecuperees++;
+                        compter("pieces", mur.valeur || 1);
                         mettreAJourBanque(mur.valeur);
                         hudPieces.innerText = `🪙 ${stats.piecesRecuperees} / ${stats.totalPieces}`;
                         if (mur.elementDom) mur.elementDom.style.display = "none";
@@ -5229,6 +5932,7 @@
                                 let mission = epreuve.missions[missionChoisie[z]];
                                 let prochaine = epreuvesHistoire[z + 1];
                                 lancerTachePiratage(function() {
+                                    debloquerSucces("mission");
                                     afficherAlerte(`✅ ${tx(mission.fin)} !` + (prochaine
                                         ? "\n" + tx(["La zone suivante est déverrouillée : ", "The next zone is unlocked: ", "Die nächste Zone ist freigeschaltet: ", "次のゾーンが解放された: "]) + tx(prochaine.nom)
                                         : "\n" + tx(["Le 🏆 est accessible !", "The 🏆 is now reachable!", "Das 🏆 ist jetzt erreichbar!", "🏆に到達できる!"])));
@@ -5236,6 +5940,35 @@
                             }
                         }
                     }
+                    if (mur.type === "interrupteur") {
+                        let ov = joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y;
+                        if (ov && !mur.dedans) basculerPortes();
+                        mur.dedans = ov;
+                    }
+                    if ((mur.type === "tp_a" || mur.type === "tp_b") && !(joueur.portailCd > 0) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        let cible = blocsMonde.find(b => b.type === (mur.type === "tp_a" ? "tp_b" : "tp_a"));
+                        if (cible) { joueur.x = cible.x; joueur.y = cible.y; joueur.vy = 0; joueur.portailCd = 45; debloquerSucces("teleport"); }
+                    }
+                    if (mur.type === "orbe_bouclier" || mur.type === "orbe_vitesse") {
+                        if (mur.reviensA && frameCompteur >= mur.reviensA) { mur.reviensA = 0; if (mur.elementDom) mur.elementDom.style.display = "flex"; }
+                        if (!mur.reviensA && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                            if (mur.type === "orbe_bouclier") { joueur.invincible = 360; debloquerSucces("orbe_bouclier"); }
+                            else { vitesseBoost = 300; debloquerSucces("orbe_vitesse"); }
+                            mur.reviensA = frameCompteur + 240; if (mur.elementDom) mur.elementDom.style.display = "none";
+                        }
+                    }
+                    if ((mur.type === "vent_g" || mur.type === "vent_d") && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        ventLat = mur.type === "vent_d" ? 1 : -1; debloquerSucces("vent_lat");
+                    }
+                    if (mur.type === "piege_cache" && !estProtege() && joueur.x < mur.x + mur.width - 3 && joueur.x + joueur.width > mur.x + 3 && joueur.y < mur.y + mur.height - 3 && joueur.y + joueur.height > mur.y + 3) { debloquerSucces("piege_cache"); respawnJoueur(); }
+                    if (mur.type === "orbe") {
+                        if (mur.reviensA && frameCompteur >= mur.reviensA) { mur.reviensA = 0; if (mur.elementDom) mur.elementDom.style.display = "flex"; }
+                        if (!mur.reviensA && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                            joueur.sautExtra = 1; majAuraSaut(); mur.reviensA = frameCompteur + 180; if (mur.elementDom) mur.elementDom.style.display = "none";
+                        }
+                    }
+                    if (mur.type === "pulsant" && phasePulse && !estProtege() && joueur.x < mur.x + mur.width - 3 && joueur.x + joueur.width > mur.x + 3 && joueur.y < mur.y + mur.height - 3 && joueur.y + joueur.height > mur.y + 3) { respawnJoueur(); }
+                    if (mur.type === "lune" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) { enLune = true; debloquerSucces("lune"); }
                     if (mur.type === "piege" && !estProtege() && joueur.x < mur.x + mur.width - 1 && joueur.x + joueur.width > mur.x + 1 && joueur.y < mur.y + mur.height && joueur.y + joueur.height >= mur.y) {
                         respawnJoueur(); // contact avec n'importe quelle face, dessus compris
                     }
@@ -5243,6 +5976,7 @@
                         if (joueur.spawnX !== mur.x || joueur.spawnY !== mur.y - joueur.height) {
                             joueur.spawnX = mur.x;
                             joueur.spawnY = mur.y - joueur.height;
+                            debloquerSucces("checkpoint");
                             if (mur.elementDom) mur.elementDom.innerText = "✅";
                             toast(tx(["🏁 Point de sauvegarde !", "🏁 Checkpoint saved!", "🏁 Checkpoint gespeichert!", "🏁 チェックポイント保存!"]));
                         }
@@ -5253,29 +5987,34 @@
                         let traverse = mur.type === "traversant" && !(joueur.vy >= 0 && (jB - joueur.vy) <= mur.y + 1);
                         if (!traverse && jD > mur.x + 2 && jG < mur.x + mur.width - 2 && jB > mur.y && jH < mur.y + mur.height) {
                             let auDessus = (jH + jB) / 2 < mur.y + mur.height / 2;
-                            if (joueur.vy > 0 || (joueur.vy === 0 && auDessus)) {
+                            if (mur.type === "mobile_v") auDessus = (jB - joueur.vy) <= mur.y + 8 + Math.abs(mur.dy || 0);
+                            if ((joueur.vy > 0 && (mur.type !== "mobile_v" || auDessus)) || (joueur.vy === 0 && auDessus)) {
                                 // Atterrissage sur le dessus
                                 joueur.y = mur.y - joueur.height;
                                 joueur.vy = 0;
                                 joueur.isGrounded = true;
 
                                 if (mur.type === "trampoline") {
+                                    debloquerSucces("trampo");
                                     joueur.vy = joueur.jumpForce * 1.4;
                                     joueur.isGrounded = false;
                                 }
                                 if (mur.type === "boost") {
                                     let dirBoost = moveDir !== 0 ? moveDir : 1;
-                                    boostDir = dirBoost; boostTimer = 16;
+                                    boostDir = dirBoost; boostTimer = 16; debloquerSucces("boost");
                                 }
                                 if (mur.type === "glace") {
+                                    debloquerSucces("glace");
                                     surDeLaGlace = true;
                                 }
                                 if (mur.type === "trampoline_max") { joueur.vy = joueur.jumpForce * 1.9; joueur.isGrounded = false; }
                                 if (mur.type === "boue") surBoue = true;
+                                if (mur.type === "gelee") { joueur.vy = joueur.jumpForce * 0.75; joueur.isGrounded = false; debloquerSucces("gelee"); }
+                                if (mur.type === "mobile_h") joueur.sur = mur;
                                 if (mur.type === "convoyeur_g") pousseeConv = -1.6;
                                 if (mur.type === "convoyeur_d") pousseeConv = 1.6;
                                 if (mur.type === "fragile" && mur.compte === undefined) mur.compte = 36;
-                            } else if (joueur.vy < 0) {
+                            } else if (joueur.vy < 0 || mur.type === "mobile_v") {
                                 // Cogne le dessous du bloc en montant
                                 joueur.y = mur.y + mur.height;
                                 joueur.vy = 0;
@@ -5284,6 +6023,10 @@
                     }
                 });
 
+                mettreAJourTourelles();
+                if (enVent) { joueur.vy -= 1.4; if (joueur.vy < -4.5) joueur.vy = -4.5; }
+                if (enLune) { joueur.vy -= 0.36; if (joueur.vy > 3) joueur.vy = 3; }
+                if (ventLat !== 0) pousseeConv += ventLat * 1.6; // une seule poussée par image, même sur plusieurs cases
                 // Mode Histoire : la sortie de la zone reste verrouillée tant que tous
                 // les fragments de la zone ne sont pas récupérés.
                 if (modeHistoireActif && !modeNiveauPersonnaliseActif && zoneHistoireActuelle >= 0 && zoneHistoireActuelle < 3 && !missionsFaites[zoneHistoireActuelle]) {
@@ -5293,9 +6036,9 @@
 
                 cameraX = Math.max(0, Math.min(joueur.x - Math.min(300, arene.clientWidth * 0.4), maxWorldWidth - arene.clientWidth));
                 if (modeHistoireActif) mettreAJourMursZones();
-                monde.style.left = -cameraX + "px";
-                joueur.element.style.left = joueur.x + "px";
-                joueur.element.style.top = joueur.y + "px";
+                let pct = Math.round(Math.max(0, Math.min(1, joueur.x / maxWorldWidth)) * 200) / 2;
+                if (pct !== dernierPct) { dernierPct = pct; document.getElementById("barre-prog-fill").style.width = pct + "%"; }
+                appliquerCameraDom();
             }
             requestAnimationFrame(update);
         }
@@ -5314,6 +6057,9 @@
                 localStorage.removeItem("cyber_hack_skins");
                 localStorage.removeItem("cyber_hack_mobs");
                 localStorage.removeItem("cyber_hack_langue");
+                localStorage.removeItem("cyber_hack_succes");
+                localStorage.removeItem("cyber_hack_compteurs");
+                localStorage.removeItem("cyber_hack_records");
 
                 // Remise à zéro immédiate EN MÉMOIRE, en filet de sécurité au cas où
                 // location.reload() serait bloqué (certains navigateurs mobiles/webviews) :
