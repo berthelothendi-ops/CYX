@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V6.4</title><!-- build V6.4 : nouveaux blocs fonctionnels + 27 succès -->
+    <title>CYBER_HACK // PROTOCOL — V7.2</title><!-- build V7.2 : correctifs, affichage PC, skins par rareté, génération mise à jour -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -629,6 +629,11 @@
         #bouton-saut-tactile.appuye { background: rgba(255, 0, 85, 0.7); color: #fff; transform: scale(0.94); }
             #monde { will-change: transform; }
             body:not(.mode-creatif) .bloc-cache { opacity: 0.07; }
+            #bouton-dash-tactile { position:absolute; right:120px; bottom:20px; width:56px; height:56px; background:rgba(0,255,204,0.25); border:2px solid #00ffcc; color:#00ffcc; font-size:12px; font-weight:bold; border-radius:50%; display:none; align-items:center; justify-content:center; pointer-events:auto; }
+            .groupe-inv .skin-item { margin: 3px; }
+        body.ui-portrait .groupe-inv { display: inline-block; vertical-align: middle; margin: 0 6px; line-height: 38px; }
+        body.ui-portrait .groupe-inv > summary { display: inline-block; font-size: 8px; line-height: 1.1; max-width: 72px; white-space: normal; vertical-align: middle; }
+        body.ui-portrait .groupe-inv > div { display: inline-flex !important; flex-wrap: nowrap !important; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -641,7 +646,9 @@
         <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
         <button class="btn-mode-choix" style="border-color:#ffcc00; color:#ffcc00; box-shadow:0 0 12px rgba(255,204,0,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirJournal()">📜 JOURNAL DES MISES À JOUR</button>
         <button class="btn-mode-choix" style="border-color:#ff0055; color:#ff0055; box-shadow:0 0 12px rgba(255,0,85,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirSucces()">🏅 SUCCÈS</button>
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V6.4</p>
+        <button class="btn-mode-choix" style="border-color:#00ff66; color:#00ff66; box-shadow:0 0 12px rgba(0,255,102,0.25); padding:10px 22px; font-size:13px;" onclick="lancerDefiDuJour()">📅 DÉFI DU JOUR</button>
+        <button class="btn-mode-choix" style="border-color:#9d00ff; color:#c58bff; box-shadow:0 0 12px rgba(157,0,255,0.25); padding:10px 22px; font-size:13px;" onclick="demanderGraine()">🎲 GRAINE</button>
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V7.2</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -808,6 +815,7 @@
             <button class="btn-modal-action" onclick="ouvrirEcranTitre()" id="btn-revoir-titre-txt">🎬 VOIR L'ÉCRAN TITRE</button>
             <button class="btn-modal-action" onclick="ouvrirJournal()" style="background-color:#ffcc00; color:#0b0f19;">📜 JOURNAL DES MISES À JOUR</button>
             <button class="btn-modal-action" onclick="ouvrirSucces()" style="background-color:#ff0055; color:#fff;">🏅 SUCCÈS</button>
+            <button class="btn-modal-action" id="btn-hardcore" onclick="basculerHardcore()" style="background-color:#3a0a0a; color:#ff6b6b; border:1px solid #ff0055;">☠️ MODE HARDCORE : OFF</button>
             <p style="color: #8892b0; font-size: 10px; margin: 10px 0 4px 0; text-align: left;">Niveaux créés par le développeur, à essayer librement :</p>
             <button class="btn-modal-action" id="btn-voir-fin" onclick="afficherEcranFin()" style="display:none; background-color:#ffcc00; color:#0b0f19;">🏆 VOIR LA FIN</button>
             <button class="btn-modal-action" id="btn-voir-credits" onclick="afficherCredits()" style="display:none; background-color:#00ffcc; color:#0b0f19;">🎬 CRÉDITS</button>
@@ -871,6 +879,7 @@
             <div id="joystick-stick"></div>
         </div>
         <div id="bouton-saut-tactile">SAUT</div>
+        <div id="bouton-dash-tactile">DASH</div>
     </div>
 
     <script>
@@ -1252,6 +1261,26 @@
             "Courant d'Air Gauche": ["Air Current Left", "Luftstrom links", "気流(左)"], "Courant d'Air Droite": ["Air Current Right", "Luftstrom rechts", "気流(右)"],
             "Piège Caché": ["Hidden Trap", "Versteckte Falle", "隠し罠"], "Gelée": ["Jelly", "Gelee", "ゼリー"]
         });
+        Object.assign(I18N_DOM, {
+            "📅 DÉFI DU JOUR": ["📅 DAILY CHALLENGE", "📅 TAGESHERAUSFORDERUNG", "📅 デイリーチャレンジ"],
+            "🎲 GRAINE": ["🎲 SEED", "🎲 SEED", "🎲 シード"],
+            "☠️ MODE HARDCORE : OFF": ["☠️ HARDCORE MODE: OFF", "☠️ HARDCORE-MODUS: AUS", "☠️ ハードコアモード:OFF"],
+            "☠️ MODE HARDCORE : ON": ["☠️ HARDCORE MODE: ON", "☠️ HARDCORE-MODUS: AN", "☠️ ハードコアモード:ON"],
+            "Ramasse-la pour ouvrir une Porte à Clé (une clé = une porte)": ["Pick it up to open a Key Door (one key = one door)", "Einsammeln, um eine Schlüsseltür zu öffnen (ein Schlüssel = eine Tür)", "拾うと鍵付きドアを開けられる(鍵1つにつきドア1つ)"],
+            "Solide : s'ouvre définitivement si tu as une Clé": ["Solid: opens for good if you have a Key", "Fest: öffnet sich dauerhaft, wenn du einen Schlüssel hast", "固体:鍵を持っていると開いたままになる"],
+            "Ouvre toutes les Portes pendant 6 s, puis elles se referment": ["Opens every Door for 6 s, then they close again", "Öffnet alle Türen für 6 s, dann schließen sie sich wieder", "6秒間すべてのドアを開け、その後閉じる"],
+            "Patrouille et tire vers toi quand tu es à portée": ["Patrols and shoots at you when in range", "Patrouilliert und schießt auf dich in Reichweite", "巡回し、射程内で撃ってくる"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Clé": ["Key", "Schlüssel", "鍵"], "Porte à Clé": ["Key Door", "Schlüsseltür", "鍵付きドア"],
+            "Bouton Temporisé": ["Timed Button", "Zeitknopf", "タイマーボタン"], "Drone Tireur": ["Shooter Drone", "Schützendrohne", "シュータードローン"],
+            "Trophée Bronze": ["Bronze Trophy", "Bronze-Trophäe", "ブロンズトロフィー"], "Trophée Argent": ["Silver Trophy", "Silber-Trophäe", "シルバートロフィー"],
+            "Trophée Or": ["Gold Trophy", "Gold-Trophäe", "ゴールドトロフィー"], "Hacker Platine": ["Platinum Hacker", "Platin-Hacker", "プラチナハッカー"]
+        });
+        Object.assign(I18N_NOMS, {
+            "Pixel Pirate": ["Pixel Pirate", "Pixel-Pirat", "ピクセルパイレーツ"], "Galaxy": ["Galaxy", "Galaxie", "ギャラクシー"],
+            "Arc-en-ciel": ["Rainbow", "Regenbogen", "レインボー"]
+        });
         I18N_RE.push(
             [/^📄 Niveau dupliqué \(privé\) : (.*)$/, ["📄 Level duplicated (private): $1", "📄 Level dupliziert (privat): $1", "📄 レベルを複製(非公開):$1"]],
             [/^(\d+) niveau\(x\) importé\(s\) dans tes niveaux locaux\.$/, ["$1 level(s) imported into your local levels.", "$1 Level in deine lokalen Level importiert.", "$1件のレベルをローカルレベルに読み込みました。"]]
@@ -1316,6 +1345,7 @@
             liste.forEach(function(x) { if (x.nodeType === 3) _trNoeudTexte(x); else _trAttr(x); });
         }
         function traduireDOM() {
+            try { majTitresSkins(); } catch (e) {}
             try {
                 if (typeof NodeFilter === "undefined" || !document.createTreeWalker) return;
                 _trArbre(document.body);
@@ -2182,14 +2212,14 @@
         // V5 : fenêtre des nouveautés, affichée une seule fois par version
         window.addEventListener("load", function() {
             let vue = null; try { vue = localStorage.getItem("cyber_hack_version_vue"); } catch (e) {}
-            if (vue === "6.4") return;
-            try { localStorage.setItem("cyber_hack_version_vue", "6.4"); } catch (e) {}
+            if (vue === "7.2") return;
+            try { localStorage.setItem("cyber_hack_version_vue", "7.2"); } catch (e) {}
             setTimeout(function() {
                 afficherAlerte(tx([
-                    "🆕 V6.4 — Mise à jour !\n\n🏅 27 nouveaux succès (blocs, compteurs, éditeur, boutique, langues…)\n🛡️ Orbe Bouclier et 💨 Orbe Vitesse\n⬅️➡️ Courants d'Air latéraux\n☠️ Piège Caché, 🟣 Gelée\n📜 Tout est dans le Journal des mises à jour",
-                    "🆕 V6.4 — Update!\n\n🏅 27 new achievements (blocks, counters, editor, shop, languages…)\n🛡️ Shield Orb and 💨 Speed Orb\n⬅️➡️ Side Air Currents\n☠️ Hidden Trap, 🟣 Jelly\n📜 Everything is in the Update Log",
-                    "🆕 V6.4 — Update!\n\n🏅 27 neue Erfolge (Blöcke, Zähler, Editor, Shop, Sprachen…)\n🛡️ Schild-Orb und 💨 Tempo-Orb\n⬅️➡️ Seitliche Luftströme\n☠️ Versteckte Falle, 🟣 Gelee\n📜 Alles im Update-Journal",
-                    "🆕 V6.4 — アップデート!\n\n🏅 新しい実績27個(ブロック・カウンター・エディタ・ショップ・言語…)\n🛡️ シールドオーブと💨 スピードオーブ\n⬅️➡️ 横向きの気流\n☠️ 隠し罠、🟣 ゼリー\n📜 全てアップデート履歴に載っています"
+                    "🆕 V7.2 — Mise à jour !\n\n🔧 Pièges ⚠️ : mortels au contact ; avec un bouclier ils deviennent des blocs solides\n⌨️ Les flèches ← → ne restent plus bloquées\n🖥️ Affichage PC rééquilibré : il s'adapte à la taille de la fenêtre\n🎭 Skins rangés par rareté + 3 nouveaux skins\n🗺️ Génération aléatoire mise à jour avec les blocs récents (18 nouveaux passages)\n🏅 3 nouveaux succès\n📜 Détails dans le Journal des mises à jour",
+                    "🆕 V7.2 — Update!\n\n🔧 Traps ⚠️: deadly on contact; with a shield they become solid blocks\n⌨️ Left/right arrows no longer get stuck\n🖥️ PC layout rebalanced: it adapts to the window size\n🎭 Skins sorted by rarity + 3 new skins\n🗺️ Random generation updated with recent blocks (18 new sections)\n🏅 3 new achievements\n📜 Details in the Update Log",
+                    "🆕 V7.2 — Update!\n\n🔧 Fallen ⚠️: tödlich bei Berührung; mit Schild werden sie zu festen Blöcken\n⌨️ Die Pfeiltasten ← → bleiben nicht mehr hängen\n🖥️ PC-Anzeige neu abgestimmt: passt sich der Fenstergröße an\n🎭 Skins nach Seltenheit sortiert + 3 neue Skins\n🗺️ Zufallsgenerierung mit neuen Blöcken aktualisiert (18 neue Abschnitte)\n🏅 3 neue Erfolge\n📜 Details im Update-Journal",
+                    "🆕 V7.2 — アップデート!\n\n🔧 罠⚠️:触れると即死。シールド中は通常ブロックのように固体になる\n⌨️ ← → キーが押しっぱなしになる不具合を修正\n🖥️ PC表示を調整:ウィンドウサイズに合わせて自動調整\n🎭 スキンをレア度別に整理+新スキン3種\n🗺️ ランダム生成を新ブロックで更新(新セクション18種)\n🏅 新しい実績3つ\n📜 詳細はアップデート履歴へ"
                 ]));
             }, 700);
         });
@@ -2640,6 +2670,16 @@
             "Plasma Violet": ["Violet Plasma", "Violettes Plasma", "バイオレットプラズマ"], "Or Rose": ["Rose Gold", "Roségold", "ローズゴールド"]
         });
         const JOURNAL_MAJ = [
+            { v: "7.1 → 7.2", titre: ["Correctifs, affichage PC, génération", "Fixes, PC layout, generation", "Korrekturen, PC-Anzeige, Generierung", "修正・PC表示・生成"], t: [
+                "🔧 Pièges ⚠️ : mortels au contact ; avec un bouclier (ou invincibilité) ils deviennent solides comme des blocs normaux\n⌨️ Flèches ← → : elles ne restent plus bloquées (le relâchement est pris en compte, même en quittant la fenêtre)\n🖥️ Affichage PC rééquilibré : panneaux fixes qui s'adaptent à la taille de la fenêtre, plus de débordement\n🎭 Skins rangés par rareté dans des menus déroulants, comme l'inventaire ; 3 nouveaux skins (Pixel Pirate, Galaxy, Arc-en-ciel)\n🗺️ Génération aléatoire mise à jour : 18 nouveaux passages avec les blocs récents (gelée, vent, plateformes mobiles, ascenseur, clés, portes, téléporteur, orbes, tourelle, lasers…) et des mobs plus variés — même style de gros sauts\n🏅 3 nouveaux succès (65 au total), la plupart faisables en génération aléatoire",
+                "🔧 Traps ⚠️: deadly on contact; with a shield (or invincibility) they become solid like normal blocks\n⌨️ Left/right arrows: they no longer get stuck (key release is handled, even when leaving the window)\n🖥️ PC layout rebalanced: fixed panels that adapt to the window size, no more overflow\n🎭 Skins sorted by rarity in drop-down menus, like the inventory; 3 new skins (Pixel Pirate, Galaxy, Rainbow)\n🗺️ Random generation updated: 18 new sections using recent blocks (jelly, wind, moving platforms, lift, keys, doors, teleporter, orbs, turret, lasers…) and more varied mobs — same big-jump style\n🏅 3 new achievements (65 in total), most of them doable in random generation",
+                "🔧 Fallen ⚠️: tödlich bei Berührung; mit Schild (oder Unverwundbarkeit) werden sie fest wie normale Blöcke\n⌨️ Pfeiltasten ← →: bleiben nicht mehr hängen (Loslassen wird erkannt, auch beim Verlassen des Fensters)\n🖥️ PC-Anzeige neu abgestimmt: feste Panels, die sich der Fenstergröße anpassen, kein Überlaufen mehr\n🎭 Skins nach Seltenheit in Aufklappmenüs sortiert, wie das Inventar; 3 neue Skins (Pixel-Pirat, Galaxie, Regenbogen)\n🗺️ Zufallsgenerierung aktualisiert: 18 neue Abschnitte mit neuen Blöcken (Gelee, Wind, bewegliche Plattformen, Aufzug, Schlüssel, Türen, Teleporter, Orbs, Geschützturm, Laser…) und abwechslungsreichere Mobs — gleicher Stil mit großen Sprüngen\n🏅 3 neue Erfolge (65 insgesamt), die meisten in der Zufallsgenerierung machbar",
+                "🔧 罠⚠️:触れると即死。シールド(または無敵)中は通常のブロックのように固体になる\n⌨️ ← → キー:押しっぱなしにならない(離した操作を反映、ウィンドウ外へ出た時も)\n🖥️ PC表示を調整:ウィンドウサイズに合わせて自動調整する固定パネル、はみ出しなし\n🎭 スキンをレア度別にプルダウンで整理(インベントリと同じ形式)。新スキン3種(ピクセルパイレーツ、ギャラクシー、レインボー)\n🗺️ ランダム生成を更新:新ブロックを使ったセクション18種(ゼリー、風、動く足場、エレベーター、鍵、ドア、テレポーター、オーブ、タレット、レーザーなど)とモブの種類を追加。大ジャンプ中心のスタイルはそのまま\n🏅 新しい実績3つ(合計65)。ほとんどがランダム生成で達成可能"] },
+            { v: "7.0", titre: ["GROSSE mise à jour : défis, dash, clés", "BIG update: challenges, dash, keys", "GROSSES Update: Herausforderungen, Dash, Schlüssel", "大型アップデート:チャレンジ・ダッシュ・鍵"], t: [
+                "📅 Défi du jour : la même carte pour tout le monde chaque jour, avec ton meilleur temps\n🎲 Graine : tape un texte et obtiens toujours la même carte (partage-la !)\n⚡ Dash (Maj ou K, bouton DASH sur mobile) : débloqué avec 15 succès\n🔑 Clé + 🔐 Porte à Clé : une clé ouvre une porte\n⏲️ Bouton Temporisé : ouvre toutes les portes pendant 6 s\n🚁 Drone Tireur : patrouille et tire sur toi\n🎁 Chaque succès rapporte 100 🪙 ; skins Trophées à 10, 25, 40 et 60 succès\n📊 Statistiques dans la fenêtre des succès\n☠️ Mode Hardcore (paramètres) : une mort = on recommence\n🏅 17 nouveaux succès (62 au total)",
+                "📅 Daily Challenge: the same map for everyone each day, with your best time\n🎲 Seed: type any text and always get the same map (share it!)\n⚡ Dash (Shift or K, DASH button on mobile): unlocked at 15 achievements\n🔑 Key + 🔐 Key Door: one key opens one door\n⏲️ Timed Button: opens every door for 6 s\n🚁 Shooter Drone: patrols and shoots at you\n🎁 Every achievement pays 100 🪙; Trophy skins at 10, 25, 40 and 60 achievements\n📊 Statistics in the achievements window\n☠️ Hardcore mode (settings): one death = start over\n🏅 17 new achievements (62 in total)",
+                "📅 Tagesherausforderung: jeden Tag dieselbe Karte für alle, mit deiner Bestzeit\n🎲 Seed: gib einen Text ein und bekomme immer dieselbe Karte (teile sie!)\n⚡ Dash (Umschalt oder K, DASH-Knopf am Handy): ab 15 Erfolgen\n🔑 Schlüssel + 🔐 Schlüsseltür: ein Schlüssel öffnet eine Tür\n⏲️ Zeitknopf: öffnet alle Türen für 6 s\n🚁 Schützendrohne: patrouilliert und schießt auf dich\n🎁 Jeder Erfolg bringt 100 🪙; Trophäen-Skins bei 10, 25, 40 und 60 Erfolgen\n📊 Statistiken im Erfolgsfenster\n☠️ Hardcore-Modus (Einstellungen): ein Tod = von vorn\n🏅 17 neue Erfolge (62 insgesamt)",
+                "📅 デイリーチャレンジ:毎日全員が同じマップ、自己ベスト付き\n🎲 シード:好きな文字列で常に同じマップ(共有できる!)\n⚡ ダッシュ(ShiftまたはK、モバイルはDASHボタン):実績15個で解放\n🔑 鍵+🔐 鍵付きドア:鍵1つでドア1つ\n⏲️ タイマーボタン:6秒間すべてのドアを開ける\n🚁 シュータードローン:巡回して撃ってくる\n🎁 実績1つにつき100 🪙。トロフィースキンは実績10/25/40/60個で解放\n📊 実績ウィンドウに統計\n☠️ ハードコアモード(設定):死んだら最初から\n🏅 新しい実績17個(合計62)"] },
             { v: "6.4", titre: ["27 succès et blocs fonctionnels", "27 achievements and functional blocks", "27 Erfolge und Funktionsblöcke", "実績27個と機能ブロック"], t: [
                 "🏅 27 nouveaux succès (45 au total) : blocs, compteurs, éditeur, boutique, langues…\n🛡️ Orbe Bouclier : invincible 6 s\n💨 Orbe Vitesse : +60 % de vitesse pendant 5 s\n⬅️➡️ Courants d'Air Gauche / Droite : zones qui poussent sur le côté\n☠️ Piège Caché : presque invisible en jeu, visible en création\n🟣 Gelée : petit rebond à chaque atterrissage",
                 "🏅 27 new achievements (45 in total): blocks, counters, editor, shop, languages…\n🛡️ Shield Orb: invincible for 6 s\n💨 Speed Orb: +60% speed for 5 s\n⬅️➡️ Air Current Left / Right: zones that push you sideways\n☠️ Hidden Trap: nearly invisible in play, visible in creative\n🟣 Jelly: small bounce on every landing",
@@ -2757,7 +2797,27 @@
             { id: "achat", n: ["Premier achat", "First Purchase", "Erster Kauf", "初めての購入"], d: ["Achète un élément de la boutique.", "Buy something from the shop.", "Kaufe etwas im Shop.", "ショップで何か買う。"] },
             { id: "collection", n: ["Collectionneur", "Collector", "Sammler", "コレクター"], d: ["Possède 25 éléments payants.", "Own 25 paid items.", "Besitze 25 kostenpflichtige Elemente.", "有料アイテムを25個持つ。"] },
             { id: "vide", n: ["Le vide t'appelle", "The Void Calls", "Der Abgrund ruft", "奈落の呼び声"], d: ["Tombe dans le vide.", "Fall into the void.", "Falle in den Abgrund.", "奈落に落ちる。"] },
-            { id: "record", n: ["Chronomètre", "Stopwatch", "Stoppuhr", "ストップウォッチ"], d: ["Établis un record sur un niveau.", "Set a record on a level.", "Stelle einen Rekord in einem Level auf.", "レベルで記録を作る。"] }
+            { id: "record", n: ["Chronomètre", "Stopwatch", "Stoppuhr", "ストップウォッチ"], d: ["Établis un record sur un niveau.", "Set a record on a level.", "Stelle einen Rekord in einem Level auf.", "レベルで記録を作る。"] },
+            { id: "defi_jour", n: ["Défi relevé", "Challenge Accepted", "Herausforderung angenommen", "挑戦成功"], d: ["Termine le Défi du jour.", "Finish the Daily Challenge.", "Beende die Tagesherausforderung.", "デイリーチャレンジをクリアする。"] },
+            { id: "defi7", n: ["Fidèle au poste", "Loyal Player", "Treuer Spieler", "皆勤賞"], d: ["Termine 7 Défis du jour (jours différents).", "Finish 7 Daily Challenges (different days).", "Beende 7 Tagesherausforderungen (verschiedene Tage).", "別の日のデイリーチャレンジを7回クリアする。"] },
+            { id: "graine", n: ["Cartographe", "Cartographer", "Kartograf", "地図職人"], d: ["Lance une carte avec une graine.", "Start a map from a seed.", "Starte eine Karte mit einem Seed.", "シード値でマップを開始する。"] },
+            { id: "cle", n: ["Serrurier", "Locksmith", "Schlosser", "鍵師"], d: ["Ramasse une clé.", "Pick up a key.", "Sammle einen Schlüssel ein.", "鍵を拾う。"] },
+            { id: "porte_cle", n: ["Clé en main", "Key in Hand", "Schlüssel im Schloss", "鍵を開ける"], d: ["Ouvre une Porte à Clé.", "Open a Key Door.", "Öffne eine Schlüsseltür.", "鍵付きドアを開ける。"] },
+            { id: "bouton_tempo", n: ["Juste à temps", "Just in Time", "Gerade rechtzeitig", "ギリギリ"], d: ["Appuie sur un Bouton Temporisé.", "Press a Timed Button.", "Drücke einen Zeitknopf.", "タイマーボタンを押す。"] },
+            { id: "tireur", n: ["Pris pour cible", "Target Practice", "Zielscheibe", "標的"], d: ["Fais-toi toucher par un Drone Tireur.", "Get hit by a Shooter Drone.", "Lass dich von einer Schützendrohne treffen.", "シュータードローンに撃たれる。"] },
+            { id: "dash", n: ["Esquive", "Dodge", "Ausweichen", "回避"], d: ["Utilise le Dash (débloqué à 15 succès).", "Use the Dash (unlocked at 15 achievements).", "Nutze den Dash (ab 15 Erfolgen).", "ダッシュを使う(実績15個で解放)。"] },
+            { id: "dash100", n: ["Insaisissable", "Elusive", "Unfassbar", "捉えられない"], d: ["Utilise le Dash 100 fois.", "Use the Dash 100 times.", "Nutze den Dash 100 Mal.", "ダッシュを100回使う。"] },
+            { id: "hardcore", n: ["Sans filet", "No Safety Net", "Ohne Netz", "ノーセーフティ"], d: ["Termine une carte aléatoire en mode Hardcore.", "Finish a random map in Hardcore mode.", "Beende eine Zufallskarte im Hardcore-Modus.", "ハードコアモードでランダムマップをクリアする。"] },
+            { id: "succes10", n: ["Chasseur de succès", "Achievement Hunter", "Erfolgsjäger", "実績ハンター"], d: ["Débloque 10 succès.", "Unlock 10 achievements.", "Schalte 10 Erfolge frei.", "実績を10個解除する。"] },
+            { id: "succes30", n: ["Perfectionniste", "Perfectionist", "Perfektionist", "完璧主義者"], d: ["Débloque 30 succès.", "Unlock 30 achievements.", "Schalte 30 Erfolge frei.", "実績を30個解除する。"] },
+            { id: "temps10h", n: ["Vétéran", "Veteran", "Veteran", "ベテラン"], d: ["Joue 10 heures au total.", "Play for 10 hours in total.", "Spiele insgesamt 10 Stunden.", "合計10時間プレイする。"] },
+            { id: "morts500", n: ["Légende du respawn", "Respawn Legend", "Respawn-Legende", "リスポーンの伝説"], d: ["Meurs 500 fois au total.", "Die 500 times in total.", "Stirb insgesamt 500 Mal.", "合計500回死ぬ。"] },
+            { id: "pieces20000", n: ["Magnat", "Tycoon", "Magnat", "大物"], d: ["Ramasse 20 000 pièces au total.", "Collect 20,000 coins in total.", "Sammle insgesamt 20.000 Münzen.", "合計2万枚のコインを集める。"] },
+            { id: "blocs5000", n: ["Architecte en chef", "Chief Architect", "Chefarchitekt", "主任建築家"], d: ["Pose 5000 blocs en mode création.", "Place 5000 blocks in creative mode.", "Setze 5000 Blöcke im Kreativmodus.", "クリエイティブで5000個ブロックを置く。"] },
+            { id: "sauts5000", n: ["Pogo", "Pogo", "Pogo", "ポゴ"], d: ["Saute 5000 fois.", "Jump 5000 times.", "Springe 5000 Mal.", "5000回ジャンプする。"] },
+            { id: "autostop", n: ["Autostoppeur", "Hitchhiker", "Tramper", "ヒッチハイカー"], d: ["Monte sur une Plateforme Mobile.", "Ride a Moving Platform.", "Fahre auf einer beweglichen Plattform mit.", "動く足場に乗る。"] },
+            { id: "ascenseur", n: ["Monte-charge", "Lift Operator", "Aufzugführer", "エレベーター係"], d: ["Monte sur une Plateforme Verticale.", "Ride a Vertical Platform.", "Fahre auf einer vertikalen Plattform mit.", "縦移動足場に乗る。"] },
+            { id: "fashion", n: ["Fashion victim", "Fashionista", "Modefreak", "おしゃれさん"], d: ["Possède 10 skins.", "Own 10 skins.", "Besitze 10 Skins.", "スキンを10個持つ。"] }
         ];
         let succesObtenus = {}, compteursVie = {};
         try { succesObtenus = JSON.parse(localStorage.getItem("cyber_hack_succes")) || {}; } catch (e) { succesObtenus = {}; }
@@ -2766,7 +2826,13 @@
             if (succesObtenus[id]) return;
             succesObtenus[id] = true; lsSet("cyber_hack_succes", JSON.stringify(succesObtenus));
             let su = SUCCES.find(x => x.id === id);
-            if (su) toast("🏅 " + tx(su.n));
+            if (su) toast("🏅 " + tx(su.n) + "  +100 🪙");
+            try { mettreAJourBanque(100); } catch (e) {}
+            let nbS = nbSuccesObtenus();
+            if (nbS === 15) toast(tx(["⚡ Compétence débloquée : Dash (Maj ou K)", "⚡ Skill unlocked: Dash (Shift or K)", "⚡ Fähigkeit freigeschaltet: Dash (Umschalt oder K)", "⚡ スキル解放:ダッシュ(ShiftまたはK)"]));
+            if (nbS >= 10) debloquerSucces("succes10");
+            if (nbS >= 30) debloquerSucces("succes30");
+            majCompetences(); majSkinsSucces();
         }
         function verifierSuccesCompteurs(cle, n) {
             let v = compteursVie[cle] || 0;
@@ -2777,6 +2843,13 @@
             if (cle === "sauts" && v >= 500) debloquerSucces("sauts500");
             if (cle === "secondes" && v >= 3600) debloquerSucces("temps1h");
             if (cle === "blocs" && v >= 500) debloquerSucces("blocs500");
+            if (cle === "blocs" && v >= 5000) debloquerSucces("blocs5000");
+            if (cle === "sauts" && v >= 5000) debloquerSucces("sauts5000");
+            if (cle === "morts" && v >= 500) debloquerSucces("morts500");
+            if (cle === "pieces" && v >= 20000) debloquerSucces("pieces20000");
+            if (cle === "secondes" && v >= 36000) debloquerSucces("temps10h");
+            if (cle === "dashs" && v >= 100) debloquerSucces("dash100");
+            if (cle === "defis" && v >= 7) debloquerSucces("defi7");
         }
         // Compteur léger pour les actions très fréquentes : écriture groupée (pas un lsSet par saut / par bloc)
         let _attenteEcritureCompteurs = null;
@@ -2802,7 +2875,9 @@
             let nb = SUCCES.filter(x => succesObtenus[x.id]).length;
             document.getElementById("titre-succes").innerText = tx(["🏅 SUCCÈS", "🏅 ACHIEVEMENTS", "🏅 ERFOLGE", "🏅 実績"]) + "  " + nb + "/" + SUCCES.length;
             let stat = document.createElement("div"); stat.style.cssText = "color:#8892b0; font-size:11px; margin-bottom:8px;";
-            stat.innerText = "🪙 " + (compteursVie.pieces || 0) + "   💀 " + (compteursVie.morts || 0);
+            stat.style.whiteSpace = "pre-line"; stat.style.lineHeight = "1.6";
+            let sec = compteursVie.secondes || 0;
+            stat.innerText = "🪙 " + (compteursVie.pieces || 0) + "   💀 " + (compteursVie.morts || 0) + "   🦘 " + (compteursVie.sauts || 0) + "   ⏱️ " + Math.floor(sec / 3600) + "h" + String(Math.floor(sec / 60) % 60).padStart(2, "0") + "\n🗺️ " + (compteursVie.cartes || 0) + "   🛠️ " + (compteursVie.blocs || 0) + "   ⚡ " + (compteursVie.dashs || 0) + (dashDebloque() ? "" : "   🔒 Dash " + nb + "/15") + "\n" + tx(["🎁 +100 🪙 par succès · 🎭 skins Trophées à 10 / 25 / 40 / 60 · ⚡ Dash à 15", "🎁 +100 🪙 per achievement · 🎭 Trophy skins at 10 / 25 / 40 / 60 · ⚡ Dash at 15", "🎁 +100 🪙 pro Erfolg · 🎭 Trophäen-Skins bei 10 / 25 / 40 / 60 · ⚡ Dash bei 15", "🎁 実績ごとに+100 🪙 · 🎭 トロフィースキン10/25/40/60個 · ⚡ ダッシュ15個"]);
             c.appendChild(stat);
             SUCCES.forEach(function(x) {
                 let ok = !!succesObtenus[x.id];
@@ -2819,6 +2894,99 @@
         function fermerSucces() { document.getElementById("fenetre-succes").style.display = "none"; }
 
         // ---- Tourelles : tirent sur le joueur à portée ----
+        // ---- V7 : défi du jour, graine, hardcore, dash, clés, récompenses ----
+        function nbSuccesObtenus() { return SUCCES.filter(x => succesObtenus[x.id]).length; }
+        function dashDebloque() { return nbSuccesObtenus() >= 15; }
+        function majCompetences() { let b = document.getElementById("bouton-dash-tactile"); if (b) b.style.display = dashDebloque() ? "flex" : "none"; }
+        function majSkinsSucces() {
+            try {
+                let nb = nbSuccesObtenus();
+                listeSkins.forEach(function(sk) {
+                    if (sk.succesRequis && !sk.acquis && nb >= sk.succesRequis) {
+                        sk.acquis = true; achatsSkins[sk.nom] = true; sauvegarderAchatsSkins();
+                        if (sk.el) { let l = sk.el.querySelector(".badge-lock"); if (l) l.remove(); sk.el.title = sk.nom; }
+                        toast("🎭 " + sk.nom);
+                    }
+                });
+            } catch (e) {}
+        }
+        function majAuraCle() { joueur.element.style.filter = clesJoueur > 0 ? "drop-shadow(0 0 4px #ffd700)" : ""; }
+        function reinitialiserClesPortes() {
+            blocsMonde.forEach(b => {
+                if (b.type === "cle") { b.ramasse = false; if (b.elementDom) b.elementDom.style.display = "flex"; }
+                if (b.type === "porte_cle") { b.ouverte = false; if (b.elementDom) b.elementDom.style.opacity = 1; }
+            });
+            clesJoueur = 0; majAuraCle();
+        }
+        function fermerPortesTemporisees() {
+            if (!portesOuvertes) return;
+            if (blocsProchesDuJoueur().some(b => b.type === "porte" && joueur.x < b.x + b.width && joueur.x + joueur.width > b.x && joueur.y < b.y + b.height && joueur.y + joueur.height > b.y)) { boutonTimer = 30; return; }
+            portesOuvertes = false; majPortes();
+        }
+        function tenterDash() {
+            if (!dashDebloque() || dashCd > 0 || dashTimer > 0 || modeConstructionActif || tacheActive || jeuEnPause) return;
+            let d = (touches.d ? 1 : 0) - (touches.q ? 1 : 0);
+            if (joystickDirection !== 0) d = joystickDirection;
+            dashDir = d !== 0 ? d : dernierSens;
+            dashTimer = 9; dashCd = 55;
+            debloquerSucces("dash"); compterLeger("dashs", 1);
+        }
+        // Graine : la génération procédurale devient reproductible
+        let graineActive = null, defiActif = null;
+        function hashGraine(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+        function mulberry32(a) { return function() { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+        function lireDefis() { try { return JSON.parse(localStorage.getItem("cyber_hack_defis")) || {}; } catch (e) { return {}; } }
+        function graineDuJour() { let d = new Date(); return "jour-" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+        function lancerGraine(graine, jour) {
+            fermerEcranTitre(); fermerParametres();
+            graineActive = String(graine); defiActif = { graine: String(graine), jour: !!jour };
+            genererMapProcedurale();
+            graineActive = null;
+            if (!jour) debloquerSucces("graine");
+            let r = lireDefis()[defiActif.graine];
+            toast((jour ? "📅 " : "🎲 ") + (jour ? tx(["Défi du jour", "Daily Challenge", "Tagesherausforderung", "デイリーチャレンジ"]) : graine) + (r ? "  ⏱️ " + formaterTemps(r.t) + " 💀" + r.m : ""));
+        }
+        function lancerDefiDuJour() { lancerGraine(graineDuJour(), true); }
+        function demanderGraine() {
+            demanderTexte(tx(["Entre une graine (un mot, un nombre…) : la même graine donne toujours la même carte.", "Enter a seed (a word, a number…): the same seed always gives the same map.", "Gib einen Seed ein (Wort, Zahl…): derselbe Seed ergibt immer dieselbe Karte.", "シード(単語や数字など)を入力:同じシードなら常に同じマップになります。"]), "", function(v) { lancerGraine(v, false); });
+        }
+        function terminerDefi() {
+            if (!defiActif) return;
+            let d = defiActif; defiActif = null;
+            if (protecteurCmd || bouclierActif) return;
+            let t = stats.tempsSecondes, m = stats.morts, recs = lireDefis(), r = recs[d.graine];
+            let premiere = !r, meilleur = !r || t < r.t || (t === r.t && m < r.m);
+            if (meilleur) { recs[d.graine] = { t: t, m: m }; lsSet("cyber_hack_defis", JSON.stringify(recs)); }
+            toast("🏁 " + formaterTemps(t) + " — 💀 " + m + (meilleur ? " — 🏆" : ""));
+            if (d.jour && premiere) { debloquerSucces("defi_jour"); compter("defis", 1); }
+        }
+        // Hardcore : une mort = on recommence
+        let modeHardcore = false, hardcoreEnAttente = false;
+        try { modeHardcore = localStorage.getItem("cyber_hack_hardcore") === "1"; } catch (e) {}
+        function majBoutonHardcore() { let b = document.getElementById("btn-hardcore"); if (b) b.innerText = modeHardcore ? "☠️ MODE HARDCORE : ON" : "☠️ MODE HARDCORE : OFF"; }
+        function basculerHardcore() {
+            modeHardcore = !modeHardcore; lsSet("cyber_hack_hardcore", modeHardcore ? "1" : "0"); majBoutonHardcore();
+            toast(modeHardcore ? tx(["☠️ Hardcore activé : une mort et tout recommence", "☠️ Hardcore on: one death and everything restarts", "☠️ Hardcore an: ein Tod und alles beginnt von vorn", "☠️ ハードコアON:死んだら最初から"]) : tx(["☠️ Hardcore désactivé", "☠️ Hardcore off", "☠️ Hardcore aus", "☠️ ハードコアOFF"]));
+        }
+        function recommencerHardcore() {
+            hardcoreEnAttente = false;
+            if (!modeHardcore || modeConstructionActif || modeTestCreation) return;
+            toast(tx(["☠️ Hardcore : tout recommence !", "☠️ Hardcore: starting over!", "☠️ Hardcore: alles beginnt von vorn!", "☠️ ハードコア:最初から!"]));
+            if (!modeNiveauPersonnaliseActif) {
+                if (defiActif) { graineActive = defiActif.graine; genererMapProcedurale(); graineActive = null; }
+                else genererMapProcedurale();
+            } else {
+                nouvelleCarteDepart();
+                blocsMonde.forEach(b => { if (b.type === "piece") { b.ramasse = false; if (b.elementDom) b.elementDom.style.display = "flex"; } });
+                stats.piecesRecuperees = 0; recalculerTotalPieces();
+            }
+        }
+        function lancerProjectile(x, y, dir, origine) {
+            let el = document.createElement("div");
+            el.style.cssText = "position:absolute; left:0; top:0; width:10px; height:10px; border-radius:50%; background:#3fa9ff; box-shadow:0 0 8px #3fa9ff; pointer-events:none;";
+            monde.appendChild(el);
+            projectiles.push({ x: x, y: y, vx: dir * 3, vie: 170, el: el, origine: origine });
+        }
         let dernierPct = -1;
         function majTicksProg() {
             let b = document.getElementById("barre-prog"); if (!b) return;
@@ -2872,7 +3040,7 @@
                 let fin = p.vie <= 0 || blocsMonde.some(b => estBlocSolide(b) && b.x < p.x + 10 && b.x + b.width > p.x && b.y < p.y + 10 && b.y + b.height > p.y);
                 if (!fin && joueur.x < p.x + 10 && joueur.x + joueur.width > p.x && joueur.y < p.y + 10 && joueur.y + joueur.height > p.y) {
                     fin = true;
-                    if (!estProtege()) { debloquerSucces("tourelle"); respawnJoueur(); break; } // respawnJoueur vide la liste
+                    if (!estProtege()) { debloquerSucces(p.origine === "tireur" ? "tireur" : "tourelle"); respawnJoueur(); break; } // respawnJoueur vide la liste
                 }
                 if (fin) { p.el.remove(); projectiles.splice(i, 1); }
                 else p.el.style.transform = "translate3d(" + p.x + "px," + p.y + "px,0)";
@@ -3582,6 +3750,7 @@
             // null, donc rien de ce que le joueur fait n'est jamais sauvegardé.
             niveauEnEditionId = editIdx;
             niveauCourantNom = niveau.nom || "";
+            defiActif = null;
             modeNiveauPersonnaliseActif = true;
             mettreAJourBadgeNiveauPerso();
             fermerEcranNiveaux();
@@ -3609,7 +3778,7 @@
         function verifierCompletionBoutique() {
             let tout =
                 typesDeBlocs.every(b => b.acquis) &&
-                listeSkins.every(s => s.acquis) &&
+                listeSkins.every(s => s.acquis || s.succesRequis) &&
                 mobsBoutique.every(m => m.acquis);
             let btn = document.getElementById("btn-voir-fin");
             if (btn) btn.style.display = tout ? "block" : "none";
@@ -3618,6 +3787,8 @@
             let nbPayes = typesDeBlocs.filter(b => b.prix > 0 && b.acquis).length + listeSkins.filter(s => s.prix > 0 && s.acquis).length + mobsBoutique.filter(m => m.acquis).length;
             if (nbPayes >= 1) debloquerSucces("achat");
             if (nbPayes >= 25) debloquerSucces("collection");
+            if (listeSkins.filter(s => s.acquis).length >= 10) debloquerSucces("fashion");
+            try { majTitresSkins(); } catch (e) {}
         }
 
         // Le message « création verrouillée » ne s'affiche que la toute première fois.
@@ -3644,7 +3815,7 @@
             if (modeConstructionActif) { try { reinitialiserFragiles(); } catch (e) {} }
             if (modeConstructionActif) { blocsMonde.forEach(b => { if (b.type === "mobile_h") { b.x = b.baseX; if (b.elementDom) b.elementDom.style.left = b.x + "px"; } if (b.type === "mobile_v") { b.y = b.baseY; if (b.elementDom) b.elementDom.style.top = b.y + "px"; }
                 if (b.type === "orbe" || b.type === "orbe_bouclier" || b.type === "orbe_vitesse") { b.reviensA = 0; if (b.elementDom) b.elementDom.style.display = "flex"; } }); joueur.sautExtra = 0; majAuraSaut(); }
-            if (modeConstructionActif) { portesOuvertes = false; majPortes(); viderProjectiles(); }
+            if (modeConstructionActif) { portesOuvertes = false; majPortes(); viderProjectiles(); reinitialiserClesPortes(); }
             if (modeConstructionActif) { phaseClignote = true; phasePulse = true; blocsMonde.forEach(b => { if ((b.type === "clignotant" || b.type === "pulsant") && b.elementDom) b.elementDom.style.opacity = 1; }); }
             if (modeConstructionActif && !creationAutorisee() && !messageCreationDejaVu()) {
                 afficherAlerte(tx(["🔒 Création verrouillée en génération procédurale. Tu peux changer de skin. Appuie sur RESET MAP pour une carte de test, ou édite un niveau.", "🔒 Creation is locked in procedural generation. You can still change skins. Press RESET MAP for a test map, or edit a level.", "🔒 Bauen ist in der prozeduralen Generierung gesperrt. Skins kannst du weiterhin ändern. Drücke RESET MAP für eine Testkarte oder bearbeite ein Level.", "🔒 自動生成マップでは作成できません。スキンは変更可能。テストマップはRESET MAP、またはレベルを編集してください。"]));
@@ -3979,95 +4150,33 @@
         window.addEventListener("orientationchange", () => setTimeout(positionnerPanneaux, 250));
 
         function _positionnerPanneauxPC() {
-            let rectArene = arene.getBoundingClientRect();
-            let estMobile = false;
-
-            if (estMobile) {
-                // Sur mobile : "fixed" (relatif à l'écran visible) au lieu de "absolute"
-                // (relatif à toute la hauteur de la page, souvent bien plus grande que
-                // l'écran) — c'est ce qui faisait sortir les panneaux/boutons de la
-                // zone visible et rendait le jeu injouable sur téléphone.
-                panneauInventaire.style.position = "fixed";
-                panneauInventaire.style.left = "50%";
-                panneauInventaire.style.top = "50%";
-                panneauInventaire.style.transform = "translate(-50%, -50%)";
-
-                panneauSkins.style.position = "fixed";
-                panneauSkins.style.left = "50%";
-                panneauSkins.style.top = "12%";
-                panneauSkins.style.transform = "translateX(-50%)";
-
-                compteurGlobalContainer.style.position = "fixed";
-                compteurGlobalContainer.style.left = "10px";
-                compteurGlobalContainer.style.top = "10px";
-                compteurGlobalContainer.style.transform = "none";
-
-                btnReset.style.position = "fixed";
-                btnReset.style.left = "auto";
-                btnReset.style.right = "8px";
-                btnReset.style.top = "8px";
-                btnReset.style.bottom = "auto";
-                btnReset.style.transform = "none";
-
-                btnGeneration.style.position = "fixed";
-                btnGeneration.style.left = "auto";
-                btnGeneration.style.right = "8px";
-                btnGeneration.style.top = "38px";
-                btnGeneration.style.bottom = "auto";
-                btnGeneration.style.transform = "none";
-            } else {
-                // Sur PC : disposition classique sur les côtés de l'arène
-                panneauInventaire.style.position = "absolute";
-                panneauSkins.style.position = "absolute";
-                btnReset.style.position = "absolute";
-                btnGeneration.style.position = "absolute";
-                compteurGlobalContainer.style.position = "absolute";
-
-                panneauInventaire.style.transform = "none";
-                panneauSkins.style.transform = "none";
-                btnReset.style.transform = "none";
-                btnGeneration.style.transform = "none";
-                compteurGlobalContainer.style.transform = "none";
-
-                btnReset.style.right = "auto";
-                btnReset.style.bottom = "auto";
-                btnGeneration.style.right = "auto";
-                btnGeneration.style.bottom = "auto";
-
-                panneauInventaire.style.left = (rectArene.right + 12) + "px";
-                panneauInventaire.style.top = rectArene.top + "px";
-
-                btnReset.style.left = (rectArene.right + 12) + "px";
-                btnReset.style.top = (rectArene.top + 325) + "px";
-
-                btnGeneration.style.left = (rectArene.right + 12) + "px";
-                btnGeneration.style.top = (rectArene.top + 370) + "px";
-
-                btnNiveaux.style.position = "absolute";
-                btnNiveaux.style.transform = "none";
-                btnNiveaux.style.right = "auto";
-                btnNiveaux.style.bottom = "auto";
-                btnNiveaux.style.left = (rectArene.right + 12) + "px";
-                btnNiveaux.style.top = (rectArene.top + 415) + "px";
-
-                compteurGlobalContainer.style.left = (rectArene.left - 142) + "px";
-                compteurGlobalContainer.style.top = rectArene.top + "px";
-
-                panneauSkins.style.left = (rectArene.left - 142) + "px";
-                panneauSkins.style.top = (rectArene.top + 48) + "px";
-
-                // Bouton TAILLE & ZONES : sous NIVEAUX (retirerPlacementMobile le remet à zéro à chaque passage)
-                let bz = document.getElementById("btn-taille-zones");
-                if (bz) {
-                    bz.style.position = "absolute";
-                    bz.style.transform = "none";
-                    bz.style.right = "auto";
-                    bz.style.bottom = "auto";
-                    bz.style.left = (rectArene.right + 12) + "px";
-                    bz.style.top = (rectArene.top + 460) + "px";
-                }
-            }
+            // Disposition PC : colonnes FIXES (position: fixed) dont la taille s'adapte à la fenêtre.
+            let W = window.innerWidth, H = window.innerHeight;
+            let wrapper = document.getElementById("arene-scale-wrapper");
+            let colW = 130, gap = 12;
+            // Si la fenêtre est trop étroite pour 2 colonnes + l'arène, l'arène est légèrement réduite
+            let dispo = W - (modeConstructionActif ? 2 * (colW + gap) : 0) - 16;
+            let sc = Math.max(0.5, Math.min(1, dispo / 800));
+            arene.style.transformOrigin = "top center";
+            arene.style.transform = sc < 1 ? "scale(" + sc + ")" : "";
+            wrapper.style.height = sc < 1 ? Math.round(320 * sc) + "px" : "";
+            let r = arene.getBoundingClientRect();
+            let top = Math.max(8, r.top), hDispo = Math.max(180, H - top - 8);
+            let gauche = Math.max(4, r.left - colW - gap), droite = Math.min(W - colW - 4, r.right + gap);
+            let fixer = function(el, vals) {
+                el.style.position = "fixed"; el.style.right = "auto"; el.style.bottom = "auto"; el.style.transform = "none";
+                Object.keys(vals).forEach(k => { el.style[k] = vals[k]; });
+            };
+            // Colonne droite : inventaire puis boutons d'action
+            let btns = [btnReset, btnGeneration, btnNiveaux, document.getElementById("btn-taille-zones")].filter(b => b && b.style.display !== "none");
+            let pas = 32, hInv = Math.max(110, hDispo - btns.length * pas - 6);
+            fixer(panneauInventaire, { left: droite + "px", top: top + "px", width: colW + "px", height: hInv + "px", maxHeight: "none" });
+            btns.forEach((b, k) => fixer(b, { left: droite + "px", top: (top + hInv + 6 + k * pas) + "px", width: colW + "px", height: "28px" }));
+            // Colonne gauche : banque puis skins
+            fixer(compteurGlobalContainer, { left: gauche + "px", top: top + "px", width: colW + "px" });
+            fixer(panneauSkins, { left: gauche + "px", top: (top + 46) + "px", width: colW + "px", height: Math.max(110, hDispo - 46) + "px", maxHeight: "none" });
         }
+        window.addEventListener("scroll", function() { if (modeConstructionActif && !estMobile()) _positionnerPanneauxPC(); }, { passive: true });
 
         window.addEventListener("load", () => {
             positionnerPanneaux();
@@ -4421,6 +4530,10 @@
             { nom: "Courant d'Air Droite (Rare - Utilitaire)", couleur: "#a0d8ef", type: "vent_d", symbole: "➡️", prix: 600, info: "Zone sans collision qui pousse vers la droite" },
             { nom: "Piège Caché (Épique - Utilitaire)", couleur: "#7a0000", type: "piege_cache", symbole: "☠️", prix: 700, info: "Presque invisible en jeu, mortel au contact (visible en création)" },
             { nom: "Gelée (Rare - Utilitaire)", couleur: "#c77dff", type: "gelee", symbole: "🟣", prix: 550, info: "Solide : petit rebond à chaque atterrissage" },
+            // ===== V7.0 : clés et boutons =====
+            { nom: "Clé (Rare - Utilitaire)", couleur: "#ffd700", type: "cle", symbole: "🔑", prix: 500, info: "Ramasse-la pour ouvrir une Porte à Clé (une clé = une porte)" },
+            { nom: "Porte à Clé (Rare - Utilitaire)", couleur: "#b8860b", type: "porte_cle", symbole: "🔐", prix: 500, info: "Solide : s'ouvre définitivement si tu as une Clé" },
+            { nom: "Bouton Temporisé (Rare - Utilitaire)", couleur: "#ff6b6b", type: "bouton_tempo", symbole: "⏲️", prix: 700, info: "Ouvre toutes les Portes pendant 6 s, puis elles se referment" },
             // ===== V6.3 : nouvelles couleurs =====
             { nom: "Saumon (Commun)", couleur: "#fa8072", type: "solide", symbole: "", prix: 70 },
             { nom: "Sable Digital (Commun)", couleur: "#e8d8a0", type: "solide", symbole: "", prix: 70 },
@@ -4493,7 +4606,8 @@
             { nom: "Chauve-souris Cyber (Peu Commun)", couleur: "#4b0082", symbole: "🦇", vitesse: 2.2, mode: "sinus", prix: 700, info: "Vole en vagues rapides" },
             { nom: "Ver Binaire (Rare)", couleur: "#00ff66", symbole: "🪱", vitesse: 0.9, mode: "patrouille", prix: 800, info: "Rampe lentement" },
             { nom: "Chasseur Cyber (Épique)", couleur: "#7f5539", symbole: "🐺", vitesse: 1.6, mode: "chasse", prix: 1500, info: "Patrouille, puis fonce sur toi quand tu approches" },
-            { nom: "Drone Traqueur (Légendaire)", couleur: "#2b2d42", symbole: "🛰️", vitesse: 2.2, mode: "chasse", prix: 2400, info: "Chasse à toute vitesse dès qu'il te repère" }
+            { nom: "Drone Traqueur (Légendaire)", couleur: "#2b2d42", symbole: "🛰️", vitesse: 2.2, mode: "chasse", prix: 2400, info: "Chasse à toute vitesse dès qu'il te repère" },
+            { nom: "Drone Tireur (Épique)", couleur: "#14213d", symbole: "🚁", vitesse: 1.2, mode: "tireur", prix: 1800, info: "Patrouille et tire vers toi quand tu es à portée" }
         ];
 
         mobsBoutique.forEach(m => {
@@ -4716,15 +4830,67 @@
                 { nom: "Golden Hacker (Suprême)", fond: "#ffd700", prix: 22000, html: h("#ff0055") }
             );
         })();
+        (function() {
+            function h(c) {
+                let g = " box-shadow: 0 0 6px " + c + ";";
+                return '<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: ' + c + ';' + g + '"></div><div style="width: 3px; height: 3px; background: ' + c + ';' + g + '"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid ' + c + '; border-radius: 50%;"></div>';
+            }
+            listeSkins.push(
+                { nom: "Trophée Bronze (Commun)", fond: "#cd7f32", prix: 0, succesRequis: 10, html: h("#3b1f00") },
+                { nom: "Trophée Argent (Rare)", fond: "#c0c0c0", prix: 0, succesRequis: 25, html: h("#222222") },
+                { nom: "Trophée Or (Légendaire)", fond: "#ffd700", prix: 0, succesRequis: 40, html: h("#7a3b00") },
+                { nom: "Hacker Platine (Divin)", fond: "#e5e4e2", prix: 0, succesRequis: 60, html: h("#00ffcc") }
+            );
+        })();
+        (function() {
+            function hh(c, glow) {
+                let g = glow ? " box-shadow: 0 0 6px " + c + ";" : "";
+                return '<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: ' + c + ';' + g + '"></div><div style="width: 3px; height: 3px; background: ' + c + ';' + g + '"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid ' + c + '; border-radius: 50%;"></div>';
+            }
+            listeSkins.push(
+                { nom: "Pixel Pirate (Peu Commun)", fond: "#8b4513", prix: 600, html: '<div style="position:absolute; top:4px; left:3px; width:6px; height:6px; background:#000; border-radius:50%;"></div><div style="position:absolute; top:5px; right:4px; width:3px; height:3px; background:#fff;"></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #000; border-radius: 50%;"></div>' },
+                { nom: "Galaxy (Mythique)", fond: "linear-gradient(135deg, #1b0036, #5b2a86 55%, #00bfff)", prix: 12000, html: hh("#ffffff", true) },
+                { nom: "Arc-en-ciel (Suprême)", fond: "linear-gradient(135deg, #ff0055, #ffaa00, #00ff66, #00bfff, #9d00ff)", prix: 30000, html: hh("#ffffff", true) }
+            );
+        })();
+        // ---- Skins rangés par rareté (menus déroulants, comme l'inventaire créatif) ----
+        const ORDRE_RARETES = ["Commun", "Peu Commun", "Rare", "Épique", "Légendaire", "Mythique", "Ultra Rare", "Divin", "Suprême", "Infernal", "Spectre"];
+        const groupesSkins = {};
+        ORDRE_RARETES.forEach(function(rar) {
+            let det = document.createElement("details"); det.className = "groupe-inv";
+            let ouv = (rar === "Commun");
+            try { let v = localStorage.getItem("cyber_hack_grpskin_" + rar); if (v !== null) ouv = (v === "1"); } catch (e) {}
+            det.open = ouv;
+            let sm = document.createElement("summary");
+            sm.style.cssText = "cursor:pointer; color:#ff0055; font-size:9px; padding:4px 0; border-bottom:1px dashed rgba(255,0,85,0.45); text-align:left;";
+            det.addEventListener("toggle", function() { try { localStorage.setItem("cyber_hack_grpskin_" + rar, det.open ? "1" : "0"); } catch (e) {} });
+            let contenu = document.createElement("div");
+            contenu.style.cssText = "display:flex; flex-wrap:wrap; justify-content:center; padding:4px 0;";
+            det.append(sm, contenu); panneauSkins.appendChild(det);
+            contenu.resume = sm; contenu.det = det; groupesSkins[rar] = contenu;
+        });
+        function groupeSkinPour(skin) {
+            let m = skin.nom.match(/\(([^)]+)\)$/), r = m ? m[1] : "Commun";
+            return groupesSkins[r] || groupesSkins["Commun"];
+        }
+        function nomRareteTx(r) { let i = ({ fr: 0, en: 1, de: 2, ja: 3 })[langueActuelle]; return (i && I18N_RARETES[r]) ? I18N_RARETES[r][i - 1] : r; }
+        function majTitresSkins() {
+            ORDRE_RARETES.forEach(function(r) {
+                let c = groupesSkins[r]; if (!c) return;
+                let nb = c.querySelectorAll(".skin-item").length, lock = c.querySelectorAll(".badge-lock").length;
+                c.det.style.display = nb ? "" : "none";
+                c.resume.innerText = "🎭 " + nomRareteTx(r) + " (" + nb + ")" + (lock ? "  🔒" + lock : "");
+            });
+        }
         listeSkins.forEach((skin) => {
             // Débloqué si prix = 0 (skin de départ) OU si déjà acheté et sauvegardé
-            skin.acquis = (skin.prix === 0) || (achatsSkins[skin.nom] === true);
+            skin.acquis = skin.succesRequis ? (achatsSkins[skin.nom] === true) : ((skin.prix === 0) || (achatsSkins[skin.nom] === true));
 
             let divSkin = document.createElement("div");
             divSkin.className = "skin-item";
-            divSkin.style.backgroundColor = skin.fond;
+            divSkin.style.background = skin.fond;
             divSkin.innerHTML = skin.html;
-            divSkin.title = skin.acquis ? skin.nom : `${skin.nom} — 🪙${skin.prix}`;
+            divSkin.title = skin.acquis ? skin.nom : (skin.succesRequis ? `${skin.nom} — 🏅 ${skin.succesRequis}` : `${skin.nom} — 🪙${skin.prix}`);
             if (!skin.acquis) {
                 let badgeCadenas = document.createElement("div");
                 badgeCadenas.className = "badge-lock";
@@ -4732,6 +4898,7 @@
                 divSkin.appendChild(badgeCadenas);
             }
             divSkin.onclick = function() {
+                if (!skin.acquis && skin.succesRequis) { toast(tx(["🏅 Débloqué avec " + skin.succesRequis + " succès", "🏅 Unlocked with " + skin.succesRequis + " achievements", "🏅 Freigeschaltet mit " + skin.succesRequis + " Erfolgen", "🏅 実績" + skin.succesRequis + "個で解放"])); return; }
                 if (!skin.acquis) {
                     if (piecesGlobales >= skin.prix) {
                         mettreAJourBanque(-skin.prix);
@@ -4748,11 +4915,12 @@
                     }
                 }
                 if (skin.acquis) {
-                    joueur.element.style.backgroundColor = skin.fond;
+                    joueur.element.style.background = skin.fond;
                     joueur.element.innerHTML = skin.html;
                 }
             };
-            panneauSkins.appendChild(divSkin);
+            skin.el = divSkin;
+            groupeSkinPour(skin).appendChild(divSkin);
         });
 
         // Vérification initiale au chargement (si tout était déjà acquis avant un rechargement)
@@ -4921,9 +5089,20 @@
         function sol(x, y, c) { creerBlocMondeDirect(x, y, "solide", c || couleurSeg, "", 1); }
         function sols(x, y, n, c) { for (let i = 0; i < n; i++) sol(x + i * T_GEN, y, c); return x + n * T_GEN; }
         function piegeGen(x, y) { creerBlocMondeDirect(x, y, "piege", "#ff0000", "⚠️", 1); }
+        let tpPlace = false, portePlace = false, progGen = 0;
+        function blkGen(x, y, type, c, sym) { creerBlocMondeDirect(x, y, type, c, sym, 1); }
         function pieceGen(x, y, v) { creerBlocMondeDirect(x, y, "piece", "#ffcc00", "🪙" + v, v); }
 
-        function mobGen(x0, x1, y, v, sym) { creerMobPatrouilleur(x0, x1, y, v, "#8892b0", sym || "👾"); }
+        function mobGen(x0, x1, y, v, sym) {
+            // V7.2 : plus de variété avec la progression (les drones volants 🤖 restent tels quels)
+            let r = Math.random(), mode = "patrouille", sy = sym || "👾";
+            if (sym !== "🤖") {
+                if (progGen > 0.25 && r < 0.14) { mode = "chasse"; sy = "🐺"; v = 1.5; }
+                else if (progGen > 0.35 && r < 0.26) { mode = "tireur"; sy = "🚁"; v = 1.1; }
+                else if (progGen > 0.1 && r < 0.36) { mode = "saut"; sy = "🐸"; v = 1.1; }
+            }
+            creerMobPatrouilleur(x0, x1, y, v, "#8892b0", sy, mode);
+        }
         function gapJ(p) { return p < 0.3 ? rnd(2, 3) : rnd(3, 4); }   // largeur d'un trou (en cases), selon la progression
         function pose(x, y, ncases, c) { return sols(x, y, ncases, c); }
 
@@ -5091,6 +5270,133 @@
             { min: 0.3, w: 1, f: function(x, y, p) {
                 let x0 = x; x = sols(x, y, 10);
                 mobGen(x0 + 3 * T_GEN, x0 + 8 * T_GEN, y - T_GEN, 0.9, "👾");
+                return x; } },
+            // ===== V7.2 : passages avec les blocs récents (même style : sauts, vide, pièces) =====
+            // Tapis de gelée : on rebondit en avançant
+            { min: 0.1, w: 1, f: function(x, y, p) {
+                let n = rnd(5, 7);
+                for (let i = 0; i < n; i++) blkGen(x + i * T_GEN, y, "gelee", "#c77dff", "🟣");
+                pieceGen(x + 2 * T_GEN, y - 3 * T_GEN, 5);
+                return x + n * T_GEN; } },
+            // Vent de travers : un courant pousse vers la droite au-dessus du vide
+            { min: 0.25, w: 1, f: function(x, y, p) {
+                let g = rnd(5, 6);
+                for (let c = 0; c < g; c++) for (let r = 1; r <= 4; r++) blkGen(x + c * T_GEN, y - r * T_GEN, "vent_d", "#a0d8ef", "➡️");
+                pieceGen(x + Math.floor(g / 2) * T_GEN, y - 3 * T_GEN, 10);
+                return sols(x + g * T_GEN, y, 3); } },
+            // Pont mobile : une plateforme glisse au-dessus d'un grand vide
+            { min: 0.2, w: 2, f: function(x, y, p) {
+                blkGen(x + 3 * T_GEN, y, "mobile_h", "#ff9f1c", "↔️");
+                blkGen(x + 4 * T_GEN, y, "mobile_h", "#ff9f1c", "↔️");
+                pieceGen(x + 4 * T_GEN, y - 3 * T_GEN, 10);
+                return sols(x + 8 * T_GEN, y, 3); } },
+            // Ascenseur : une plateforme verticale mène à une corniche haute, puis grande chute
+            { min: 0.3, w: 1, f: function(x, y, p) {
+                x = sols(x, y, 2);
+                let ex = x + T_GEN;
+                for (let i = 0; i < 3; i++) blkGen(ex + i * T_GEN, y - 2 * T_GEN, "mobile_v", "#ffbe0b", "↕️");
+                let ux = ex + 4 * T_GEN;
+                x = sols(ux, y - 5 * T_GEN, 4);
+                pieceGen(ux + T_GEN, y - 7 * T_GEN, 5);
+                x += 2 * T_GEN;
+                return sols(x, y, 3); } },
+            // Orbe double saut : le grand vide se passe en deux sauts
+            { min: 0.3, w: 1, f: function(x, y, p) {
+                blkGen(x + 3 * T_GEN, y - 4 * T_GEN, "orbe", "#3fa9ff", "🔵");
+                pieceGen(x + 5 * T_GEN, y - 5 * T_GEN, 10);
+                return sols(x + 7 * T_GEN, y, 3); } },
+            // Sentinelle : une tourelle garde la fin d'une longue plateforme
+            { min: 0.35, w: 1, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 13);
+                blkGen(x0 + 11 * T_GEN, y - T_GEN, "tourelle", "#d35400", "🔫");
+                pieceGen(x0 + 6 * T_GEN, y - 3 * T_GEN, 5);
+                pieceGen(x0 + 11 * T_GEN, y - 3 * T_GEN, 5);
+                return x; } },
+            // Porte à ouvrir : bouton temporisé ou interrupteur (un seul passage de ce type par carte)
+            { min: 0.3, w: 1, f: function(x, y, p) {
+                if (portePlace) { let g = gapJ(p); return sols(x + g * T_GEN, y, 3); }
+                portePlace = true;
+                let x0 = x; x = sols(x, y, 12);
+                if (Math.random() < 0.5) blkGen(x0 + 2 * T_GEN, y - T_GEN, "bouton_tempo", "#ff6b6b", "⏲️");
+                else blkGen(x0 + 2 * T_GEN, y - T_GEN, "interrupteur", "#2ecc71", "🔘");
+                for (let r = 1; r <= 4; r++) blkGen(x0 + 8 * T_GEN, y - r * T_GEN, "porte", "#8e44ad", "🚪");
+                pieceGen(x0 + 5 * T_GEN, y - 3 * T_GEN, 5);
+                return x; } },
+            // Clé et porte à clé : la clé est sur une petite plateforme haute
+            { min: 0.4, w: 1, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 14);
+                sols(x0 + 2 * T_GEN, y - 3 * T_GEN, 3);
+                blkGen(x0 + 3 * T_GEN, y - 4 * T_GEN, "cle", "#ffd700", "🔑");
+                for (let r = 1; r <= 4; r++) blkGen(x0 + 11 * T_GEN, y - r * T_GEN, "porte_cle", "#b8860b", "🔐");
+                return x; } },
+            // Lasers pulsants à sauter ou à attendre
+            { min: 0.25, w: 2, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 13);
+                for (let i = 0; i < 3; i++) { blkGen(x0 + (3 + i) * T_GEN, y - T_GEN, "pulsant", "#ff3b3b", "⚡"); blkGen(x0 + (9 + i) * T_GEN, y - T_GEN, "pulsant", "#ff3b3b", "⚡"); }
+                pieceGen(x0 + 7 * T_GEN, y - 3 * T_GEN, 5);
+                return x; } },
+            // Pont fragile : il faut courir
+            { min: 0.2, w: 1, f: function(x, y, p) {
+                let n = rnd(6, 8);
+                for (let i = 0; i < n; i++) blkGen(x + i * T_GEN, y, "fragile", "#a0522d", "🍂");
+                pieceGen(x + 3 * T_GEN, y - 2 * T_GEN, 5);
+                return sols(x + n * T_GEN, y, 3); } },
+            // Tapis roulant à contre-sens
+            { min: 0.3, w: 1, f: function(x, y, p) {
+                let n = rnd(7, 9);
+                for (let i = 0; i < n; i++) blkGen(x + i * T_GEN, y, "convoyeur_g", "#5b6b86", "◀️");
+                pieceGen(x + Math.floor(n / 2) * T_GEN, y - 2 * T_GEN, 5);
+                return x + n * T_GEN; } },
+            // Tour de plateformes traversantes (bonus en hauteur, on peut aussi passer dessous)
+            { min: 0.15, w: 1, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 9);
+                for (let i = 0; i < 3; i++) { blkGen(x0 + (2 + i) * T_GEN, y - 3 * T_GEN, "traversant", "#7fdbff", "➖"); blkGen(x0 + (5 + i) * T_GEN, y - 6 * T_GEN, "traversant", "#7fdbff", "➖"); }
+                pieceGen(x0 + 3 * T_GEN, y - 4 * T_GEN, 5);
+                pieceGen(x0 + 6 * T_GEN, y - 7 * T_GEN, 10);
+                return x; } },
+            // Cheminée : la colonne de vent est le seul moyen de franchir le grand vide
+            { min: 0.15, w: 1, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 4);
+                for (let r = 1; r <= 9; r++) { blkGen(x0 + 2 * T_GEN, y - r * T_GEN, "vent", "#9fd8ff", "🌀"); blkGen(x0 + 3 * T_GEN, y - r * T_GEN, "vent", "#9fd8ff", "🌀"); }
+                sols(x0 + 4 * T_GEN, y - 8 * T_GEN, 4);
+                pieceGen(x0 + 6 * T_GEN, y - 10 * T_GEN, 10);
+                return sols(x0 + 11 * T_GEN, y, 3); } },
+            // Zone lunaire : gravité faible au-dessus d'un très grand vide
+            { min: 0.35, w: 1, f: function(x, y, p) {
+                let g = 8;
+                for (let c = -1; c < g + 1; c++) for (let r = 1; r <= 6; r++) blkGen(x + c * T_GEN, y - r * T_GEN, "lune", "#c8d6ff", "🌙");
+                pieceGen(x + 4 * T_GEN, y - 4 * T_GEN, 10);
+                return sols(x + g * T_GEN, y, 3); } },
+            // Téléporteur : un seul par carte, il saute un vide infranchissable
+            { min: 0.4, w: 1, f: function(x, y, p) {
+                if (tpPlace) { let g = gapJ(p); return sols(x + g * T_GEN, y, 3); }
+                tpPlace = true;
+                let x0 = x; x = sols(x, y, 5);
+                blkGen(x0 + 3 * T_GEN, y - T_GEN, "tp_a", "#e84393", "🅰️");
+                x += 12 * T_GEN;
+                let xl = x; x = sols(x, y, 5);
+                blkGen(xl + T_GEN, y - T_GEN, "tp_b", "#e84393", "🅱️");
+                return x; } },
+            // Sprint : l'orbe vitesse permet de passer le grand vide
+            { min: 0.3, w: 1, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 7);
+                blkGen(x0 + 2 * T_GEN, y - T_GEN, "orbe_vitesse", "#ffd23f", "💨");
+                pieceGen(x + 3 * T_GEN, y - 4 * T_GEN, 10);
+                return sols(x + 6 * T_GEN, y, 4); } },
+            // Les gardes : un orbe bouclier aide à passer deux loups chasseurs
+            { min: 0.35, w: 1, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 15);
+                blkGen(x0 + T_GEN, y - T_GEN, "orbe_bouclier", "#00d4ff", "🛡️");
+                creerMobPatrouilleur(x0 + 5 * T_GEN, x0 + 11 * T_GEN, y - T_GEN, 1.5, "#7f5539", "🐺", "chasse");
+                creerMobPatrouilleur(x0 + 9 * T_GEN, x0 + 14 * T_GEN, y - T_GEN, 1.2, "#7f5539", "🐺", "chasse");
+                pieceGen(x0 + 8 * T_GEN, y - 4 * T_GEN, 10);
+                return x; } },
+            // Pièce piégée : un piège caché garde la pièce sur la petite plateforme (optionnel)
+            { min: 0.3, w: 1, f: function(x, y, p) {
+                let x0 = x; x = sols(x, y, 10);
+                sols(x0 + 3 * T_GEN, y - 3 * T_GEN, 4);
+                blkGen(x0 + 4 * T_GEN, y - 4 * T_GEN, "piege_cache", "#7a0000", "☠️");
+                pieceGen(x0 + 5 * T_GEN, y - 4 * T_GEN, 10);
                 return x; } }
         ];
 
@@ -5106,6 +5412,14 @@
             construireMapProcedurale();
             if (modeHistoireActif) { placerFragmentsHistoire(); placerMursZones(); }
         }
+        // Génération reproductible : avec une graine, Math.random() est remplacé le temps de la génération
+        const _genOrig = genererMapProcedurale;
+        genererMapProcedurale = function() {
+            if (graineActive !== null) {
+                const orig = Math.random; Math.random = mulberry32(hashGraine(String(graineActive)));
+                try { _genOrig(); } finally { Math.random = orig; }
+            } else { defiActif = null; _genOrig(); }
+        };
 
         // Mur de verrouillage à chaque frontière de zone : une seule couleur
         // (tirée parmi les blocs décoratifs), du sol au plafond. Les blocs solides
@@ -5188,6 +5502,7 @@
             reinitialiserParametresNiveau();
             bandesJonction = [];
 
+            tpPlace = false; portePlace = false; progGen = 0;
             const finMapX = 6800, Y_MIN = 200, Y_MAX = 280;
             let groundY = 240;
             let x = sols(0, groundY, 9);
@@ -5201,6 +5516,7 @@
                     prochainRelais = x + rnd(1000, 1500);
                 } else {
                     let p = x / finMapX;
+                    progGen = p;
                     let choix = [];
                     SEGMENTS_GEN.forEach((seg, i) => { if (seg.min <= p && i !== dernier && i !== avantDernier) for (let k = 0; k < seg.w; k++) choix.push(i); });
                     avantDernier = dernier;
@@ -5566,6 +5882,8 @@
             e.preventDefault();
         });
 
+        document.getElementById("bouton-dash-tactile").addEventListener("touchstart", (e) => { tenterDash(); e.preventDefault(); });
+
         let touches = { q: false, d: false };
         window.addEventListener("keydown", (e) => {
             if (document.activeElement.id === "input-commande") {
@@ -5584,6 +5902,7 @@
             if ((e.key === "z" || e.key === "Z" || e.key === " " || (e.key === "ArrowUp" && !champ)) && !modeConstructionActif) {
                 tenterSaut(e.repeat);
             }
+            if ((e.key === "Shift" || e.key === "k" || e.key === "K") && !champ && !e.repeat) tenterDash();
             if ((e.key === "p" || e.key === "P") && !champ && !e.repeat && !modeConstructionActif) { basculerPause(); if (jeuEnPause) debloquerSucces("pause"); }
             if (e.key === "e" || e.key === "E") {
                 basculerModeCreatif();
@@ -5595,9 +5914,10 @@
                 genererMapProcedurale();
             }
         });
+        window.addEventListener("blur", () => { touches.q = false; touches.d = false; }); // plus de touche « collée » si on quitte la fenêtre
         window.addEventListener("keyup", (e) => {
-            if (e.key === "q" || e.key === "Q") touches.q = false;
-            if (e.key === "d" || e.key === "D") touches.d = false;
+            if (e.key === "q" || e.key === "Q" || e.key === "ArrowLeft") touches.q = false;
+            if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") touches.d = false;
         });
 
         // --- Départ de carte : téléportation INSTANTANÉE au vrai départ, sans compter de mort ---
@@ -5624,7 +5944,7 @@
             joueur.isGrounded = false;
             boostTimer = 0;
             surDeLaGlace = false;
-            joueur.invincible = 45; joueur.sautExtra = 0; vitesseBoost = 0; majAuraSaut(); viderProjectiles(); if (portesOuvertes) { portesOuvertes = false; majPortes(); } // laisse le temps de se poser
+            joueur.invincible = 45; joueur.sautExtra = 0; vitesseBoost = 0; reinitialiserClesPortes(); boutonTimer = 0; dashTimer = 0; majAuraSaut(); viderProjectiles(); if (portesOuvertes) { portesOuvertes = false; majPortes(); } // laisse le temps de se poser
             // Caméra et sprite placés tout de suite : aucune image dans le vide
             cameraX = Math.max(0, Math.min(joueur.x - Math.min(300, arene.clientWidth * 0.4), maxWorldWidth - arene.clientWidth));
             appliquerCameraDom();
@@ -5640,6 +5960,7 @@
         function respawnJoueur() {
             stats.morts++;
             compter("morts", 1);
+            if (modeHardcore && !hardcoreEnAttente) { hardcoreEnAttente = true; setTimeout(recommencerHardcore, 0); }
             viderProjectiles();
             afficherMorts();
             joueur.x = joueur.spawnX;
@@ -5651,11 +5972,13 @@
             joueur.invincible = 90; joueur.sautExtra = 0; vitesseBoost = 0; majAuraSaut(); if (portesOuvertes) { portesOuvertes = false; majPortes(); }
         }
 
-        const TYPES_NON_SOLIDES = new Set(["piege", "checkpoint", "piece", "fin_niveau", "decor", "fragment", "vent", "spawn", "portail", "lune", "pulsant", "orbe", "interrupteur", "tp_a", "tp_b", "orbe_bouclier", "orbe_vitesse", "vent_g", "vent_d", "piege_cache"]);
+        const TYPES_NON_SOLIDES = new Set(["piege", "checkpoint", "piece", "fin_niveau", "decor", "fragment", "vent", "spawn", "portail", "lune", "pulsant", "orbe", "interrupteur", "tp_a", "tp_b", "orbe_bouclier", "orbe_vitesse", "vent_g", "vent_d", "piege_cache", "cle", "bouton_tempo"]);
         function estBlocSolide(mur) {
             if (mur.type === "fragile" && mur.cache) return false;
-            if (mur.type === "porte" && portesOuvertes) return false; // plateforme tombée
+            if (mur.type === "porte" && portesOuvertes) return false;
+            if (mur.type === "porte_cle" && mur.ouverte) return false; // plateforme tombée
             if (mur.type === "clignotant" && !phaseClignote) return false; // bloc clignotant éteint
+            if ((mur.type === "piege" || mur.type === "piege_cache" || (mur.type === "pulsant" && phasePulse)) && estProtege()) return true; // protégé : un piège se touche comme un bloc normal
             return !TYPES_NON_SOLIDES.has(mur.type);
         }
 
@@ -5677,7 +6000,7 @@
 
         let surDeLaGlace = false;
         let frameCompteur = 0, phaseClignote = true, phasePulse = true;
-        let portesOuvertes = false, jeuEnPause = false, vitesseBoost = 0;
+        let portesOuvertes = false, jeuEnPause = false, vitesseBoost = 0, clesJoueur = 0, boutonTimer = 0, dashTimer = 0, dashCd = 0, dashDir = 1, dernierSens = 1;
         function majPortes() {
             blocsMonde.forEach(b => {
                 if (!b.elementDom) return;
@@ -5744,6 +6067,7 @@
             if (!modeConstructionActif && !tacheActive && !jeuEnPause) {
                 frameCompteur++; majClignotants(false);
                 if (joueur.portailCd > 0) joueur.portailCd--;
+                if (boutonTimer > 0 && --boutonTimer === 0) fermerPortesTemporisees();
                 if (joueur.invincible > 0) {
                     joueur.invincible--;
                     joueur.element.style.opacity = (Math.floor(joueur.invincible / 6) % 2) ? 0.35 : 1;
@@ -5779,6 +6103,7 @@
                 if (touches.q) moveDir = -1;
                 if (touches.d) moveDir = 1;
                 if (modeActuel === 'mobile' || joystickDirection !== 0) moveDir = joystickDirection;
+                if (moveDir !== 0) dernierSens = moveDir;
 
                 // Mobile (mode tactile choisi ou écran tactile) : déplacement plus lent
                 let fv = vitesseReduiteMobile() ? FACTEUR_VITESSE_MOBILE : 1;
@@ -5804,6 +6129,8 @@
                 }
 
                 if (boostTimer > 0) { boostTimer--; joueur.vx = boostDir * 7.5 * fv; }
+                if (dashCd > 0) dashCd--;
+                if (dashTimer > 0) { dashTimer--; joueur.vx = dashTimer > 0 ? dashDir * 11 : dashDir * joueur.speed; }
 
                 // --- Mouvement et collisions SÉPARÉS PAR AXE ---
                 // 1) On bouge en X puis on se recolle au mur touché (jamais de choix
@@ -5838,6 +6165,7 @@
                 }
                 // 2) Puis on bouge en Y (les collisions verticales sont gérées plus bas).
                 joueur.vy += joueur.gravity;
+                if (dashTimer > 0) joueur.vy = 0;
                 joueur.y += joueur.vy;
                 joueur.isGrounded = false;
                 surDeLaGlace = false; surBoue = false; pousseeConv = 0; joueur.sur = null;
@@ -5868,6 +6196,10 @@
                         
                     }
 
+                    if (mob.mode === "tireur") {
+                        if (mob.cdT > 0) mob.cdT--;
+                        else if (projectiles.length < 12 && Math.abs(joueur.x - mob.x) < 300 && Math.abs(joueur.y - mob.y) < 140) { lancerProjectile(mob.x + 14, mob.y + 9, joueur.x < mob.x ? -1 : 1, "tireur"); mob.cdT = 130; }
+                    }
                     if (mobVisible) mob.elementDom.style.transform = "translate3d(" + mob.x + "px," + mob.y + "px,0)";
 
                     if (!estProtege() && joueur.x < mob.x + mob.width - 4 && joueur.x + joueur.width > mob.x + 4 &&
@@ -5900,7 +6232,7 @@
                             stats.piecesRecuperees = 0;
                             recalculerTotalPieces();
                         } else {
-                            debloquerSucces("fin_proc"); compter("cartes", 1); if (stats.morts === 0 && !protecteurCmd) debloquerSucces("sans_mort");
+                            debloquerSucces("fin_proc"); compter("cartes", 1); if (modeHardcore) debloquerSucces("hardcore"); terminerDefi(); if (stats.morts === 0 && !protecteurCmd) debloquerSucces("sans_mort");
                             genererMapProcedurale();
                         }
                     }
@@ -5948,6 +6280,15 @@
                     if ((mur.type === "tp_a" || mur.type === "tp_b") && !(joueur.portailCd > 0) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         let cible = blocsMonde.find(b => b.type === (mur.type === "tp_a" ? "tp_b" : "tp_a"));
                         if (cible) { joueur.x = cible.x; joueur.y = cible.y; joueur.vy = 0; joueur.portailCd = 45; debloquerSucces("teleport"); }
+                    }
+                    if (mur.type === "cle" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        mur.ramasse = true; clesJoueur++; if (mur.elementDom) mur.elementDom.style.display = "none"; majAuraCle(); debloquerSucces("cle"); toast("🔑 x" + clesJoueur);
+                    }
+                    if (mur.type === "porte_cle" && !mur.ouverte && clesJoueur > 0 && joueur.x < mur.x + mur.width + 3 && joueur.x + joueur.width > mur.x - 3 && joueur.y < mur.y + mur.height + 3 && joueur.y + joueur.height > mur.y - 3) {
+                        mur.ouverte = true; clesJoueur--; if (mur.elementDom) mur.elementDom.style.opacity = 0.12; majAuraCle(); debloquerSucces("porte_cle"); toast("🔓");
+                    }
+                    if (mur.type === "bouton_tempo" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
+                        debloquerSucces("bouton_tempo"); portesOuvertes = true; boutonTimer = 360; majPortes();
                     }
                     if (mur.type === "orbe_bouclier" || mur.type === "orbe_vitesse") {
                         if (mur.reviensA && frameCompteur >= mur.reviensA) { mur.reviensA = 0; if (mur.elementDom) mur.elementDom.style.display = "flex"; }
@@ -6010,7 +6351,8 @@
                                 if (mur.type === "trampoline_max") { joueur.vy = joueur.jumpForce * 1.9; joueur.isGrounded = false; }
                                 if (mur.type === "boue") surBoue = true;
                                 if (mur.type === "gelee") { joueur.vy = joueur.jumpForce * 0.75; joueur.isGrounded = false; debloquerSucces("gelee"); }
-                                if (mur.type === "mobile_h") joueur.sur = mur;
+                                if (mur.type === "mobile_h") { joueur.sur = mur; debloquerSucces("autostop"); }
+                                if (mur.type === "mobile_v") debloquerSucces("ascenseur");
                                 if (mur.type === "convoyeur_g") pousseeConv = -1.6;
                                 if (mur.type === "convoyeur_d") pousseeConv = 1.6;
                                 if (mur.type === "fragile" && mur.compte === undefined) mur.compte = 36;
@@ -6060,6 +6402,8 @@
                 localStorage.removeItem("cyber_hack_succes");
                 localStorage.removeItem("cyber_hack_compteurs");
                 localStorage.removeItem("cyber_hack_records");
+                localStorage.removeItem("cyber_hack_defis");
+                localStorage.removeItem("cyber_hack_hardcore");
 
                 // Remise à zéro immédiate EN MÉMOIRE, en filet de sécurité au cas où
                 // location.reload() serait bloqué (certains navigateurs mobiles/webviews) :
@@ -6080,7 +6424,7 @@
         }
 
         genererMapProcedurale();
-        stats.chronoActif = true;
+        stats.chronoActif = true; try { majTitresSkins(); } catch (e) {} majCompetences(); majSkinsSucces(); majBoutonHardcore();
         positionnerPanneaux();
         appliquerTraductions();   // traduction immédiate, sans attendre l'événement load
         update();
