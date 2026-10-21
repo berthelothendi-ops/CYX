@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V7.2</title><!-- build V7.2 : correctifs, affichage PC, skins par rareté, génération mise à jour -->
+    <title>CYBER_HACK // PROTOCOL — V8.0</title><!-- build V8.0 : écran titre compact + nouvelles couleurs -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -634,21 +634,51 @@
         body.ui-portrait .groupe-inv { display: inline-block; vertical-align: middle; margin: 0 6px; line-height: 38px; }
         body.ui-portrait .groupe-inv > summary { display: inline-block; font-size: 8px; line-height: 1.1; max-width: 72px; white-space: normal; vertical-align: middle; }
         body.ui-portrait .groupe-inv > div { display: inline-flex !important; flex-wrap: nowrap !important; vertical-align: middle; }
+        /* Skins animés (V7.4) */
+        @keyframes skHue { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+        @keyframes skPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+        @keyframes skBlink { 0%, 90%, 100% { transform: scaleY(1); } 94% { transform: scaleY(0.1); } }
+        @keyframes skScan { from { background-position: 0 0; } to { background-position: 0 20px; } }
+        .sk-hue { animation: skHue 4s linear infinite; }
+        .sk-pulse { animation: skPulse 1.6s ease-in-out infinite; }
+        .sk-blink { animation: skBlink 3.5s infinite; }
+        .sk-scan { animation: skScan 1s linear infinite; }
+
+        /* V8 : écran titre compact */
+        #ecran-titre { overflow-y: auto; justify-content: center; padding: 10px; }
+        #ecran-titre h1 { font-size: 26px !important; margin: 0 0 4px 0; }
+        #ecran-titre > p { margin: 0 0 14px 0 !important; font-size: 12px; }
+        .ligne-titre { display: flex; gap: 8px; width: 100%; max-width: 440px; justify-content: center; }
+        .ligne-titre .btn-mode-choix { flex: 1; margin: 4px 0; padding: 9px 6px !important; font-size: 12px !important; line-height: 1.25; }
+        .ligne-titre.grand .btn-mode-choix { font-size: 16px !important; padding: 12px !important; }
     </style>
 </head>
 <body>
 
     <div id="ecran-titre">
-        <h1 id="titre-jeu-texte" style="color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.6); font-size: 32px;">CYBER_HACK // PROTOCOL</h1>
-        <p style="color: #8892b0; margin-bottom: 30px;">Un jeu de plateforme sur le thème de la cybersécurité</p>
-        <button class="btn-mode-choix" onclick="fermerEcranTitre()">▶ JOUER</button>
-        <button class="btn-mode-choix" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 15px rgba(255,170,0,0.3); padding:10px 22px; font-size:13px;" onclick="ouvrirFenetreTouches()">⌨️ TOUCHES &amp; COMMANDES</button>
-        <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
-        <button class="btn-mode-choix" style="border-color:#ffcc00; color:#ffcc00; box-shadow:0 0 12px rgba(255,204,0,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirJournal()">📜 JOURNAL DES MISES À JOUR</button>
-        <button class="btn-mode-choix" style="border-color:#ff0055; color:#ff0055; box-shadow:0 0 12px rgba(255,0,85,0.25); padding:10px 22px; font-size:13px;" onclick="ouvrirSucces()">🏅 SUCCÈS</button>
-        <button class="btn-mode-choix" style="border-color:#00ff66; color:#00ff66; box-shadow:0 0 12px rgba(0,255,102,0.25); padding:10px 22px; font-size:13px;" onclick="lancerDefiDuJour()">📅 DÉFI DU JOUR</button>
-        <button class="btn-mode-choix" style="border-color:#9d00ff; color:#c58bff; box-shadow:0 0 12px rgba(157,0,255,0.25); padding:10px 22px; font-size:13px;" onclick="demanderGraine()">🎲 GRAINE</button>
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:26px; letter-spacing:3px;">V7.2</p>
+        <h1 id="titre-jeu-texte" style="color:#00ffcc; text-shadow:0 0 15px rgba(0,255,204,0.6);">CYBER_HACK // PROTOCOL</h1>
+        <p style="color:#8892b0;">Un jeu de plateforme sur le thème de la cybersécurité</p>
+
+        <div class="ligne-titre grand">
+            <button class="btn-mode-choix" onclick="fermerEcranTitre()">▶ JOUER</button>
+        </div>
+        <div class="ligne-titre">
+            <button class="btn-mode-choix" style="border-color:#00ff66; color:#00ff66; box-shadow:0 0 12px rgba(0,255,102,0.25);" onclick="lancerDefiDuJour()">📅 DÉFI DU JOUR</button>
+            <button class="btn-mode-choix" style="border-color:#9d00ff; color:#c58bff; box-shadow:0 0 12px rgba(157,0,255,0.25);" onclick="demanderGraine()">🎲 GRAINE</button>
+        </div>
+        <div class="ligne-titre">
+            <button class="btn-mode-choix" style="border-color:#ff0055; color:#ff0055; box-shadow:0 0 12px rgba(255,0,85,0.25);" onclick="ouvrirSucces()">🏅 SUCCÈS</button>
+            <button class="btn-mode-choix" style="border-color:#1db954; color:#1db954; box-shadow:0 0 12px rgba(29,185,84,0.25);" onclick="ouvrirMusique()">🎵 MUSIQUE</button>
+        </div>
+        <div class="ligne-titre">
+            <button class="btn-mode-choix" style="border-color:#ffcc00; color:#ffcc00; box-shadow:0 0 12px rgba(255,204,0,0.25);" onclick="ouvrirJournal()">📜 JOURNAL DES MISES À JOUR</button>
+            <button class="btn-mode-choix" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 12px rgba(255,170,0,0.3);" onclick="ouvrirFenetreTouches()">⌨️ TOUCHES &amp; COMMANDES</button>
+        </div>
+        <div class="ligne-titre">
+            <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25);" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
+        </div>
+
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:14px; letter-spacing:3px;">V8.0</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -815,6 +845,7 @@
             <button class="btn-modal-action" onclick="ouvrirEcranTitre()" id="btn-revoir-titre-txt">🎬 VOIR L'ÉCRAN TITRE</button>
             <button class="btn-modal-action" onclick="ouvrirJournal()" style="background-color:#ffcc00; color:#0b0f19;">📜 JOURNAL DES MISES À JOUR</button>
             <button class="btn-modal-action" onclick="ouvrirSucces()" style="background-color:#ff0055; color:#fff;">🏅 SUCCÈS</button>
+            <button class="btn-modal-action" onclick="ouvrirMusique()" style="background-color:#1db954; color:#0b0f19;">🎵 MUSIQUE</button>
             <button class="btn-modal-action" id="btn-hardcore" onclick="basculerHardcore()" style="background-color:#3a0a0a; color:#ff6b6b; border:1px solid #ff0055;">☠️ MODE HARDCORE : OFF</button>
             <p style="color: #8892b0; font-size: 10px; margin: 10px 0 4px 0; text-align: left;">Niveaux créés par le développeur, à essayer librement :</p>
             <button class="btn-modal-action" id="btn-voir-fin" onclick="afficherEcranFin()" style="display:none; background-color:#ffcc00; color:#0b0f19;">🏆 VOIR LA FIN</button>
@@ -840,6 +871,7 @@
             <button id="btn-histoire-toggle" class="btn-hud-icone" onclick="basculerModeHistoire()" title="Mode Histoire / Normal">📖</button>
             <button id="btn-test-histoire" class="btn-hud-icone" onclick="ouvrirTestHistoire()" title="Tester toutes les missions de l'histoire" style="display:none;">🧪</button>
             <button id="btn-creatif-toggle" class="btn-hud-icone" onclick="basculerModeCreatif()" title="Mode Créatif / Inventaire">🎒</button>
+            <button id="btn-musique-toggle" class="btn-hud-icone" onclick="ouvrirMusique()" title="Musique">🎵</button>
             <button id="btn-parametres" class="btn-hud-icone" onclick="ouvrirParametres()" title="Paramètres">⚙️</button>
         </div>
     </div>
@@ -2212,14 +2244,14 @@
         // V5 : fenêtre des nouveautés, affichée une seule fois par version
         window.addEventListener("load", function() {
             let vue = null; try { vue = localStorage.getItem("cyber_hack_version_vue"); } catch (e) {}
-            if (vue === "7.2") return;
-            try { localStorage.setItem("cyber_hack_version_vue", "7.2"); } catch (e) {}
+            if (vue === "8.0") return;
+            try { localStorage.setItem("cyber_hack_version_vue", "8.0"); } catch (e) {}
             setTimeout(function() {
                 afficherAlerte(tx([
-                    "🆕 V7.2 — Mise à jour !\n\n🔧 Pièges ⚠️ : mortels au contact ; avec un bouclier ils deviennent des blocs solides\n⌨️ Les flèches ← → ne restent plus bloquées\n🖥️ Affichage PC rééquilibré : il s'adapte à la taille de la fenêtre\n🎭 Skins rangés par rareté + 3 nouveaux skins\n🗺️ Génération aléatoire mise à jour avec les blocs récents (18 nouveaux passages)\n🏅 3 nouveaux succès\n📜 Détails dans le Journal des mises à jour",
-                    "🆕 V7.2 — Update!\n\n🔧 Traps ⚠️: deadly on contact; with a shield they become solid blocks\n⌨️ Left/right arrows no longer get stuck\n🖥️ PC layout rebalanced: it adapts to the window size\n🎭 Skins sorted by rarity + 3 new skins\n🗺️ Random generation updated with recent blocks (18 new sections)\n🏅 3 new achievements\n📜 Details in the Update Log",
-                    "🆕 V7.2 — Update!\n\n🔧 Fallen ⚠️: tödlich bei Berührung; mit Schild werden sie zu festen Blöcken\n⌨️ Die Pfeiltasten ← → bleiben nicht mehr hängen\n🖥️ PC-Anzeige neu abgestimmt: passt sich der Fenstergröße an\n🎭 Skins nach Seltenheit sortiert + 3 neue Skins\n🗺️ Zufallsgenerierung mit neuen Blöcken aktualisiert (18 neue Abschnitte)\n🏅 3 neue Erfolge\n📜 Details im Update-Journal",
-                    "🆕 V7.2 — アップデート!\n\n🔧 罠⚠️:触れると即死。シールド中は通常ブロックのように固体になる\n⌨️ ← → キーが押しっぱなしになる不具合を修正\n🖥️ PC表示を調整:ウィンドウサイズに合わせて自動調整\n🎭 スキンをレア度別に整理+新スキン3種\n🗺️ ランダム生成を新ブロックで更新(新セクション18種)\n🏅 新しい実績3つ\n📜 詳細はアップデート履歴へ"
+                    "🆕 V8.0 — Mise à jour !\n\n🧩 Écran titre compact : boutons regroupés par deux\n🎨 12 nouvelles couleurs de blocs\n📜 Détails dans le Journal des mises à jour",
+                    "🆕 V8.0 — Update!\n\n🧩 Compact title screen: buttons grouped in pairs\n🎨 12 new block colors\n📜 Details in the Update Log",
+                    "🆕 V8.0 — Update!\n\n🧩 Kompakter Titelbildschirm: Knöpfe paarweise gruppiert\n🎨 12 neue Blockfarben\n📜 Details im Update-Journal",
+                    "🆕 V8.0 — アップデート!\n\n🧩 コンパクトなタイトル画面:ボタンを2つずつ配置\n🎨 新しいブロックカラー12色\n📜 詳細はアップデート履歴へ"
                 ]));
             }, 700);
         });
@@ -2583,7 +2615,7 @@
         }
 
         function basculerModeHistoire() {
-            modeHistoireActif = !modeHistoireActif;
+            modeHistoireActif = !modeHistoireActif; if (modeHistoireActif) debloquerSucces("histoire_on");
             zoneHistoireActuelle = -1; // force le réaffichage de l'épreuve en cours
             progressionZoneActuelle = 0;
             let btn = document.getElementById("btn-histoire-toggle");
@@ -2669,7 +2701,35 @@
             "Saphir": ["Sapphire", "Saphir", "サファイア"], "Argent Chrome": ["Chrome Silver", "Chromsilber", "クロームシルバー"],
             "Plasma Violet": ["Violet Plasma", "Violettes Plasma", "バイオレットプラズマ"], "Or Rose": ["Rose Gold", "Roségold", "ローズゴールド"]
         });
+        Object.assign(I18N_NOMS, {
+            "Rose Poudré": ["Powder Pink", "Puderrosa", "パウダーピンク"], "Bleu Glacier": ["Glacier Blue", "Gletscherblau", "グレイシャーブルー"],
+            "Vert Pomme": ["Apple Green", "Apfelgrün", "アップルグリーン"], "Orange Brûlé": ["Burnt Orange", "Gebranntes Orange", "バーントオレンジ"],
+            "Lilas Néon": ["Neon Lilac", "Neonflieder", "ネオンライラック"], "Gris Béton": ["Concrete Grey", "Betongrau", "コンクリートグレー"],
+            "Cyan Électrique": ["Electric Cyan", "Elektrisches Cyan", "エレクトリックシアン"], "Vert Toxique": ["Toxic Green", "Giftgrün", "トキシックグリーン"],
+            "Bordeaux": ["Burgundy", "Bordeaux", "ボルドー"], "Ambre": ["Amber", "Bernstein", "アンバー"],
+            "Aurore Rose": ["Dawn Pink", "Morgenrosa", "ドーンピンク"], "Minuit Bleu": ["Midnight Blue", "Mitternachtsblau", "ミッドナイトブルー"]
+        });
         const JOURNAL_MAJ = [
+            { v: "7.6 → 8.0", titre: ["GROSSE V8 : écran titre compact", "BIG V8: compact title screen", "GROSSES V8: kompakter Titelbildschirm", "大型V8:コンパクトなタイトル画面"], t: [
+                "🧩 Écran titre réorganisé : les boutons sont regroupés par deux, le titre et la version sont de nouveau visibles sur une seule page\n🎨 12 nouvelles couleurs de blocs",
+                "🧩 Title screen reorganized: buttons grouped in pairs, title and version visible again on a single page\n🎨 12 new block colors",
+                "🧩 Titelbildschirm neu geordnet: Knöpfe paarweise gruppiert, Titel und Version wieder auf einer Seite sichtbar\n🎨 12 neue Blockfarben",
+                "🧩 タイトル画面を整理:ボタンを2つずつ並べ、タイトルとバージョンが1ページで見える\n🎨 新しいブロックカラー12色"] },
+            { v: "7.5 → 7.6", titre: ["Musique aléatoire et liste des pistes", "Shuffle and track list", "Zufallswiedergabe und Titelliste", "シャッフルと曲リスト"], t: [
+                "🔀 Lecture aléatoire (case dans la fenêtre 🎵, activée par défaut) : à la fin d'une piste, une autre piste de ta playlist est choisie au hasard, et la première piste lancée l'est aussi. Disponible pour les playlists YouTube et SoundCloud\n⏭ Bouton « piste aléatoire » pour changer tout de suite\n📃 Fenêtre « liste des pistes » : toutes les musiques de la playlist, avec recherche, et un clic pour jouer celle que tu veux\n⚠️ Spotify, Deezer et Apple Music ne laissent pas le jeu piloter leur lecteur intégré : pas d'aléatoire ni de liste pour eux\n🏅 2 nouveaux succès : Mix aléatoire, Programmateur",
+                "🔀 Shuffle (checkbox in the 🎵 window, on by default): when a track ends, another track from your playlist is picked at random, and so is the first one. Available for YouTube and SoundCloud playlists\n⏭ “Random track” button to switch right away\n📃 “Track list” window: every song of the playlist, with search, and one click to play the one you want\n⚠️ Spotify, Deezer and Apple Music don't let the game control their embedded player: no shuffle or list for them\n🏅 2 new achievements: Random Mix, Programmer",
+                "🔀 Zufallswiedergabe (Kästchen im 🎵-Fenster, standardmäßig an): Am Ende eines Titels wird zufällig ein anderer aus deiner Playlist gewählt, ebenso der erste. Für YouTube- und SoundCloud-Playlists\n⏭ Knopf „Zufälliger Titel“ zum sofortigen Wechseln\n📃 Fenster „Titelliste“: alle Lieder der Playlist, mit Suche, und ein Klick spielt das gewünschte\n⚠️ Spotify, Deezer und Apple Music lassen das Spiel ihren eingebetteten Player nicht steuern: dort gibt es weder Zufall noch Liste\n🏅 2 neue Erfolge: Zufalls-Mix, Programmgestalter",
+                "🔀 シャッフル再生(🎵ウィンドウのチェック、初期ON):曲が終わるとプレイリストからランダムに次の曲を選び、最初の曲もランダム。YouTube・SoundCloudのプレイリストで利用可能\n⏭「ランダムな曲」ボタンですぐ切り替え\n📃「曲リスト」ウィンドウ:プレイリスト全曲を検索つきで表示し、クリックで再生\n⚠️ Spotify・Deezer・Apple Musicは埋め込みプレイヤーの操作を許可していないため、シャッフルと一覧は非対応\n🏅 新しい実績2つ:ランダムミックス、選曲担当"] },
+            { v: "7.4 → 7.5", titre: ["Musique perso et 42 succès", "Your own music and 42 achievements", "Eigene Musik und 42 Erfolge", "自分の音楽と実績42個"], t: [
+                "🎵 Lecteur de musique perso (bouton 🎵 en haut, sur l'écran titre et dans les paramètres) : colle un lien Spotify, SoundCloud, YouTube / YouTube Music, Deezer, Apple Music ou un fichier audio (.mp3, .ogg, .wav) et ta musique se lance pendant que tu joues. Elle continue quand tu fermes la fenêtre, et peut se relancer toute seule au prochain chargement\n🏅 42 nouveaux succès : séries sans mort, course contre la montre, zones, Mode Histoire, boutique complète, blocs et pièges, compteurs géants, musique… et 50 / 75 / 100 succès\n🎭 Nouveau skin Trophée : Hacker Diamant (80 succès)",
+                "🎵 Your own music player (🎵 button at the top, on the title screen and in settings): paste a Spotify, SoundCloud, YouTube / YouTube Music, Deezer, Apple Music link or an audio file (.mp3, .ogg, .wav) and your music plays while you play. It keeps going when you close the window, and can restart by itself on the next load\n🏅 42 new achievements: no-death streaks, time attack, zones, Story Mode, full shop, blocks and traps, giant counters, music… and 50 / 75 / 100 achievements\n🎭 New Trophy skin: Diamond Hacker (80 achievements)",
+                "🎵 Eigener Musikplayer (🎵-Knopf oben, auf dem Titelbildschirm und in den Einstellungen): Füge einen Spotify-, SoundCloud-, YouTube- / YouTube-Music-, Deezer-, Apple-Music-Link oder eine Audiodatei (.mp3, .ogg, .wav) ein, und deine Musik läuft beim Spielen. Sie geht weiter, wenn du das Fenster schließt, und kann beim nächsten Laden automatisch neu starten\n🏅 42 neue Erfolge: Serien ohne Tod, Zeitrennen, Zonen, Story-Modus, kompletter Shop, Blöcke und Fallen, riesige Zähler, Musik… und 50 / 75 / 100 Erfolge\n🎭 Neuer Trophäen-Skin: Diamant-Hacker (80 Erfolge)",
+                "🎵 自分の音楽プレイヤー(上部の🎵ボタン、タイトル画面、設定):Spotify・SoundCloud・YouTube / YouTube Music・Deezer・Apple Musicのリンクか音声ファイル(.mp3 / .ogg / .wav)をはると、プレイ中に音楽が流れます。ウィンドウを閉じても続き、次回の読み込み時に自動再開もできます\n🏅 新しい実績42個:ノーミス連続、タイムアタック、ゾーン、ストーリー、ショップ全制覇、ブロックと罠、巨大カウンター、音楽…と50 / 75 / 100個\n🎭 新トロフィースキン:ダイヤモンドハッカー(実績80個)"] },
+            { v: "7.2 → 7.4", titre: ["Plateformes corrigées et 32 skins", "Platforms fixed and 32 skins", "Plattformen repariert und 32 Skins", "足場修正とスキン32種"], t: [
+                "🔧 Plateformes mobiles (↔️ ↕️) corrigées : elles bougent toujours toutes ensemble, même loin du joueur (fini les blocs figés qui se téléportent à ton arrivée ou qui avancent à tour de rôle)\n🔧 Plus d'éjection sur les plateformes verticales : le joueur est emporté avec elles\n🛠️ Éditeur : impossible de poser un bloc dans le trajet d'une plateforme mobile (3 cases autour), et inversement\n🎭 32 nouveaux skins, tous différents (formes d'yeux, bouches, cornes, couronnes, auras, animations), rangés par rareté jusqu'à Spectre\n💾 Ton skin est maintenant sauvegardé : il revient après un rechargement\n🏅 3 nouveaux succès : Nouveau look, Garde-robe, Style légendaire",
+                "🔧 Moving platforms (↔️ ↕️) fixed: they now all move together at all times, even far from the player (no more frozen blocks teleporting when you arrive, or moving one at a time)\n🔧 No more ejection on vertical platforms: the player is carried along\n🛠️ Editor: you can't place a block in a moving platform's path (3 cells around), and vice versa\n🎭 32 new skins, all different (eye shapes, mouths, horns, crowns, auras, animations), sorted by rarity up to Spectral\n💾 Your skin is now saved: it comes back after a reload\n🏅 3 new achievements: New Look, Wardrobe, Legendary Style",
+                "🔧 Bewegliche Plattformen (↔️ ↕️) repariert: alle bewegen sich jetzt immer gemeinsam, auch weit vom Spieler entfernt (keine eingefrorenen Blöcke mehr, die bei deiner Ankunft teleportieren oder nacheinander laufen)\n🔧 Kein Herausschleudern mehr auf vertikalen Plattformen: der Spieler wird mitgenommen\n🛠️ Editor: Im Pfad einer beweglichen Plattform (3 Felder drumherum) können keine Blöcke gesetzt werden, und umgekehrt\n🎭 32 neue Skins, alle verschieden (Augenformen, Münder, Hörner, Kronen, Auren, Animationen), nach Seltenheit bis Spektral sortiert\n💾 Dein Skin wird jetzt gespeichert und kommt nach einem Neuladen zurück\n🏅 3 neue Erfolge: Neuer Look, Kleiderschrank, Legendärer Stil",
+                "🔧 動く足場(↔️ ↕️)を修正:プレイヤーから遠くても常に全て一緒に動く(到着時にテレポートしたり、1つずつ動くことはなくなった)\n🔧 縦移動足場で弾き出されなくなった:プレイヤーも一緒に運ばれる\n🛠️ エディタ:動く足場の通り道(周囲3マス)にはブロックを置けない(逆も同様)\n🎭 新スキン32種、すべて個性的(目の形、口、角、王冠、オーラ、アニメーション)。スペクトルまでレア度別に整理\n💾 選んだスキンを保存:再読み込み後も維持\n🏅 新しい実績3つ:イメチェン、ワードローブ、伝説のスタイル"] },
             { v: "7.1 → 7.2", titre: ["Correctifs, affichage PC, génération", "Fixes, PC layout, generation", "Korrekturen, PC-Anzeige, Generierung", "修正・PC表示・生成"], t: [
                 "🔧 Pièges ⚠️ : mortels au contact ; avec un bouclier (ou invincibilité) ils deviennent solides comme des blocs normaux\n⌨️ Flèches ← → : elles ne restent plus bloquées (le relâchement est pris en compte, même en quittant la fenêtre)\n🖥️ Affichage PC rééquilibré : panneaux fixes qui s'adaptent à la taille de la fenêtre, plus de débordement\n🎭 Skins rangés par rareté dans des menus déroulants, comme l'inventaire ; 3 nouveaux skins (Pixel Pirate, Galaxy, Arc-en-ciel)\n🗺️ Génération aléatoire mise à jour : 18 nouveaux passages avec les blocs récents (gelée, vent, plateformes mobiles, ascenseur, clés, portes, téléporteur, orbes, tourelle, lasers…) et des mobs plus variés — même style de gros sauts\n🏅 3 nouveaux succès (65 au total), la plupart faisables en génération aléatoire",
                 "🔧 Traps ⚠️: deadly on contact; with a shield (or invincibility) they become solid like normal blocks\n⌨️ Left/right arrows: they no longer get stuck (key release is handled, even when leaving the window)\n🖥️ PC layout rebalanced: fixed panels that adapt to the window size, no more overflow\n🎭 Skins sorted by rarity in drop-down menus, like the inventory; 3 new skins (Pixel Pirate, Galaxy, Rainbow)\n🗺️ Random generation updated: 18 new sections using recent blocks (jelly, wind, moving platforms, lift, keys, doors, teleporter, orbs, turret, lasers…) and more varied mobs — same big-jump style\n🏅 3 new achievements (65 in total), most of them doable in random generation",
@@ -2817,7 +2877,54 @@
             { id: "sauts5000", n: ["Pogo", "Pogo", "Pogo", "ポゴ"], d: ["Saute 5000 fois.", "Jump 5000 times.", "Springe 5000 Mal.", "5000回ジャンプする。"] },
             { id: "autostop", n: ["Autostoppeur", "Hitchhiker", "Tramper", "ヒッチハイカー"], d: ["Monte sur une Plateforme Mobile.", "Ride a Moving Platform.", "Fahre auf einer beweglichen Plattform mit.", "動く足場に乗る。"] },
             { id: "ascenseur", n: ["Monte-charge", "Lift Operator", "Aufzugführer", "エレベーター係"], d: ["Monte sur une Plateforme Verticale.", "Ride a Vertical Platform.", "Fahre auf einer vertikalen Plattform mit.", "縦移動足場に乗る。"] },
-            { id: "fashion", n: ["Fashion victim", "Fashionista", "Modefreak", "おしゃれさん"], d: ["Possède 10 skins.", "Own 10 skins.", "Besitze 10 Skins.", "スキンを10個持つ。"] }
+            { id: "fashion", n: ["Fashion victim", "Fashionista", "Modefreak", "おしゃれさん"], d: ["Possède 10 skins.", "Own 10 skins.", "Besitze 10 Skins.", "スキンを10個持つ。"] },
+            { id: "look", n: ["Nouveau look", "New Look", "Neuer Look", "イメチェン"], d: ["Change de skin.", "Change your skin.", "Wechsle deinen Skin.", "スキンを変更する。"] },
+            { id: "dressing", n: ["Garde-robe", "Wardrobe", "Kleiderschrank", "ワードローブ"], d: ["Possède 25 skins.", "Own 25 skins.", "Besitze 25 Skins.", "スキンを25個持つ。"] },
+            { id: "skin_rare", n: ["Style légendaire", "Legendary Style", "Legendärer Stil", "伝説のスタイル"], d: ["Possède un skin Légendaire ou mieux.", "Own a Legendary skin or better.", "Besitze einen legendären Skin oder besser.", "レジェンダリー以上のスキンを持つ。"] },
+            { id: "cartes25", n: ["Marathonien", "Marathoner", "Marathonläufer", "マラソンランナー"], d: ["Termine 25 cartes aléatoires.", "Finish 25 random maps.", "Beende 25 Zufallskarten.", "ランダムマップを25回クリアする。"] },
+            { id: "cartes50", n: ["Routard", "Road Warrior", "Dauerläufer", "旅人"], d: ["Termine 50 cartes aléatoires.", "Finish 50 random maps.", "Beende 50 Zufallskarten.", "ランダムマップを50回クリアする。"] },
+            { id: "niveaux20", n: ["Globe-trotter", "Globetrotter", "Weltenbummler", "世界旅行者"], d: ["Termine 20 niveaux personnalisés ou publics.", "Finish 20 custom or public levels.", "Beende 20 eigene oder öffentliche Level.", "カスタム/公開レベルを20回クリアする。"] },
+            { id: "serie3", n: ["Sans faute", "Flawless", "Makellos", "ノーミス"], d: ["Termine 3 cartes aléatoires d'affilée sans mourir.", "Finish 3 random maps in a row without dying.", "Beende 3 Zufallskarten hintereinander ohne zu sterben.", "死なずにランダムマップを3連続クリアする。"] },
+            { id: "serie5", n: ["Série parfaite", "Perfect Streak", "Perfekte Serie", "完璧な連続"], d: ["Termine 5 cartes aléatoires d'affilée sans mourir.", "Finish 5 random maps in a row without dying.", "Beende 5 Zufallskarten hintereinander ohne zu sterben.", "死なずにランダムマップを5連続クリアする。"] },
+            { id: "speed", n: ["Course contre la montre", "Race Against Time", "Wettlauf gegen die Zeit", "タイムアタック"], d: ["Termine une carte aléatoire en moins de 2 min 30.", "Finish a random map in under 2:30.", "Beende eine Zufallskarte in unter 2:30.", "ランダムマップを2分30秒以内にクリアする。"] },
+            { id: "zone2", n: ["Première frontière", "First Border", "Erste Grenze", "最初の国境"], d: ["Atteins la zone 2 en génération aléatoire.", "Reach zone 2 in random generation.", "Erreiche Zone 2 in der Zufallsgenerierung.", "ランダム生成でゾーン2に到達する。"] },
+            { id: "zone3", n: ["Territoire hostile", "Hostile Territory", "Feindliches Gebiet", "敵地"], d: ["Atteins la zone 3 en génération aléatoire.", "Reach zone 3 in random generation.", "Erreiche Zone 3 in der Zufallsgenerierung.", "ランダム生成でゾーン3に到達する。"] },
+            { id: "missions10", n: ["Agent de terrain", "Field Agent", "Außendienstagent", "現場エージェント"], d: ["Réussis 10 missions du Mode Histoire.", "Complete 10 Story Mode missions.", "Schließe 10 Story-Missionen ab.", "ストーリーの任務を10回達成する。"] },
+            { id: "missions25", n: ["Maître espion", "Spymaster", "Meisterspion", "スパイマスター"], d: ["Réussis 25 missions du Mode Histoire.", "Complete 25 Story Mode missions.", "Schließe 25 Story-Missionen ab.", "ストーリーの任務を25回達成する。"] },
+            { id: "histoire_fin", n: ["Protocole bouclé", "Protocol Closed", "Protokoll abgeschlossen", "プロトコル完了"], d: ["Termine une carte complète en Mode Histoire.", "Finish a full map in Story Mode.", "Beende eine komplette Karte im Story-Modus.", "ストーリーモードでマップを最後までクリアする。"] },
+            { id: "histoire_on", n: ["Il était une fois…", "Once Upon a Time…", "Es war einmal…", "むかしむかし…"], d: ["Active le Mode Histoire.", "Turn on Story Mode.", "Aktiviere den Story-Modus.", "ストーリーモードを有効にする。"] },
+            { id: "hardcore_on", n: ["Tête brûlée", "Daredevil", "Draufgänger", "命知らず"], d: ["Active le mode Hardcore.", "Turn on Hardcore mode.", "Aktiviere den Hardcore-Modus.", "ハードコアモードを有効にする。"] },
+            { id: "pieces50000", n: ["Fortune", "Fortune", "Vermögen", "財産"], d: ["Ramasse 50 000 pièces au total.", "Collect 50,000 coins in total.", "Sammle insgesamt 50.000 Münzen.", "合計5万枚のコインを集める。"] },
+            { id: "sauts20000", n: ["Ressort", "Spring", "Sprungfeder", "バネ"], d: ["Saute 20 000 fois.", "Jump 20,000 times.", "Springe 20.000 Mal.", "20000回ジャンプする。"] },
+            { id: "temps5h", n: ["Marathon de jeu", "Gaming Marathon", "Spielmarathon", "ゲームマラソン"], d: ["Joue 5 heures au total.", "Play for 5 hours in total.", "Spiele insgesamt 5 Stunden.", "合計5時間プレイする。"] },
+            { id: "morts1000", n: ["Éternel recommencement", "Eternal Return", "Ewige Wiederkehr", "永遠の繰り返し"], d: ["Meurs 1000 fois au total.", "Die 1000 times in total.", "Stirb insgesamt 1000 Mal.", "合計1000回死ぬ。"] },
+            { id: "dash500", n: ["Courant d'air", "Gust of Wind", "Windstoß", "疾風"], d: ["Utilise le Dash 500 fois.", "Use the Dash 500 times.", "Nutze den Dash 500 Mal.", "ダッシュを500回使う。"] },
+            { id: "blocs20000", n: ["Urbaniste", "Urban Planner", "Stadtplaner", "都市計画家"], d: ["Pose 20 000 blocs en mode création.", "Place 20,000 blocks in creative mode.", "Setze 20.000 Blöcke im Kreativmodus.", "クリエイティブで2万個ブロックを置く。"] },
+            { id: "defi3", n: ["Habitué du défi", "Challenge Regular", "Herausforderungs-Stammgast", "挑戦の常連"], d: ["Termine 3 Défis du jour (jours différents).", "Finish 3 Daily Challenges (different days).", "Beende 3 Tagesherausforderungen (verschiedene Tage).", "別の日のデイリーチャレンジを3回クリアする。"] },
+            { id: "defi30", n: ["Légende du défi", "Challenge Legend", "Herausforderungs-Legende", "挑戦の伝説"], d: ["Termine 30 Défis du jour (jours différents).", "Finish 30 Daily Challenges (different days).", "Beende 30 Tagesherausforderungen (verschiedene Tage).", "別の日のデイリーチャレンジを30回クリアする。"] },
+            { id: "fragile", n: ["Ça s'effondre", "Crumbling", "Es bröckelt", "崩壊"], d: ["Fais s'effondrer une Plateforme Fragile.", "Make a Fragile Platform collapse.", "Lass eine zerbrechliche Plattform einstürzen.", "もろい足場を崩す。"] },
+            { id: "convoyeur", n: ["À contre-courant", "Against the Flow", "Gegen den Strom", "流れに逆らって"], d: ["Marche sur un Convoyeur.", "Walk on a Conveyor.", "Gehe auf einem Förderband.", "コンベアの上を歩く。"] },
+            { id: "boue", n: ["Collant", "Sticky", "Klebrig", "ねばねば"], d: ["Marche dans la Boue Collante.", "Walk through Sticky Mud.", "Gehe durch klebrigen Schlamm.", "ねばねば泥の上を歩く。"] },
+            { id: "super_trampo", n: ["Propulsé", "Launched", "Katapultiert", "発射!"], d: ["Rebondis sur un Super Trampoline.", "Bounce on a Super Trampoline.", "Springe auf einem Supertrampolin.", "スーパートランポリンで跳ねる。"] },
+            { id: "laser", n: ["Éclair fatal", "Fatal Flash", "Tödlicher Blitz", "致命の閃光"], d: ["Touche un Laser Pulsant allumé.", "Touch a lit Pulsing Laser.", "Berühre einen eingeschalteten pulsierenden Laser.", "点灯中のパルスレーザーに触れる。"] },
+            { id: "piege_mortel", n: ["Aïe, ça pique", "Ouch, That Stings", "Autsch, das sticht", "痛っ!"], d: ["Meurs sur un Piège Mortel.", "Die on a Deadly Trap.", "Stirb auf einer tödlichen Falle.", "致命的な罠で死ぬ。"] },
+            { id: "mob_mort", n: ["Mauvaise rencontre", "Bad Encounter", "Schlechte Begegnung", "最悪の出会い"], d: ["Fais-toi toucher par un monstre.", "Get touched by a monster.", "Lass dich von einem Monster berühren.", "モンスターに触れる。"] },
+            { id: "portail", n: ["Rentre à la maison", "Home Again", "Wieder zu Hause", "お帰りなさい"], d: ["Utilise un Portail de Retour.", "Use a Return Portal.", "Nutze ein Rückkehrportal.", "帰還ポータルを使う。"] },
+            { id: "mur_fondu", n: ["Le mur tombe", "The Wall Falls", "Die Mauer fällt", "壁が消えた"], d: ["Regarde un mur de zone se dissoudre (Mode Histoire).", "Watch a zone wall dissolve (Story Mode).", "Sieh zu, wie sich eine Zonenmauer auflöst (Story-Modus).", "ゾーンの壁が消えるのを見る(ストーリーモード)。"] },
+            { id: "acharne", n: ["Acharné", "Relentless", "Unnachgiebig", "不屈"], d: ["Meurs 20 fois sur une même carte.", "Die 20 times on the same map.", "Stirb 20 Mal auf derselben Karte.", "同じマップで20回死ぬ。"] },
+            { id: "boutique_blocs", n: ["Tous les blocs", "Every Block", "Alle Blöcke", "全ブロック"], d: ["Possède tous les blocs de la boutique.", "Own every block in the shop.", "Besitze alle Blöcke im Shop.", "ショップの全ブロックを持つ。"] },
+            { id: "boutique_mobs", n: ["Ménagerie", "Menagerie", "Menagerie", "モンスター図鑑"], d: ["Possède tous les mobs de la boutique.", "Own every mob in the shop.", "Besitze alle Mobs im Shop.", "ショップの全モブを持つ。"] },
+            { id: "boutique_skins", n: ["Dressing complet", "Full Wardrobe", "Voller Kleiderschrank", "コンプリート衣装"], d: ["Possède tous les skins de la boutique (hors trophées).", "Own every skin in the shop (except trophies).", "Besitze alle Skins im Shop (außer Trophäen).", "ショップの全スキンを持つ(トロフィー除く)。"] },
+            { id: "coup_oeil", n: ["Coup d'œil", "Quick Glance", "Kurzer Blick", "ひと目"], d: ["Ouvre la liste des succès.", "Open the achievements list.", "Öffne die Erfolgsliste.", "実績一覧を開く。"] },
+            { id: "manuel", n: ["Lecteur de manuel", "Manual Reader", "Handbuchleser", "説明書を読む人"], d: ["Ouvre la fenêtre des touches et commandes.", "Open the keys and commands window.", "Öffne das Fenster mit Tasten und Befehlen.", "キーとコマンドのウィンドウを開く。"] },
+            { id: "initie", n: ["Initié", "Insider", "Eingeweihter", "内部の人"], d: ["Ouvre la console admin (/admin).", "Open the admin console (/admin).", "Öffne die Admin-Konsole (/admin).", "管理コンソール(/admin)を開く。"] },
+            { id: "dj", n: ["DJ", "DJ", "DJ", "DJ"], d: ["Lance ta propre musique pendant le jeu.", "Play your own music while gaming.", "Spiele deine eigene Musik beim Spielen.", "ゲーム中に自分の音楽を流す。"] },
+            { id: "melomane", n: ["Mélomane", "Music Lover", "Musikliebhaber", "音楽好き"], d: ["Utilise 3 sources de musique différentes.", "Use 3 different music sources.", "Nutze 3 verschiedene Musikquellen.", "3種類の音楽ソースを使う。"] },
+            { id: "mix", n: ["Mix aléatoire", "Random Mix", "Zufalls-Mix", "ランダムミックス"], d: ["Laisse le mode aléatoire choisir une piste, ou passe à une piste aléatoire.", "Let shuffle pick a track, or skip to a random one.", "Lass den Zufallsmodus einen Titel wählen oder wechsle zu einem zufälligen.", "シャッフルで曲を選ばせるか、ランダムな曲にスキップする。"] },
+            { id: "piste_choisie", n: ["Programmateur", "Programmer", "Programmgestalter", "選曲担当"], d: ["Choisis toi-même une piste dans la liste de ta playlist.", "Pick a track yourself from your playlist's list.", "Wähle selbst einen Titel aus der Liste deiner Playlist.", "プレイリストの一覧から曲を自分で選ぶ。"] },
+            { id: "succes50", n: ["Collectionneur de trophées", "Trophy Collector", "Trophäensammler", "トロフィーコレクター"], d: ["Débloque 50 succès.", "Unlock 50 achievements.", "Schalte 50 Erfolge frei.", "実績を50個解除する。"] },
+            { id: "succes75", n: ["Légende vivante", "Living Legend", "Lebende Legende", "生ける伝説"], d: ["Débloque 75 succès.", "Unlock 75 achievements.", "Schalte 75 Erfolge frei.", "実績を75個解除する。"] },
+            { id: "succes100", n: ["Centurion", "Centurion", "Zenturio", "百人隊長"], d: ["Débloque 100 succès.", "Unlock 100 achievements.", "Schalte 100 Erfolge frei.", "実績を100個解除する。"] }
         ];
         let succesObtenus = {}, compteursVie = {};
         try { succesObtenus = JSON.parse(localStorage.getItem("cyber_hack_succes")) || {}; } catch (e) { succesObtenus = {}; }
@@ -2832,9 +2939,13 @@
             if (nbS === 15) toast(tx(["⚡ Compétence débloquée : Dash (Maj ou K)", "⚡ Skill unlocked: Dash (Shift or K)", "⚡ Fähigkeit freigeschaltet: Dash (Umschalt oder K)", "⚡ スキル解放:ダッシュ(ShiftまたはK)"]));
             if (nbS >= 10) debloquerSucces("succes10");
             if (nbS >= 30) debloquerSucces("succes30");
+            if (nbS >= 50) debloquerSucces("succes50");
+            if (nbS >= 75) debloquerSucces("succes75");
+            if (nbS >= 100) debloquerSucces("succes100");
             majCompetences(); majSkinsSucces();
         }
         function verifierSuccesCompteurs(cle, n) {
+            verifierSuccesCompteursV75(cle);
             let v = compteursVie[cle] || 0;
             if (cle === "pieces") { if (n >= 100) debloquerSucces("gros_lot"); if (v >= 5000) debloquerSucces("pieces5000"); }
             if (cle === "morts" && v >= 100) debloquerSucces("morts100");
@@ -2871,13 +2982,14 @@
             if (cle === "morts") { debloquerSucces("mort1"); if (compteursVie.morts >= 50) debloquerSucces("morts50"); }
         }
         function ouvrirSucces() {
+            debloquerSucces("coup_oeil");
             let c = document.getElementById("liste-succes"); c.innerHTML = "";
             let nb = SUCCES.filter(x => succesObtenus[x.id]).length;
             document.getElementById("titre-succes").innerText = tx(["🏅 SUCCÈS", "🏅 ACHIEVEMENTS", "🏅 ERFOLGE", "🏅 実績"]) + "  " + nb + "/" + SUCCES.length;
             let stat = document.createElement("div"); stat.style.cssText = "color:#8892b0; font-size:11px; margin-bottom:8px;";
             stat.style.whiteSpace = "pre-line"; stat.style.lineHeight = "1.6";
             let sec = compteursVie.secondes || 0;
-            stat.innerText = "🪙 " + (compteursVie.pieces || 0) + "   💀 " + (compteursVie.morts || 0) + "   🦘 " + (compteursVie.sauts || 0) + "   ⏱️ " + Math.floor(sec / 3600) + "h" + String(Math.floor(sec / 60) % 60).padStart(2, "0") + "\n🗺️ " + (compteursVie.cartes || 0) + "   🛠️ " + (compteursVie.blocs || 0) + "   ⚡ " + (compteursVie.dashs || 0) + (dashDebloque() ? "" : "   🔒 Dash " + nb + "/15") + "\n" + tx(["🎁 +100 🪙 par succès · 🎭 skins Trophées à 10 / 25 / 40 / 60 · ⚡ Dash à 15", "🎁 +100 🪙 per achievement · 🎭 Trophy skins at 10 / 25 / 40 / 60 · ⚡ Dash at 15", "🎁 +100 🪙 pro Erfolg · 🎭 Trophäen-Skins bei 10 / 25 / 40 / 60 · ⚡ Dash bei 15", "🎁 実績ごとに+100 🪙 · 🎭 トロフィースキン10/25/40/60個 · ⚡ ダッシュ15個"]);
+            stat.innerText = "🪙 " + (compteursVie.pieces || 0) + "   💀 " + (compteursVie.morts || 0) + "   🦘 " + (compteursVie.sauts || 0) + "   ⏱️ " + Math.floor(sec / 3600) + "h" + String(Math.floor(sec / 60) % 60).padStart(2, "0") + "\n🗺️ " + (compteursVie.cartes || 0) + "   🛠️ " + (compteursVie.blocs || 0) + "   ⚡ " + (compteursVie.dashs || 0) + (dashDebloque() ? "" : "   🔒 Dash " + nb + "/15") + "\n" + tx(["🎁 +100 🪙 par succès · 🎭 skins Trophées à 10 / 25 / 40 / 60 / 80 · ⚡ Dash à 15", "🎁 +100 🪙 per achievement · 🎭 Trophy skins at 10 / 25 / 40 / 60 / 80 · ⚡ Dash at 15", "🎁 +100 🪙 pro Erfolg · 🎭 Trophäen-Skins bei 10 / 25 / 40 / 60 / 80 · ⚡ Dash bei 15", "🎁 実績ごとに+100 🪙 · 🎭 トロフィースキン10/25/40/60個 · ⚡ ダッシュ15個"]);
             c.appendChild(stat);
             SUCCES.forEach(function(x) {
                 let ok = !!succesObtenus[x.id];
@@ -2965,7 +3077,7 @@
         try { modeHardcore = localStorage.getItem("cyber_hack_hardcore") === "1"; } catch (e) {}
         function majBoutonHardcore() { let b = document.getElementById("btn-hardcore"); if (b) b.innerText = modeHardcore ? "☠️ MODE HARDCORE : ON" : "☠️ MODE HARDCORE : OFF"; }
         function basculerHardcore() {
-            modeHardcore = !modeHardcore; lsSet("cyber_hack_hardcore", modeHardcore ? "1" : "0"); majBoutonHardcore();
+            modeHardcore = !modeHardcore; if (modeHardcore) debloquerSucces("hardcore_on"); lsSet("cyber_hack_hardcore", modeHardcore ? "1" : "0"); majBoutonHardcore();
             toast(modeHardcore ? tx(["☠️ Hardcore activé : une mort et tout recommence", "☠️ Hardcore on: one death and everything restarts", "☠️ Hardcore an: ein Tod und alles beginnt von vorn", "☠️ ハードコアON:死んだら最初から"]) : tx(["☠️ Hardcore désactivé", "☠️ Hardcore off", "☠️ Hardcore aus", "☠️ ハードコアOFF"]));
         }
         function recommencerHardcore() {
@@ -3787,7 +3899,15 @@
             let nbPayes = typesDeBlocs.filter(b => b.prix > 0 && b.acquis).length + listeSkins.filter(s => s.prix > 0 && s.acquis).length + mobsBoutique.filter(m => m.acquis).length;
             if (nbPayes >= 1) debloquerSucces("achat");
             if (nbPayes >= 25) debloquerSucces("collection");
-            if (listeSkins.filter(s => s.acquis).length >= 10) debloquerSucces("fashion");
+            let nbSkinsAcquis = listeSkins.filter(s => s.acquis).length;
+            if (nbSkinsAcquis >= 10) debloquerSucces("fashion");
+            if (nbSkinsAcquis >= 25) debloquerSucces("dressing");
+            if (!compteursVie.shopfree) {
+                if (typesDeBlocs.every(b => b.acquis)) debloquerSucces("boutique_blocs");
+                if (mobsBoutique.every(m => m.acquis)) debloquerSucces("boutique_mobs");
+                if (listeSkins.every(s => s.acquis || s.succesRequis)) debloquerSucces("boutique_skins");
+            }
+            if (listeSkins.some(s => s.acquis && /\((Légendaire|Mythique|Ultra Rare|Divin|Suprême|Infernal|Spectre)\)$/.test(s.nom))) debloquerSucces("skin_rare");
             try { majTitresSkins(); } catch (e) {}
         }
 
@@ -3839,7 +3959,7 @@
         }
 
         // --- Fenêtre des touches (écran titre) + console admin cachée ---
-        function ouvrirFenetreTouches() { document.getElementById("fenetre-touches").style.display = "flex"; }
+        function ouvrirFenetreTouches() { document.getElementById("fenetre-touches").style.display = "flex"; debloquerSucces("manuel"); }
         function fermerFenetreTouches() { document.getElementById("fenetre-touches").style.display = "none"; }
         function fermerFenetreAdmin() { document.getElementById("fenetre-admin").style.display = "none"; }
 
@@ -3893,6 +4013,7 @@
                 };
                 conteneur.appendChild(ligne);
             });
+            debloquerSucces("initie");
             document.getElementById("fenetre-admin").style.display = "flex";
         }
 
@@ -4543,6 +4664,19 @@
             { nom: "Rubis (Rare)", couleur: "#e0115f", type: "solide", symbole: "", prix: 260 },
             { nom: "Saphir (Rare)", couleur: "#0f52ba", type: "solide", symbole: "", prix: 260 },
             { nom: "Argent Chrome (Rare)", couleur: "#c0c0c0", type: "solide", symbole: "", prix: 280 },
+            // ===== V8 : nouvelles couleurs =====
+            { nom: "Rose Poudré (Commun)", couleur: "#f4a6c0", type: "solide", symbole: "", prix: 80 },
+            { nom: "Bleu Glacier (Commun)", couleur: "#a8e6ff", type: "solide", symbole: "", prix: 80 },
+            { nom: "Vert Pomme (Commun)", couleur: "#8fe04a", type: "solide", symbole: "", prix: 80 },
+            { nom: "Orange Brûlé (Peu Commun)", couleur: "#d2691e", type: "solide", symbole: "", prix: 140 },
+            { nom: "Lilas Néon (Peu Commun)", couleur: "#c084fc", type: "solide", symbole: "", prix: 150 },
+            { nom: "Gris Béton (Peu Commun)", couleur: "#7b8794", type: "solide", symbole: "", prix: 120 },
+            { nom: "Cyan Électrique (Rare)", couleur: "#00f0ff", type: "solide", symbole: "", prix: 270 },
+            { nom: "Vert Toxique (Rare)", couleur: "#39ff7a", type: "solide", symbole: "", prix: 270 },
+            { nom: "Bordeaux (Rare)", couleur: "#6d0f2a", type: "solide", symbole: "", prix: 260 },
+            { nom: "Ambre (Rare)", couleur: "#ffbf00", type: "solide", symbole: "", prix: 280 },
+            { nom: "Aurore Rose (Épique)", couleur: "#ff5fa2", type: "solide", symbole: "", prix: 480 },
+            { nom: "Minuit Bleu (Épique)", couleur: "#0a1a5c", type: "solide", symbole: "", prix: 480 },
             { nom: "Plasma Violet (Épique)", couleur: "#cc00ff", type: "solide", symbole: "", prix: 450 },
             { nom: "Or Rose (Épique)", couleur: "#e6a0a8", type: "solide", symbole: "", prix: 450 }
         ];
@@ -4655,6 +4789,7 @@
         // Débloque définitivement tous les blocs, skins et mobs de la boutique
         // (persistant via localStorage, ne se réinitialise qu'au Hard Reset)
         function deverrouillerToutLaBoutique() {
+            compteursVie.shopfree = 1; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie)); // /shopfree : plus de succès boutique
             typesDeBlocs.forEach(b => {
                 b.acquis = true;
                 achatsBlocs[b.nom] = true;
@@ -4853,6 +4988,87 @@
                 { nom: "Arc-en-ciel (Suprême)", fond: "linear-gradient(135deg, #ff0055, #ffaa00, #00ff66, #00bfff, #9d00ff)", prix: 30000, html: hh("#ffffff", true) }
             );
         })();
+        // ===== V7.4 : 32 nouveaux skins, tous différents (yeux, bouches, cornes, couronnes, auras, animations) =====
+        (function() {
+            function an(cls, bg) { return '<div class="' + cls + '" style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:2px;background:' + bg + ';"></div>'; }
+            function lueur(c) { return '<div class="sk-pulse" style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:2px;box-shadow:0 0 9px 2px ' + c + ';"></div>'; }
+            function cornes(c) { let t = 'position:absolute;top:-4px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:5px solid ' + c + ';'; return '<div style="' + t + 'left:1px;"></div><div style="' + t + 'right:1px;"></div>'; }
+            function couronne(c) { return '<div style="position:absolute;top:-5px;width:12px;height:5px;background:' + c + ';clip-path:polygon(0 100%,0 0,25% 50%,50% 0,75% 50%,100% 0,100% 100%);"></div>'; }
+            function halo(c) { return '<div style="position:absolute;top:-6px;width:12px;height:4px;border:2px solid ' + c + ';border-radius:50%;box-shadow:0 0 5px ' + c + ';box-sizing:border-box;"></div>'; }
+            function antenne(c) { return '<div style="position:absolute;top:-5px;width:2px;height:5px;background:' + c + ';"></div><div style="position:absolute;top:-7px;width:4px;height:4px;border-radius:50%;background:' + c + ';"></div>'; }
+            function v(o) {
+                let c = o.c, f = o.f || "rond", b = o.b || "s", bc = o.bc || c, ye = "";
+                let st = "background:" + c + ";" + (o.g ? "box-shadow:0 0 5px " + c + ";" : "");
+                if (f === "cyclope") ye = '<div style="position:absolute;top:2px;width:8px;height:8px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;"><div style="width:4px;height:4px;border-radius:50%;background:' + c + ';"></div></div>';
+                else if (f === "visiere") ye = '<div style="position:absolute;top:4px;width:14px;height:4px;' + st + '"></div>';
+                else {
+                    let e;
+                    if (f === "carre") e = '<div style="width:3px;height:3px;' + st + '"></div>';
+                    else if (f === "losange") e = '<div style="width:3px;height:3px;transform:rotate(45deg);' + st + '"></div>';
+                    else if (f === "fente") e = '<div style="width:5px;height:2px;margin-top:1px;' + st + '"></div>';
+                    else if (f === "haut") e = '<div style="width:2px;height:5px;' + st + '"></div>';
+                    else if (f === "croix") e = '<div style="font-size:9px;line-height:5px;font-weight:bold;color:' + c + ';">×</div>';
+                    else e = '<div style="width:3px;height:3px;border-radius:50%;' + st + '"></div>';
+                    ye = '<div class="' + (o.clin ? "sk-blink" : "") + '" style="display:flex;gap:3px;position:absolute;top:4px;">' + e + e + '</div>';
+                }
+                let bo = "";
+                if (b === "s") bo = '<div style="position:absolute;bottom:3px;width:8px;height:3px;border-bottom:2px solid ' + bc + ';border-radius:50%;"></div>';
+                else if (b === "p") bo = '<div style="position:absolute;bottom:4px;width:8px;height:2px;background:' + bc + ';"></div>';
+                else if (b === "o") bo = '<div style="position:absolute;bottom:2px;width:5px;height:4px;background:' + bc + ';border-radius:0 0 5px 5px;"></div>';
+                else if (b === "d") bo = '<div style="position:absolute;bottom:3px;width:10px;height:3px;background:repeating-linear-gradient(90deg,#fff 0 2px,#111 2px 3px);"></div>';
+                return (o.ov || "") + ye + bo + (o.ext || "");
+            }
+            const ARC = "conic-gradient(#ff0055,#ffaa00,#00ff66,#00bfff,#9d00ff,#ff0055)";
+            const BIN = "linear-gradient(135deg,#00ffa6,#00b4ff,#b400ff)";
+            listeSkins.push(
+                // --- Commun ---
+                { nom: "Menthe Pixel (Commun)", fond: "#98ffcc", prix: 150, html: v({ c: "#0b3d2e", f: "carre" }) },
+                { nom: "Orange Soda (Commun)", fond: "#ff9248", prix: 200, html: v({ c: "#ffffff", b: "o", bc: "#7a2e00" }) },
+                { nom: "Brique (Commun)", fond: "#b5523b", prix: 250, html: v({ c: "#2b0f08", f: "carre", b: "p" }) },
+                { nom: "Bleu Ciel (Commun)", fond: "#87ceeb", prix: 300, html: v({ c: "#12354d", clin: true }) },
+                // --- Peu Commun ---
+                { nom: "Bubblegum Bot (Peu Commun)", fond: "#ff9ff3", prix: 600, html: v({ c: "#6b1f5e", ext: antenne("#6b1f5e") }) },
+                { nom: "Camouflage (Peu Commun)", fond: "repeating-linear-gradient(45deg,#4b5d2a 0 5px,#2f3b1a 5px 9px,#6b7a3a 9px 12px)", prix: 700, html: v({ c: "#ffffff", f: "fente", b: "p", bc: "#1a2010" }) },
+                { nom: "Chat Cyber (Peu Commun)", fond: "#ffb347", prix: 800, html: v({ c: "#222222", f: "haut", ext: cornes("#ffb347") }) },
+                { nom: "Zèbre Binaire (Peu Commun)", fond: "repeating-linear-gradient(90deg,#ffffff 0 3px,#111111 3px 6px)", prix: 900, html: v({ c: "#ff0055", f: "carre", g: true, b: "n" }) },
+                // --- Rare ---
+                { nom: "Aquarium (Rare)", fond: "linear-gradient(180deg,#4fc3f7,#01579b)", prix: 1500, html: v({ c: "#ffffff", b: "o", ov: '<div class="sk-pulse" style="position:absolute;left:3px;bottom:5px;width:3px;height:3px;border:1px solid #fff;border-radius:50%;box-sizing:border-box;"></div><div class="sk-pulse" style="position:absolute;right:3px;top:9px;width:2px;height:2px;border:1px solid #fff;border-radius:50%;box-sizing:border-box;"></div>' }) },
+                { nom: "Circuit Imprimé (Rare)", fond: "#0a3d1f", prix: 1700, html: v({ c: "#00ff66", f: "carre", g: true, b: "p", ov: an("", "linear-gradient(90deg,rgba(0,255,102,0.35) 1px,transparent 1px),linear-gradient(rgba(0,255,102,0.35) 1px,transparent 1px);background-size:5px 5px") }) },
+                { nom: "Glitch Rose (Rare)", fond: "#ff4fa3", prix: 2000, html: v({ c: "#ffffff", f: "carre", ov: an("sk-hue", "repeating-linear-gradient(0deg,rgba(0,255,255,0.45) 0 2px,transparent 2px 7px)") }) },
+                { nom: "Ombre Bleue (Rare)", fond: "#0d1b3d", prix: 2200, html: v({ c: "#00e5ff", f: "visiere", g: true, b: "n" }) },
+                // --- Épique ---
+                { nom: "Samouraï Néon (Épique)", fond: "#7a0019", prix: 3000, html: v({ c: "#ffffff", f: "fente", b: "p", ext: '<div style="position:absolute;top:1px;width:100%;height:3px;background:#ffd700;"></div>' }) },
+                { nom: "Cyclope (Épique)", fond: "#6a5acd", prix: 3200, html: v({ c: "#111111", f: "cyclope", b: "d" }) },
+                { nom: "Pixel Roi (Épique)", fond: "#7b2fbe", prix: 3400, html: v({ c: "#ffd700", g: true, ext: couronne("#ffd700") }) },
+                { nom: "Squelette Digital (Épique)", fond: "#f0f0f0", prix: 3600, html: v({ c: "#111111", f: "croix", b: "d" }) },
+                // --- Légendaire ---
+                { nom: "Phénix (Légendaire)", fond: "linear-gradient(180deg,#ffd200,#ff5e00 60%,#b00020)", prix: 5000, html: v({ c: "#fff7c2", g: true, f: "losange", ov: an("sk-pulse", "radial-gradient(circle at 50% 100%,rgba(255,255,0,0.6),transparent 70%)") }) },
+                { nom: "Dragon Vert (Légendaire)", fond: "#1b7a3a", prix: 5500, html: v({ c: "#ffe600", f: "fente", g: true, b: "d", ext: cornes("#0f4d24") }) },
+                { nom: "Néon Tokyo (Légendaire)", fond: "linear-gradient(135deg,#ff2bd6,#00e5ff)", prix: 6000, html: v({ c: "#ffffff", f: "visiere", g: true }) },
+                { nom: "Chevalier d'Argent (Légendaire)", fond: "linear-gradient(135deg,#e8e8e8,#8a97a6)", prix: 6500, html: v({ c: "#0b0f19", f: "visiere", b: "n", ext: '<div style="position:absolute;top:-5px;width:4px;height:5px;background:#e53935;border-radius:2px 2px 0 0;"></div>' }) },
+                // --- Mythique ---
+                { nom: "Éclipse (Mythique)", fond: "radial-gradient(circle,#000 45%,#ffb300 62%,#2b1500 100%)", prix: 11000, html: v({ c: "#ffffff", g: true, b: "n", ov: lueur("#ffb300") }) },
+                { nom: "Aurore Boréale (Mythique)", fond: BIN, prix: 13000, html: v({ c: "#ffffff", g: true, ov: an("sk-hue", BIN) }) },
+                // --- Ultra Rare ---
+                { nom: "Matrice Binaire (Ultra Rare)", fond: "#001a0a", prix: 18000, html: v({ c: "#00ff66", f: "carre", g: true, b: "n", ov: '<div class="sk-pulse" style="position:absolute;top:0;left:0;right:0;bottom:0;font-size:6px;line-height:6px;color:#00ff66;overflow:hidden;word-break:break-all;opacity:0.45;">1011010011010110</div>' }) },
+                { nom: "Cristal Prisme (Ultra Rare)", fond: ARC, prix: 21000, html: v({ c: "#ffffff", f: "losange", g: true, ov: an("sk-hue", ARC) }) },
+                // --- Divin ---
+                { nom: "Ange Cyber (Divin)", fond: "linear-gradient(180deg,#ffffff,#cfe9ff)", prix: 26000, html: v({ c: "#4aa8ff", g: true, ext: halo("#ffd700") }) },
+                { nom: "Soleil Levant (Divin)", fond: "radial-gradient(circle,#fff3a0,#ffb300 55%,#ff5a00)", prix: 30000, html: v({ c: "#7a2e00", ov: lueur("#ffb300") }) },
+                // --- Suprême ---
+                { nom: "Roi du Réseau (Suprême)", fond: "linear-gradient(135deg,#fff3a0,#ffd700,#b8860b)", prix: 40000, html: v({ c: "#2b1a00", f: "carre", ov: lueur("#ffd700"), ext: couronne("#e53935") }) },
+                { nom: "Hologramme (Suprême)", fond: "rgba(0,255,255,0.35)", prix: 45000, html: v({ c: "#e0ffff", g: true, b: "p", ov: an("sk-scan", "repeating-linear-gradient(0deg,rgba(0,255,255,0.55) 0 2px,transparent 2px 4px)") }) },
+                // --- Infernal ---
+                { nom: "Diable Pixel (Infernal)", fond: "#c40000", prix: 32000, html: v({ c: "#ffe600", f: "fente", g: true, b: "d", ext: cornes("#4a0000") }) },
+                { nom: "Magma Core (Infernal)", fond: "linear-gradient(180deg,#1a0000,#ff4500)", prix: 38000, html: v({ c: "#ffd54a", g: true, b: "o", ov: lueur("#ff4500") }) },
+                // --- Spectre ---
+                { nom: "Spectre Quantique (Spectre)", fond: "linear-gradient(135deg,#00ffff,#ff00ff)", prix: 52000, html: v({ c: "#ffffff", f: "haut", g: true, b: "n", ov: an("sk-hue", "linear-gradient(135deg,#00ffff,#ff00ff)") }) },
+                { nom: "Néant (Spectre)", fond: "#030303", prix: 60000, html: v({ c: "#ffffff", g: true, b: "n", ov: '<div class="sk-pulse" style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:2px;box-shadow:0 0 10px 2px #7d3cff, inset 0 0 6px #7d3cff;"></div>' }) }
+            );
+        })();
+        // V7.5 : skin Trophée supplémentaire (80 succès)
+        listeSkins.push({ nom: "Hacker Diamant (Spectre)", fond: "linear-gradient(135deg,#b9f2ff,#6ad4ff 50%,#ffffff)", prix: 0, succesRequis: 80,
+            html: '<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #0b3d5c; transform: rotate(45deg); box-shadow: 0 0 6px #0b3d5c;"></div><div style="width: 3px; height: 3px; background: #0b3d5c; transform: rotate(45deg); box-shadow: 0 0 6px #0b3d5c;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #0b3d5c; border-radius: 50%;"></div><div class="sk-pulse" style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:2px;box-shadow:0 0 9px 2px #6ad4ff;"></div>' });
         // ---- Skins rangés par rareté (menus déroulants, comme l'inventaire créatif) ----
         const ORDRE_RARETES = ["Commun", "Peu Commun", "Rare", "Épique", "Légendaire", "Mythique", "Ultra Rare", "Divin", "Suprême", "Infernal", "Spectre"];
         const groupesSkins = {};
@@ -4917,6 +5133,7 @@
                 if (skin.acquis) {
                     joueur.element.style.background = skin.fond;
                     joueur.element.innerHTML = skin.html;
+                    lsSet("cyber_hack_skin_actif", skin.nom); debloquerSucces("look");
                 }
             };
             skin.el = divSkin;
@@ -5458,6 +5675,7 @@
                 let opacite = (mursZone[z].opacite === undefined ? 1 : mursZone[z].opacite) - 0.012;
                 mursZone[z].opacite = opacite;
                 if (opacite <= 0) {
+                    debloquerSucces("mur_fondu");
                     mursZone[z].forEach(b => { if (b.elementDom) b.elementDom.remove(); });
                     blocsMonde = blocsMonde.filter(b => !mursZone[z].includes(b));
                     mursZone[z] = [];
@@ -5655,11 +5873,42 @@
             return b.type === elementActif.type && b.couleur === elementActif.couleur && (b.symbole || "") === (symboleDuTypeActif() || "")
                 && (b.type !== "piece" || b.valeur === elementActif.valeurPiece);
         }
+        // Trajet d'une plateforme mobile : ±50 px autour de sa case de base, soit 3 cases de chaque côté.
+        // On n'y pose aucun autre bloc (sinon les blocs se superposent et le joueur est éjecté).
+        let dernierToastTrajet = 0;
+        function caseDansTrajetMobile(gx, gy) {
+            let t = elementActif.type, bloque = false;
+            if (t === "mobile_h" || t === "mobile_v") {
+                // On pose une plateforme mobile : elle ne doit croiser aucun bloc existant (hors autres plateformes du même type, qui bougent ensemble)
+                for (let i = 0; i < blocsMonde.length && !bloque; i++) {
+                    let b = blocsMonde[i];
+                    if (b.type === t || b.type === "mur_zone" || (b.x === gx && b.y === gy)) continue;
+                    let bx = b.baseX !== undefined ? b.baseX : b.x, by = b.baseY !== undefined ? b.baseY : b.y;
+                    if (t === "mobile_h" && by === gy && Math.abs(bx - gx) <= 60) bloque = true;
+                    if (t === "mobile_v" && bx === gx && Math.abs(by - gy) <= 60) bloque = true;
+                }
+            } else {
+                let mobiles = listeMobiles();
+                for (let i = 0; i < mobiles.length && !bloque; i++) {
+                    let m = mobiles[i];
+                    if (m.baseX === gx && m.baseY === gy) continue; // on remplace la plateforme elle-même : autorisé
+                    if (m.type === "mobile_h" && m.baseY === gy && Math.abs(gx - m.baseX) <= 60) bloque = true;
+                    if (m.type === "mobile_v" && m.baseX === gx && Math.abs(gy - m.baseY) <= 60) bloque = true;
+                }
+            }
+            if (bloque && Date.now() - dernierToastTrajet > 1500) {
+                dernierToastTrajet = Date.now();
+                toast(tx(["⚠️ Trajet d'une plateforme mobile : on ne peut pas poser de bloc ici", "⚠️ Moving platform path: you can't place a block here", "⚠️ Pfad einer beweglichen Plattform: Hier kann kein Block stehen", "⚠️ 動く足場の通り道:ここにはブロックを置けません"]));
+            }
+            return bloque;
+        }
+
         function poserBlocSurCase(gx, gy, forcer) {
             let cle = gx + "," + gy;
             // Pendant le glisser : une case déjà traitée dans ce même trait n'est pas refaite
             if (!forcer && casesPoseesDansLeGlisse.has(cle)) return;
             casesPoseesDansLeGlisse.add(cle);
+            if (caseDansTrajetMobile(gx, gy)) return;
             let occupants = blocsMonde.filter(b => b.x === gx && b.y === gy && b.type !== "mur_zone");
             if (occupants.length === 1 && memeBlocQueActif(occupants[0])) return; // exactement le même bloc : rien à changer
             if (occupants.length > 0) {
@@ -5944,7 +6193,7 @@
             joueur.isGrounded = false;
             boostTimer = 0;
             surDeLaGlace = false;
-            joueur.invincible = 45; joueur.sautExtra = 0; vitesseBoost = 0; reinitialiserClesPortes(); boutonTimer = 0; dashTimer = 0; majAuraSaut(); viderProjectiles(); if (portesOuvertes) { portesOuvertes = false; majPortes(); } // laisse le temps de se poser
+            joueur.sur = null; joueur.invincible = 45; joueur.sautExtra = 0; vitesseBoost = 0; reinitialiserClesPortes(); boutonTimer = 0; dashTimer = 0; majAuraSaut(); viderProjectiles(); if (portesOuvertes) { portesOuvertes = false; majPortes(); } // laisse le temps de se poser
             // Caméra et sprite placés tout de suite : aucune image dans le vide
             cameraX = Math.max(0, Math.min(joueur.x - Math.min(300, arene.clientWidth * 0.4), maxWorldWidth - arene.clientWidth));
             appliquerCameraDom();
@@ -5959,7 +6208,7 @@
 
         function respawnJoueur() {
             stats.morts++;
-            compter("morts", 1);
+            compter("morts", 1); if (stats.morts >= 20) debloquerSucces("acharne");
             if (modeHardcore && !hardcoreEnAttente) { hardcoreEnAttente = true; setTimeout(recommencerHardcore, 0); }
             viderProjectiles();
             afficherMorts();
@@ -5969,7 +6218,7 @@
             joueur.vy = 0;
             boostTimer = 0;
             reinitialiserFragiles();
-            joueur.invincible = 90; joueur.sautExtra = 0; vitesseBoost = 0; majAuraSaut(); if (portesOuvertes) { portesOuvertes = false; majPortes(); }
+            joueur.sur = null; joueur.invincible = 90; joueur.sautExtra = 0; vitesseBoost = 0; majAuraSaut(); if (portesOuvertes) { portesOuvertes = false; majPortes(); }
         }
 
         const TYPES_NON_SOLIDES = new Set(["piege", "checkpoint", "piece", "fin_niveau", "decor", "fragment", "vent", "spawn", "portail", "lune", "pulsant", "orbe", "interrupteur", "tp_a", "tp_b", "orbe_bouclier", "orbe_vitesse", "vent_g", "vent_d", "piege_cache", "cle", "bouton_tempo"]);
@@ -6047,7 +6296,7 @@
             } else if (mur.compte !== undefined) {
                 mur.compte--;
                 if (mur.elementDom) mur.elementDom.style.transform = "translateX(" + ((mur.compte % 4 < 2) ? -1 : 1) + "px)";
-                if (mur.compte <= 0) { mur.cache = true; mur.retour = 180; if (mur.elementDom) { mur.elementDom.style.opacity = 0.15; mur.elementDom.style.transform = ""; } }
+                if (mur.compte <= 0) { debloquerSucces("fragile"); mur.cache = true; mur.retour = 180; if (mur.elementDom) { mur.elementDom.style.opacity = 0.15; mur.elementDom.style.transform = ""; } }
             }
         }
         function reinitialiserFragiles() {
@@ -6061,6 +6310,30 @@
         function vitesseReduiteMobile() {
             if (modeActuel === "mobile") return true;
             try { return !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches); } catch (e) { return false; }
+        }
+
+        // Plateformes mobiles : leur position ne dépend QUE du compteur d'images, et elles sont
+        // mises à jour à chaque image (même loin du joueur). Avant, seules celles à moins de 80 px
+        // du joueur bougeaient : les autres restaient figées, puis se téléportaient d'un coup.
+        let _mobilesCache = [], _mobilesRef = null, _mobilesLen = -1;
+        function listeMobiles() {
+            if (_mobilesRef !== blocsMonde || _mobilesLen !== blocsMonde.length) {
+                _mobilesRef = blocsMonde; _mobilesLen = blocsMonde.length;
+                _mobilesCache = blocsMonde.filter(b => b.type === "mobile_h" || b.type === "mobile_v");
+            }
+            return _mobilesCache;
+        }
+        function deplacerPlateformesMobiles() {
+            let liste = listeMobiles();
+            let g = cameraX - 120, d = cameraX + arene.clientWidth + 120;
+            for (let i = 0; i < liste.length; i++) {
+                let pb = liste[i], nx = pb.baseX, ny = pb.baseY;
+                if (pb.type === "mobile_h") nx = pb.baseX + Math.round(Math.sin(frameCompteur / 45) * 50);
+                else ny = pb.baseY + Math.round(Math.sin(frameCompteur / 50) * 50);
+                pb.dx = nx - pb.x; pb.dy = ny - pb.y; pb.x = nx; pb.y = ny;
+                if (joueur.sur === pb) { joueur.x += pb.dx; joueur.y += pb.dy; } // le joueur est emporté
+                if (pb.elementDom && nx + pb.width > g && nx < d) { pb.elementDom.style.left = nx + "px"; pb.elementDom.style.top = ny + "px"; }
+            }
         }
 
         function update() {
@@ -6089,6 +6362,7 @@
                     if (!modeNiveauPersonnaliseActif && !modeTestCreation) debloquerSucces("zone4");
                 }
 
+                if (indexZoneActuelle >= 1 && !modeNiveauPersonnaliseActif && !modeTestCreation) { debloquerSucces("zone2"); if (indexZoneActuelle >= 2) debloquerSucces("zone3"); }
                 if (modeHistoireActif) {
                     zoneHistoireActuelle = indexZoneActuelle;
                     let epreuve = epreuvesHistoire[zoneHistoireActuelle];
@@ -6136,26 +6410,14 @@
                 // 1) On bouge en X puis on se recolle au mur touché (jamais de choix
                 //    ambigu entre "côté" et "dessus" : c'était la cause du bug où l'on
                 //    sautait contre un mur et se retrouvait téléporté / passait dessous).
+                deplacerPlateformesMobiles(); // toutes les plateformes bougent en permanence, synchronisées
                 joueur.x += joueur.vx + pousseeConv;
                 const listeParcourue = blocsMonde;
                 const proches = blocsProchesDuJoueur();
-                for (let k = 0; k < proches.length; k++) {
-                    let pb = proches[k];
-                    if (pb.type === "mobile_v") {
-                        let ny = pb.baseY + Math.round(Math.sin(frameCompteur / 50) * 50);
-                        pb.dy = ny - pb.y; pb.y = ny;
-                        if (pb.elementDom) pb.elementDom.style.top = ny + "px";
-                    }
-                    if (pb.type === "mobile_h") {
-                        let nx = pb.baseX + Math.round(Math.sin(frameCompteur / 45) * 50);
-                        pb.dx = nx - pb.x; pb.x = nx;
-                        if (pb.elementDom) pb.elementDom.style.left = nx + "px";
-                        if (joueur.sur === pb) joueur.x += pb.dx; // le joueur est emporté
-                    }
-                }
                 for (let mur of proches) {
                     if (!estBlocSolide(mur)) continue;
                     if (mur.type === "traversant") continue;
+                    if (mur.type === "mobile_v" && joueur.y + joueur.height <= mur.y + 6) continue; // posé dessus : pas de poussée latérale
                     if (joueur.x + joueur.width > mur.x && joueur.x < mur.x + mur.width &&
                         joueur.y + joueur.height > mur.y && joueur.y < mur.y + mur.height) {
                         let versDroite = joueur.vx > 0 || (joueur.vx === 0 && (joueur.x + joueur.width / 2) < (mur.x + mur.width / 2));
@@ -6204,7 +6466,7 @@
 
                     if (!estProtege() && joueur.x < mob.x + mob.width - 4 && joueur.x + joueur.width > mob.x + 4 &&
                         joueur.y < mob.y + mob.height - 4 && joueur.y + joueur.height > mob.y + 4) {
-                        if (mob.mode === "chasse") debloquerSucces("chasse"); respawnJoueur();
+                        debloquerSucces("mob_mort"); if (mob.mode === "chasse") debloquerSucces("chasse"); respawnJoueur();
                     }
                 });
 
@@ -6232,14 +6494,19 @@
                             stats.piecesRecuperees = 0;
                             recalculerTotalPieces();
                         } else {
-                            debloquerSucces("fin_proc"); compter("cartes", 1); if (modeHardcore) debloquerSucces("hardcore"); terminerDefi(); if (stats.morts === 0 && !protecteurCmd) debloquerSucces("sans_mort");
+                            debloquerSucces("fin_proc"); compter("cartes", 1); if (modeHistoireActif) debloquerSucces("histoire_fin"); if (stats.tempsSecondes < 150 && !protecteurCmd && !bouclierActif) debloquerSucces("speed"); if (modeHardcore) debloquerSucces("hardcore"); terminerDefi(); if (stats.morts === 0 && !protecteurCmd) {
+                                debloquerSucces("sans_mort");
+                                compteursVie.serie = (compteursVie.serie || 0) + 1; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie));
+                                if (compteursVie.serie >= 3) debloquerSucces("serie3");
+                                if (compteursVie.serie >= 5) debloquerSucces("serie5");
+                            } else if (compteursVie.serie) { compteursVie.serie = 0; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie)); }
                             genererMapProcedurale();
                         }
                     }
                     if (mur.type === "fragile") gererFragile(mur);
                     if (mur.type === "portail" && !(joueur.portailCd > 0) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         joueur.x = joueur.spawnX; joueur.y = joueur.spawnY; joueur.vx = 0; joueur.vy = 0; joueur.portailCd = 45;
-                        toast(tx(["🌌 Retour au point de sauvegarde", "🌌 Back to the checkpoint", "🌌 Zurück zum Checkpoint", "🌌 チェックポイントへ戻る"]));
+                        debloquerSucces("portail"); toast(tx(["🌌 Retour au point de sauvegarde", "🌌 Back to the checkpoint", "🌌 Zurück zum Checkpoint", "🌌 チェックポイントへ戻る"]));
                     }
                     if (mur.type === "vent" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         enVent = true; debloquerSucces("vent"); // appliqué une seule fois par image, après la boucle
@@ -6264,7 +6531,7 @@
                                 let mission = epreuve.missions[missionChoisie[z]];
                                 let prochaine = epreuvesHistoire[z + 1];
                                 lancerTachePiratage(function() {
-                                    debloquerSucces("mission");
+                                    debloquerSucces("mission"); compter("missions", 1);
                                     afficherAlerte(`✅ ${tx(mission.fin)} !` + (prochaine
                                         ? "\n" + tx(["La zone suivante est déverrouillée : ", "The next zone is unlocked: ", "Die nächste Zone ist freigeschaltet: ", "次のゾーンが解放された: "]) + tx(prochaine.nom)
                                         : "\n" + tx(["Le 🏆 est accessible !", "The 🏆 is now reachable!", "Das 🏆 ist jetzt erreichbar!", "🏆に到達できる!"])));
@@ -6308,10 +6575,10 @@
                             joueur.sautExtra = 1; majAuraSaut(); mur.reviensA = frameCompteur + 180; if (mur.elementDom) mur.elementDom.style.display = "none";
                         }
                     }
-                    if (mur.type === "pulsant" && phasePulse && !estProtege() && joueur.x < mur.x + mur.width - 3 && joueur.x + joueur.width > mur.x + 3 && joueur.y < mur.y + mur.height - 3 && joueur.y + joueur.height > mur.y + 3) { respawnJoueur(); }
+                    if (mur.type === "pulsant" && phasePulse && !estProtege() && joueur.x < mur.x + mur.width - 3 && joueur.x + joueur.width > mur.x + 3 && joueur.y < mur.y + mur.height - 3 && joueur.y + joueur.height > mur.y + 3) { debloquerSucces("laser"); respawnJoueur(); }
                     if (mur.type === "lune" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) { enLune = true; debloquerSucces("lune"); }
                     if (mur.type === "piege" && !estProtege() && joueur.x < mur.x + mur.width - 1 && joueur.x + joueur.width > mur.x + 1 && joueur.y < mur.y + mur.height && joueur.y + joueur.height >= mur.y) {
-                        respawnJoueur(); // contact avec n'importe quelle face, dessus compris
+                        debloquerSucces("piege_mortel"); respawnJoueur(); // contact avec n'importe quelle face, dessus compris
                     }
                     if (mur.type === "checkpoint" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         if (joueur.spawnX !== mur.x || joueur.spawnY !== mur.y - joueur.height) {
@@ -6348,13 +6615,13 @@
                                     debloquerSucces("glace");
                                     surDeLaGlace = true;
                                 }
-                                if (mur.type === "trampoline_max") { joueur.vy = joueur.jumpForce * 1.9; joueur.isGrounded = false; }
-                                if (mur.type === "boue") surBoue = true;
+                                if (mur.type === "trampoline_max") { joueur.vy = joueur.jumpForce * 1.9; joueur.isGrounded = false; debloquerSucces("super_trampo"); }
+                                if (mur.type === "boue") { surBoue = true; debloquerSucces("boue"); }
                                 if (mur.type === "gelee") { joueur.vy = joueur.jumpForce * 0.75; joueur.isGrounded = false; debloquerSucces("gelee"); }
                                 if (mur.type === "mobile_h") { joueur.sur = mur; debloquerSucces("autostop"); }
-                                if (mur.type === "mobile_v") debloquerSucces("ascenseur");
-                                if (mur.type === "convoyeur_g") pousseeConv = -1.6;
-                                if (mur.type === "convoyeur_d") pousseeConv = 1.6;
+                                if (mur.type === "mobile_v") { joueur.sur = mur; debloquerSucces("ascenseur"); }
+                                if (mur.type === "convoyeur_g") { pousseeConv = -1.6; debloquerSucces("convoyeur"); }
+                                if (mur.type === "convoyeur_d") { pousseeConv = 1.6; debloquerSucces("convoyeur"); }
                                 if (mur.type === "fragile" && mur.compte === undefined) mur.compte = 36;
                             } else if (joueur.vy < 0 || mur.type === "mobile_v") {
                                 // Cogne le dessous du bloc en montant
@@ -6384,6 +6651,344 @@
             }
             requestAnimationFrame(update);
         }
+
+        // =====================================================================
+        // V7.5 : MUSIQUE PERSO — colle un lien (Spotify, SoundCloud, YouTube, Deezer, Apple Music
+        // ou un fichier audio) : le lecteur reste actif pendant que tu joues.
+        // =====================================================================
+        Object.assign(I18N_DOM, { "Musique": ["Music", "Musik", "音楽"], "🎵 MUSIQUE": ["🎵 MUSIC", "🎵 MUSIK", "🎵 音楽"] });
+        let lecteurMusique = { type: null, el: null, lien: "", h: 0, api: null };
+        function lireReglagesMusique() { try { return JSON.parse(localStorage.getItem("cyber_hack_musique")) || {}; } catch (e) { return {}; } }
+        function ecrireReglagesMusique(o) { lsSet("cyber_hack_musique", JSON.stringify(Object.assign(lireReglagesMusique(), o))); }
+        function verifierSuccesCompteursV75(cle) {
+            let v = compteursVie[cle] || 0;
+            const T = { pieces: [[50000, "pieces50000"]], cartes: [[25, "cartes25"], [50, "cartes50"]], niveaux: [[20, "niveaux20"]], sauts: [[20000, "sauts20000"]], secondes: [[18000, "temps5h"]], morts: [[1000, "morts1000"]], dashs: [[500, "dash500"]], blocs: [[20000, "blocs20000"]], defis: [[3, "defi3"], [30, "defi30"]], missions: [[10, "missions10"], [25, "missions25"]] };
+            (T[cle] || []).forEach(function(a) { if (v >= a[0]) debloquerSucces(a[1]); });
+        }
+        function analyserLienMusique(brut) {
+            let u = String(brut || "").trim();
+            if (!u) return null;
+            if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+            let url; try { url = new URL(u); } catch (e) { return null; }
+            let h = url.hostname.replace(/^(www|m)\./, ""), m;
+            if (h === "spotify.link" || h === "spoti.fi") return { err: "court" };
+            if (h === "open.spotify.com") {
+                m = url.pathname.match(/\/(playlist|album|track|artist|episode|show)\/([A-Za-z0-9]+)/);
+                if (m) return { type: "spotify", src: "https://open.spotify.com/embed/" + m[1] + "/" + m[2] + "?theme=0", h: 152 };
+                return null;
+            }
+            if (/(^|\.)soundcloud\.com$/.test(h)) return { type: "soundcloud", src: "https://w.soundcloud.com/player/?url=" + encodeURIComponent(u) + "&auto_play=true&hide_related=true&show_comments=false&visual=false", h: /\/sets\//.test(url.pathname) ? 300 : 166 };
+            if (h === "youtube.com" || h === "music.youtube.com" || h === "youtu.be") {
+                let list = url.searchParams.get("list"), v = url.searchParams.get("v");
+                if (h === "youtu.be") v = url.pathname.slice(1).split("/")[0];
+                else if (/^\/(shorts|embed|live)\//.test(url.pathname)) v = url.pathname.split("/")[2];
+                let base = "https://www.youtube.com/embed/";
+                if (list && v) return { type: "youtube", yt: { list: list, v: v }, src: base + encodeURIComponent(v) + "?list=" + encodeURIComponent(list) + "&autoplay=1", h: 220 };
+                if (list) return { type: "youtube", yt: { list: list, v: v }, src: base + "videoseries?list=" + encodeURIComponent(list) + "&autoplay=1", h: 220 };
+                if (v) return { type: "youtube", yt: { list: list, v: v }, src: base + encodeURIComponent(v) + "?autoplay=1&loop=1&playlist=" + encodeURIComponent(v), h: 220 };
+                return null;
+            }
+            if (h === "deezer.com" || h === "deezer.page.link") {
+                m = url.pathname.match(/\/(playlist|album|track)\/(\d+)/);
+                if (m) return { type: "deezer", src: "https://widget.deezer.com/widget/dark/" + m[1] + "/" + m[2] + "?autoplay=true&tracklist=false", h: 180 };
+                return null;
+            }
+            if (h === "music.apple.com") return { type: "apple", src: "https://embed.music.apple.com" + url.pathname + url.search, h: 175 };
+            if (/\.(mp3|ogg|oga|wav|m4a|aac|flac|opus|webm)$/i.test(url.pathname)) return { type: "audio", src: u, h: 54 };
+            return null;
+        }
+        function conteneurMusique() {
+            let c = document.getElementById("lecteur-musique");
+            if (!c) {
+                c = document.createElement("div"); c.id = "lecteur-musique";
+                c.style.cssText = "position:fixed; z-index:3200; left:-9999px; top:0; width:300px;";
+                document.body.appendChild(c);
+            }
+            return c;
+        }
+        function placerLecteurMusique() {
+            let c = conteneurMusique(), zone = document.getElementById("zone-lecteur-musique"), modal = document.getElementById("fenetre-musique");
+            if (!lecteurMusique.el) { c.style.left = "-9999px"; if (zone) zone.style.height = "0px"; return; }
+            if (modal && modal.style.display === "flex" && zone) {
+                zone.style.height = (lecteurMusique.h || 54) + "px";
+                let r = zone.getBoundingClientRect();
+                c.style.left = r.left + "px"; c.style.top = r.top + "px"; c.style.width = r.width + "px";
+            } else { c.style.left = "-9999px"; c.style.top = "0px"; c.style.width = "300px"; } // caché mais la musique continue
+        }
+        window.addEventListener("resize", placerLecteurMusique);
+        function statutMusique(t, ok) { let s = document.getElementById("statut-musique"); if (s) { s.innerText = t; s.style.color = ok ? "#00ff66" : "#ff0055"; } }
+        function marquerSourceMusique(t) {
+            compteursVie["mus_" + t] = 1; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie));
+            if (Object.keys(compteursVie).filter(function(k) { return k.indexOf("mus_") === 0; }).length >= 3) debloquerSucces("melomane");
+        }
+        function shuffleActif() { return lireReglagesMusique().melange !== false; }
+        let _scriptsCharges = {}, _ytPret = null, titresYT = {}, jetonTitres = 0, minuterieCourante = null;
+        function chargerScript(src) {
+            if (_scriptsCharges[src]) return _scriptsCharges[src];
+            _scriptsCharges[src] = new Promise(function(ok, ko) {
+                let sc = document.createElement("script"); sc.src = src; sc.onload = ok;
+                sc.onerror = function() { delete _scriptsCharges[src]; ko(new Error("script")); };
+                document.head.appendChild(sc);
+            });
+            return _scriptsCharges[src];
+        }
+        function chargerYT() {
+            if (_ytPret) return _ytPret;
+            _ytPret = new Promise(function(ok, ko) {
+                if (window.YT && window.YT.Player) { ok(); return; }
+                let prev = window.onYouTubeIframeAPIReady;
+                window.onYouTubeIframeAPIReady = function() { if (prev) { try { prev(); } catch (e) {} } ok(); };
+                let sc = document.createElement("script"); sc.src = "https://www.youtube.com/iframe_api";
+                sc.onerror = function() { _ytPret = null; ko(new Error("yt")); };
+                document.head.appendChild(sc);
+            });
+            return _ytPret;
+        }
+        function titreYouTube(id) {
+            if (titresYT[id]) return Promise.resolve(titresYT[id]);
+            let u = "https://www.youtube.com/watch?v=" + id;
+            return fetch("https://noembed.com/embed?url=" + encodeURIComponent(u)).then(function(r) { return r.json(); })
+                .then(function(j) { if (!j || !j.title) throw new Error("x"); titresYT[id] = j.title; return j.title; })
+                .catch(function() {
+                    return fetch("https://www.youtube.com/oembed?format=json&url=" + encodeURIComponent(u)).then(function(r) { return r.json(); })
+                        .then(function(j) { if (j && j.title) titresYT[id] = j.title; return titresYT[id] || null; }).catch(function() { return null; });
+                });
+        }
+        function iframeSecours(a, el) {
+            let f = document.createElement("iframe"); f.src = a.src; f.width = "100%"; f.height = String(a.h);
+            f.style.cssText = "border:0; border-radius:8px; display:block; background:#000;";
+            f.allow = "autoplay; encrypted-media; clipboard-write; fullscreen; picture-in-picture"; f.title = "Musique";
+            el.innerHTML = ""; el.appendChild(f);
+        }
+        function brancherSoundCloud(a, el) {
+            chargerScript("https://w.soundcloud.com/player/api.js").then(function() {
+                if (lecteurMusique.el !== el || !window.SC) return;
+                let w = SC.Widget(el.firstChild), demarre = false;
+                let api = {
+                    pistes: function() { return new Promise(function(res) { w.getSounds(function(l) { res((l || []).map(function(x) { return { titre: (x.title || "?") + (x.user && x.user.username ? " — " + x.user.username : "") }; })); }); }); },
+                    courant: function() { return new Promise(function(res) { w.getCurrentSoundIndex(res); }); },
+                    jouer: function(i) { w.skip(i); w.play(); },
+                    aleatoire: function() {
+                        w.getSounds(function(l) {
+                            let n = (l || []).length; if (n < 2) return;
+                            w.getCurrentSoundIndex(function(c) { let i; do { i = RND(n); } while (i === c); w.skip(i); w.play(); debloquerSucces("mix"); });
+                        });
+                    }
+                };
+                lecteurMusique.api = api;
+                let initial = function() { if (demarre) return; demarre = true; if (shuffleActif()) api.aleatoire(); };
+                w.bind(SC.Widget.Events.READY, function() { setTimeout(initial, 500); });
+                w.bind(SC.Widget.Events.FINISH, function() { if (shuffleActif()) api.aleatoire(); });
+                setTimeout(initial, 2500); // filet de sécurité si READY est déjà passé
+            }).catch(function() {});
+        }
+        function brancherYouTube(a, el) {
+            chargerYT().then(function() {
+                if (lecteurMusique.el !== el) return;
+                let hote = document.createElement("div"); el.appendChild(hote);
+                let pv = { autoplay: 1, playsinline: 1, rel: 0 };
+                let opts = { width: "100%", height: String(a.h), playerVars: pv, events: {} };
+                if (a.yt.list) { pv.list = a.yt.list; if (a.yt.v) opts.videoId = a.yt.v; else pv.listType = "playlist"; }
+                else { opts.videoId = a.yt.v; pv.loop = 1; pv.playlist = a.yt.v; }
+                let pl = null, init = false;
+                let pret = function() { return pl && typeof pl.getPlaylist === "function"; };
+                let api = {
+                    pistes: function(maj) {
+                        let ids = (pret() && pl.getPlaylist()) || [];
+                        let arr = ids.map(function(id, i) { return { titre: titresYT[id] || ("#" + (i + 1)), id: id }; });
+                        setTimeout(function() {
+                            let k = 0, jeton = ++jetonTitres;
+                            function suivant() {
+                                if (jeton !== jetonTitres || k >= ids.length) return;
+                                let i = k++;
+                                titreYouTube(ids[i]).then(function(t) { if (t && jeton === jetonTitres) maj(i, t); suivant(); });
+                            }
+                            for (let x = 0; x < 5; x++) suivant();
+                        }, 0);
+                        return Promise.resolve(arr);
+                    },
+                    courant: function() { return Promise.resolve(pret() ? pl.getPlaylistIndex() : -1); },
+                    jouer: function(i) { if (pret()) pl.playVideoAt(i); },
+                    aleatoire: function() {
+                        if (!pret()) return;
+                        let l = pl.getPlaylist(); if (!l || l.length < 2) { return; }
+                        let c = pl.getPlaylistIndex(), i; do { i = RND(l.length); } while (i === c);
+                        pl.playVideoAt(i); debloquerSucces("mix");
+                    },
+                    detruire: function() { try { pl.destroy(); } catch (e) {} }
+                };
+                let tenterInit = function() {
+                    if (init || !pret()) return;
+                    let l = pl.getPlaylist();
+                    if (l && l.length) { init = true; if (shuffleActif() && l.length > 1) api.aleatoire(); }
+                };
+                opts.events.onReady = function() { setTimeout(tenterInit, 1200); };
+                opts.events.onStateChange = function(e) {
+                    if (lecteurMusique.el !== el) return;
+                    tenterInit();
+                    if (e.data === 0 && a.yt.list && shuffleActif()) api.aleatoire(); // piste terminée
+                };
+                pl = new YT.Player(hote, opts);
+                if (a.yt.list) lecteurMusique.api = api;
+            }).catch(function() {
+                if (lecteurMusique.el !== el) return;
+                iframeSecours(a, el);
+                statutMusique(tx(["Lecteur YouTube lancé en mode simple (l'aléatoire n'est pas disponible).", "YouTube player started in simple mode (shuffle unavailable).", "YouTube-Player im einfachen Modus gestartet (Zufall nicht verfügbar).", "YouTubeプレイヤーを簡易モードで起動(シャッフル不可)。"]), true);
+            });
+        }
+        function arreterMusique() {
+            fermerPistesMusique();
+            let api = lecteurMusique.api;
+            if (api && api.detruire) { try { api.detruire(); } catch (e) {} }
+            if (lecteurMusique.el) { try { if (lecteurMusique.el.pause) lecteurMusique.el.pause(); } catch (e) {} lecteurMusique.el.remove(); }
+            lecteurMusique = { type: null, el: null, lien: "", h: 0, api: null };
+            placerLecteurMusique();
+        }
+        function lancerMusique(brut) {
+            let a = analyserLienMusique(brut);
+            if (!a || a.err) {
+                statutMusique(a && a.err ? tx(["Les liens courts (spotify.link) ne marchent pas : sur Spotify, utilise Partager → Copier le lien du titre ou de la playlist.", "Short links (spotify.link) don't work: on Spotify, use Share → Copy link to the track or playlist.", "Kurzlinks (spotify.link) funktionieren nicht: Nutze bei Spotify Teilen → Link kopieren.", "短縮リンク(spotify.link)は使えません。Spotifyでは「共有→リンクをコピー」を使ってください。"]) : tx(["Lien non reconnu. Essaie un lien Spotify, SoundCloud, YouTube, Deezer, Apple Music ou un fichier .mp3 / .ogg / .wav.", "Link not recognized. Try a Spotify, SoundCloud, YouTube, Deezer, Apple Music link or an .mp3 / .ogg / .wav file.", "Link nicht erkannt. Probiere einen Spotify-, SoundCloud-, YouTube-, Deezer-, Apple-Music-Link oder eine .mp3 / .ogg / .wav-Datei.", "リンクを認識できません。Spotify・SoundCloud・YouTube・Deezer・Apple Musicのリンクか、.mp3 / .ogg / .wavファイルを試してください。"]), false);
+                return false;
+            }
+            arreterMusique();
+            let c = conteneurMusique(), el, r = lireReglagesMusique();
+            if (a.type === "audio") {
+                el = document.createElement("audio"); el.src = a.src; el.controls = true; el.loop = true; el.autoplay = true;
+                el.volume = typeof r.volume === "number" ? r.volume : 0.6; el.style.cssText = "width:100%; display:block;";
+                el.onerror = function() { statutMusique(tx(["Impossible de lire ce fichier (lien direct vers un fichier audio requis).", "Can't play this file (a direct link to an audio file is required).", "Datei kann nicht abgespielt werden (direkter Link zu einer Audiodatei nötig).", "このファイルを再生できません(音声ファイルへの直接リンクが必要)。"]), false); };
+                try { let pr = el.play(); if (pr && pr.catch) pr.catch(function() {}); } catch (e) {}
+            } else if (a.type === "youtube") {
+                el = document.createElement("div"); el.style.cssText = "border-radius:8px; overflow:hidden; background:#000;";
+            } else {
+                el = document.createElement("div"); el.style.cssText = "border-radius:8px; overflow:hidden; background:#000;";
+                iframeSecours(a, el);
+            }
+            c.appendChild(el);
+            lecteurMusique = { type: a.type, el: el, lien: String(brut).trim(), h: a.h, api: null };
+            if (a.type === "youtube") brancherYouTube(a, el);
+            else if (a.type === "soundcloud") brancherSoundCloud(a, el);
+            ecrireReglagesMusique({ lien: lecteurMusique.lien, auto: r.auto !== false });
+            debloquerSucces("dj"); marquerSourceMusique(a.type);
+            placerLecteurMusique();
+            let msg = "▶ " + tx(["Musique lancée !", "Music started!", "Musik gestartet!", "音楽を再生中!"]);
+            if (a.type === "youtube" || a.type === "soundcloud") { if (shuffleActif()) msg += "  🔀"; }
+            else if (a.type !== "audio" && shuffleActif()) msg += "\n" + tx(["Spotify, Deezer et Apple Music ne laissent pas le jeu contrôler leur lecteur : pas d'aléatoire ni de liste de pistes ici (utilise le bouton aléatoire du lecteur, ou une playlist YouTube / SoundCloud).", "Spotify, Deezer and Apple Music don't let the game control their player: no shuffle or track list here (use the player's own shuffle button, or a YouTube / SoundCloud playlist).", "Spotify, Deezer und Apple Music lassen das Spiel ihren Player nicht steuern: hier gibt es weder Zufall noch Titelliste (nutze den Zufallsknopf des Players oder eine YouTube- / SoundCloud-Playlist).", "Spotify・Deezer・Apple Musicはゲームからの操作を許可していないため、シャッフルと曲リストは使えません(プレイヤー側のシャッフルか、YouTube / SoundCloudのプレイリストを使ってください)。"]);
+            statutMusique(msg, true);
+            let vol = document.getElementById("volume-musique"); if (vol) vol.disabled = (a.type !== "audio");
+            return true;
+        }
+        function nextMusique() {
+            if (!lecteurMusique.api) { statutMusique(tx(["« Piste aléatoire » fonctionne avec une playlist YouTube ou SoundCloud en cours de lecture.", "“Random track” works with a YouTube or SoundCloud playlist that is playing.", "„Zufälliger Titel“ funktioniert mit einer laufenden YouTube- oder SoundCloud-Playlist.", "「ランダムな曲」は再生中のYouTube / SoundCloudプレイリストで使えます。"]), false); return; }
+            lecteurMusique.api.aleatoire();
+        }
+        function fermerPistesMusique() {
+            jetonTitres++; clearInterval(minuterieCourante); minuterieCourante = null;
+            let f = document.getElementById("fenetre-pistes"); if (f) f.remove();
+        }
+        function ouvrirPistesMusique() {
+            let api = lecteurMusique.api;
+            if (!api) { statutMusique(tx(["La liste des pistes n'est disponible que pour une playlist YouTube ou SoundCloud en cours de lecture (lance-la d'abord).", "The track list is only available for a YouTube or SoundCloud playlist that is playing (start it first).", "Die Titelliste gibt es nur für eine laufende YouTube- oder SoundCloud-Playlist (starte sie zuerst).", "曲リストは再生中のYouTube / SoundCloudプレイリストでのみ使えます(先に再生してください)。"]), false); return; }
+            fermerPistesMusique();
+            let fond = document.createElement("div"); fond.id = "fenetre-pistes"; fond.className = "fenetre-info"; fond.style.display = "flex"; fond.style.zIndex = "3400";
+            fond.onclick = function(e) { if (e.target === fond) fermerPistesMusique(); };
+            let boite = document.createElement("div"); boite.className = "conteneur-parametres";
+            boite.style.cssText = "border-color:#1db954; box-shadow:0 0 25px rgba(29,185,84,0.4); display:flex; flex-direction:column; overflow:hidden; max-height:88vh; text-align:left;";
+            let titre = document.createElement("h2"); titre.style.cssText = "color:#1db954; margin:0 0 8px 0; text-align:center;"; titre.innerText = "📃 " + tx(["PISTES DE LA PLAYLIST", "PLAYLIST TRACKS", "PLAYLIST-TITEL", "プレイリストの曲"]);
+            let rech = document.createElement("input"); rech.type = "text"; rech.autocomplete = "off"; rech.spellcheck = false; rech.placeholder = "🔎 " + tx(["Rechercher…", "Search…", "Suchen…", "検索…"]);
+            rech.style.cssText = "width:100%; box-sizing:border-box; padding:8px; margin-bottom:8px; background:#0b0f19; color:#00ffcc; border:2px solid #1db954; border-radius:4px; font-family:'Courier New',monospace; font-size:13px;";
+            let liste = document.createElement("div"); liste.style.cssText = "overflow-y:auto; flex:1; min-height:140px; color:#8892b0; font-size:12px;";
+            liste.innerText = tx(["Chargement des pistes…", "Loading tracks…", "Titel werden geladen…", "曲を読み込み中…"]);
+            let bAle = document.createElement("button"); bAle.className = "btn-modal-action"; bAle.style.cssText = "background:#1db954; color:#0b0f19;"; bAle.innerText = "⏭ " + tx(["PISTE ALÉATOIRE", "RANDOM TRACK", "ZUFÄLLIGER TITEL", "ランダムな曲"]); bAle.onclick = function() { api.aleatoire(); };
+            let bF = document.createElement("button"); bF.className = "btn-modal-action"; bF.innerText = tx(["FERMER", "CLOSE", "SCHLIESSEN", "閉じる"]); bF.onclick = fermerPistesMusique;
+            let rows = [];
+            let marquer = function(c) { rows.forEach(function(r, i) { r.d.style.background = (i === c) ? "rgba(29,185,84,0.28)" : "transparent"; r.d.style.color = (i === c) ? "#ffffff" : "#ccd6f6"; }); };
+            rech.addEventListener("keydown", function(e) { e.stopPropagation(); if (e.key === "Escape") fermerPistesMusique(); });
+            rech.addEventListener("input", function() { let q = rech.value.trim().toLowerCase(); rows.forEach(function(r) { r.d.style.display = (!q || r.txt.indexOf(q) >= 0) ? "" : "none"; }); });
+            boite.append(titre, rech, liste, bAle, bF); fond.appendChild(boite); document.body.appendChild(fond);
+            api.pistes(function(i, t) { if (rows[i]) { rows[i].d.innerText = (i + 1) + ". " + t; rows[i].txt = t.toLowerCase(); } }).then(function(arr) {
+                if (!document.getElementById("fenetre-pistes")) return;
+                liste.innerHTML = "";
+                if (!arr.length) { liste.innerText = tx(["Aucune piste trouvée (la playlist est peut-être privée ou de type « mix »).", "No track found (the playlist may be private or a “mix”).", "Keine Titel gefunden (die Playlist ist evtl. privat oder ein „Mix“).", "曲が見つかりません(非公開またはミックス型の可能性)。"]); return; }
+                arr.forEach(function(pi, i) {
+                    let d = document.createElement("div");
+                    d.style.cssText = "padding:7px 6px; border-bottom:1px solid #222c44; font-size:12px; color:#ccd6f6; cursor:pointer; border-radius:3px; line-height:1.35;";
+                    d.innerText = (i + 1) + ". " + pi.titre;
+                    d.onclick = function() { api.jouer(i); debloquerSucces("piste_choisie"); marquer(i); };
+                    rows.push({ d: d, txt: pi.titre.toLowerCase() }); liste.appendChild(d);
+                });
+                api.courant().then(function(c) { if (typeof c === "number") marquer(c); });
+            });
+            minuterieCourante = setInterval(function() {
+                if (!document.getElementById("fenetre-pistes")) { fermerPistesMusique(); return; }
+                if (rows.length && lecteurMusique.api === api) api.courant().then(function(c) { if (typeof c === "number") marquer(c); });
+            }, 1500);
+        }
+        function fermerMusique() {
+            let m = document.getElementById("fenetre-musique"); if (m) m.remove();
+            placerLecteurMusique();
+        }
+        function ouvrirMusique() {
+            let ancien = document.getElementById("fenetre-musique"); if (ancien) ancien.remove();
+            let r = lireReglagesMusique();
+            let fond = document.createElement("div");
+            fond.id = "fenetre-musique"; fond.className = "fenetre-info"; fond.style.display = "flex"; fond.style.zIndex = "3100";
+            fond.onclick = function(e) { if (e.target === fond) fermerMusique(); };
+            let boite = document.createElement("div"); boite.className = "conteneur-parametres";
+            boite.style.cssText = "border-color:#1db954; box-shadow:0 0 25px rgba(29,185,84,0.4); max-height:92vh; overflow-y:auto; text-align:left;";
+            boite.addEventListener("scroll", placerLecteurMusique);
+            let titre = document.createElement("h2"); titre.style.cssText = "color:#1db954; margin-top:0; text-align:center;"; titre.innerText = "🎵 MUSIQUE";
+            let aide = document.createElement("p"); aide.style.cssText = "color:#8892b0; font-size:12px; line-height:1.5;";
+            aide.innerText = tx(["Colle le lien d'une playlist, d'un album ou d'un titre Spotify, SoundCloud, YouTube, YouTube Music, Deezer ou Apple Music, ou d'un fichier audio (.mp3, .ogg, .wav). Ta musique se lance pendant que tu joues et continue quand tu fermes cette fenêtre.", "Paste the link of a playlist, album or track from Spotify, SoundCloud, YouTube, YouTube Music, Deezer or Apple Music, or of an audio file (.mp3, .ogg, .wav). Your music plays while you play and keeps going when you close this window.", "Füge den Link einer Playlist, eines Albums oder Titels von Spotify, SoundCloud, YouTube, YouTube Music, Deezer oder Apple Music ein, oder den einer Audiodatei (.mp3, .ogg, .wav). Deine Musik läuft beim Spielen und geht weiter, wenn du dieses Fenster schließt.", "Spotify・SoundCloud・YouTube・YouTube Music・Deezer・Apple Musicのプレイリスト/アルバム/曲、または音声ファイル(.mp3 / .ogg / .wav)のリンクをはってください。プレイ中に音楽が流れ、このウィンドウを閉じても続きます。"]);
+            let inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
+            inp.value = lecteurMusique.lien || r.lien || ""; inp.placeholder = "https://open.spotify.com/playlist/…";
+            inp.style.cssText = "width:100%; box-sizing:border-box; padding:9px; margin:6px 0; background:#0b0f19; color:#00ffcc; border:2px solid #1db954; border-radius:4px; font-family:'Courier New',monospace; font-size:13px;";
+            inp.addEventListener("keydown", function(e) { e.stopPropagation(); if (e.key === "Enter") lancerMusique(inp.value); if (e.key === "Escape") fermerMusique(); });
+            let bLancer = document.createElement("button"); bLancer.className = "btn-modal-action"; bLancer.style.cssText = "background:#1db954; color:#0b0f19;"; bLancer.innerText = "▶ " + tx(["LANCER", "PLAY", "ABSPIELEN", "再生"]);
+            bLancer.onclick = function() { lancerMusique(inp.value); };
+            let bStop = document.createElement("button"); bStop.className = "btn-modal-action"; bStop.style.cssText = "background:#3a0a0a; color:#ff6b6b; border:1px solid #ff0055;"; bStop.innerText = "⏹ " + tx(["ARRÊTER LA MUSIQUE", "STOP THE MUSIC", "MUSIK STOPPEN", "音楽を停止"]);
+            bStop.onclick = function() { arreterMusique(); statutMusique(tx(["Musique arrêtée.", "Music stopped.", "Musik gestoppt.", "音楽を停止しました。"]), true); };
+            let lab = document.createElement("label"); lab.style.cssText = "display:flex; gap:8px; align-items:center; color:#c5cde3; font-size:12px; margin:10px 0 4px 0; cursor:pointer;";
+            let chk = document.createElement("input"); chk.type = "checkbox"; chk.checked = r.auto !== false;
+            chk.onchange = function() { ecrireReglagesMusique({ auto: chk.checked }); };
+            let lt = document.createElement("span"); lt.innerText = tx(["Relancer ma musique automatiquement au prochain chargement (au premier clic ou à la première touche)", "Restart my music automatically on next load (on first click or key press)", "Meine Musik beim nächsten Laden automatisch starten (beim ersten Klick oder Tastendruck)", "次回の読み込み時に自動で再生(最初のクリックまたはキー入力時)"]);
+            lab.append(chk, lt);
+            let lv = document.createElement("label"); lv.style.cssText = "display:flex; gap:8px; align-items:center; color:#c5cde3; font-size:12px; margin:6px 0;";
+            let vol = document.createElement("input"); vol.type = "range"; vol.id = "volume-musique"; vol.min = 0; vol.max = 100; vol.style.flex = "1";
+            vol.value = Math.round((typeof r.volume === "number" ? r.volume : 0.6) * 100); vol.disabled = !(lecteurMusique.type === "audio");
+            vol.oninput = function() { let v = vol.value / 100; ecrireReglagesMusique({ volume: v }); if (lecteurMusique.type === "audio") lecteurMusique.el.volume = v; };
+            let lvt = document.createElement("span"); lvt.innerText = "🔊 " + tx(["Volume (fichiers audio ; sinon règle-le dans le lecteur)", "Volume (audio files; otherwise use the player's own)", "Lautstärke (Audiodateien; sonst im Player einstellen)", "音量(音声ファイル用。他はプレイヤー側で調整)"]);
+            lv.append(lvt, vol);
+            let zone = document.createElement("div"); zone.id = "zone-lecteur-musique"; zone.style.cssText = "height:0; margin:8px 0; border-radius:8px;";
+            let st = document.createElement("p"); st.id = "statut-musique"; st.style.cssText = "font-size:12px; min-height:16px; line-height:1.4; white-space:pre-line;";
+            let astuce = document.createElement("p"); astuce.style.cssText = "color:#6b7a99; font-size:10px; line-height:1.4;";
+            astuce.innerText = tx(["Astuce : Spotify bloque parfois le démarrage automatique : si rien ne joue, appuie sur ▶ dans le lecteur. Si le titre est protégé ou indisponible chez toi, le lecteur l'indiquera lui-même.", "Tip: Spotify sometimes blocks autoplay: if nothing plays, press ▶ in the player. If a track is protected or unavailable where you live, the player will say so itself.", "Tipp: Spotify blockiert manchmal den Autostart: Wenn nichts läuft, drücke ▶ im Player. Ist ein Titel geschützt oder nicht verfügbar, zeigt der Player das selbst an.", "ヒント:Spotifyは自動再生をブロックすることがあります。再生されない時はプレイヤーの▶を押してください。"]);
+            let bF = document.createElement("button"); bF.className = "btn-modal-action"; bF.innerText = tx(["FERMER", "CLOSE", "SCHLIESSEN", "閉じる"]); bF.onclick = fermerMusique;
+            let rangee = document.createElement("div"); rangee.style.cssText = "display:flex; gap:6px;";
+            let bPistes = document.createElement("button"); bPistes.className = "btn-modal-action"; bPistes.style.cssText = "flex:1; background:#0b0f19; color:#1db954; border:1px solid #1db954;"; bPistes.innerText = "📃 " + tx(["LISTE DES PISTES", "TRACK LIST", "TITELLISTE", "曲リスト"]); bPistes.onclick = ouvrirPistesMusique;
+            let bNext = document.createElement("button"); bNext.className = "btn-modal-action"; bNext.style.cssText = "flex:1; background:#0b0f19; color:#1db954; border:1px solid #1db954;"; bNext.innerText = "⏭ " + tx(["PISTE ALÉATOIRE", "RANDOM TRACK", "ZUFÄLLIGER TITEL", "ランダムな曲"]); bNext.onclick = nextMusique;
+            rangee.append(bPistes, bNext);
+            let lm = document.createElement("label"); lm.style.cssText = "display:flex; gap:8px; align-items:center; color:#c5cde3; font-size:12px; margin:10px 0 4px 0; cursor:pointer;";
+            let chkM = document.createElement("input"); chkM.type = "checkbox"; chkM.checked = r.melange !== false;
+            chkM.onchange = function() { ecrireReglagesMusique({ melange: chkM.checked }); };
+            let lmt = document.createElement("span"); lmt.innerText = "🔀 " + tx(["Lecture aléatoire : au démarrage et à la fin de chaque piste, une piste de la playlist est choisie au hasard (playlists YouTube et SoundCloud)", "Shuffle: at start and whenever a track ends, a random track of the playlist is picked (YouTube and SoundCloud playlists)", "Zufallswiedergabe: Beim Start und nach jedem Titel wird zufällig ein Titel der Playlist gewählt (YouTube- und SoundCloud-Playlists)", "シャッフル再生:開始時と曲の終了時にプレイリストからランダムに選曲(YouTube・SoundCloudのプレイリスト)"]);
+            lm.append(chkM, lmt);
+            boite.append(titre, aide, inp, bLancer, bStop, lm, rangee, lab, lv, zone, st, astuce, bF);
+            fond.appendChild(boite); document.body.appendChild(fond);
+            placerLecteurMusique();
+            if (!lecteurMusique.el) inp.focus();
+        }
+        // Relance automatique au premier geste de l'utilisateur (les navigateurs interdisent l'audio sans geste)
+        window.addEventListener("load", function() {
+            let r = lireReglagesMusique();
+            if (!(r.auto !== false && r.lien)) return;
+            const evts = ["click", "keydown", "touchend"];
+            const go = function() {
+                if (document.getElementById("fenetre-musique") || lecteurMusique.el) return;
+                evts.forEach(function(e) { document.removeEventListener(e, go, true); });
+                lancerMusique(r.lien);
+            };
+            evts.forEach(function(e) { document.addEventListener(e, go, true); });
+        });
 
         // Remise à zéro totale : banque, blocs, skins et langue (appelée par le
         // bouton "SUPPRIMER TOUTES LES SAUVEGARDES" du panneau Paramètres)
@@ -6425,6 +7030,10 @@
 
         genererMapProcedurale();
         stats.chronoActif = true; try { majTitresSkins(); } catch (e) {} majCompetences(); majSkinsSucces(); majBoutonHardcore();
+        try { // V7.4 : on remet le skin choisi avant le rechargement
+            let nomSkin = lsGet("cyber_hack_skin_actif"), sk = nomSkin && listeSkins.find(x => x.nom === nomSkin);
+            if (sk && sk.acquis) { joueur.element.style.background = sk.fond; joueur.element.innerHTML = sk.html; }
+        } catch (e) {}
         positionnerPanneaux();
         appliquerTraductions();   // traduction immédiate, sans attendre l'événement load
         update();
