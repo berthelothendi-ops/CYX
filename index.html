@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V8.0</title><!-- build V8.0 : écran titre compact + nouvelles couleurs -->
+    <title>CYBER_HACK // PROTOCOL — V8.2</title><!-- build V8.2 : récompenses de succès, skins Halloween, menus à deux niveaux -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -678,7 +678,7 @@
             <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25);" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
         </div>
 
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:14px; letter-spacing:3px;">V8.0</p>
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:14px; letter-spacing:3px;">V8.2</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -690,6 +690,7 @@
             <div class="ligne-touche"><div class="touches"><span class="touche" data-k="q">Q</span><span class="touche" data-k="d">D</span><span class="touche" data-k="arrowleft">←</span><span class="touche" data-k="arrowright">→</span></div><div class="desc">Aller à gauche / à droite<small>Clavier AZERTY : le côté gauche du clavier, comme un vrai hacker.</small></div></div>
             <div class="ligne-touche"><div class="touches"><span class="touche" data-k="z">Z</span><span class="touche" data-k=" ">ESPACE</span><span class="touche" data-k="arrowup">↑</span></div><div class="desc">Sauter<small>Plus tu relâches tard, plus tu regrettes le piège en dessous. Inactif en mode création.</small></div></div>
             <div class="ligne-touche"><div class="touches"><span class="touche" data-k="mobile">📱</span></div><div class="desc">Mode mobile<small>Joystick + bouton de saut à l'écran.</small></div></div>
+            <div class="ligne-touche"><div class="touches"><span class="touche" data-k="m">M</span></div><div class="desc">Couper / remettre les sons du jeu<small>La musique de ta playlist n'est pas touchée.</small></div></div>
             <h3>🛠️ CRÉATION DE NIVEAU</h3>
             <div class="ligne-touche"><div class="touches"><span class="touche" data-k="e">E</span></div><div class="desc">Activer / quitter le mode création<small>Le monde se fige, tu deviens architecte.</small></div></div>
             <div class="ligne-touche"><div class="touches"><span class="touche" data-k="mouse">🖱️ Clic</span></div><div class="desc">Poser un bloc<small>Sur la case sous le curseur.</small></div></div>
@@ -847,6 +848,8 @@
             <button class="btn-modal-action" onclick="ouvrirSucces()" style="background-color:#ff0055; color:#fff;">🏅 SUCCÈS</button>
             <button class="btn-modal-action" onclick="ouvrirMusique()" style="background-color:#1db954; color:#0b0f19;">🎵 MUSIQUE</button>
             <button class="btn-modal-action" id="btn-hardcore" onclick="basculerHardcore()" style="background-color:#3a0a0a; color:#ff6b6b; border:1px solid #ff0055;">☠️ MODE HARDCORE : OFF</button>
+            <button class="btn-modal-action" id="btn-son" onclick="basculerSon()" style="background-color:#1b3a5c; color:#9fd8ff; border:1px solid #3fa9ff;">🔊 SONS DU JEU : ON</button>
+            <div style="color:#8892b0; font-size:11px; text-align:left; margin:4px 0 8px 0;">🔉 Volume des sons<input type="range" id="volume-son" min="0" max="100" value="50" style="width:100%;" oninput="reglerVolumeSon(this.value)" onchange="son('piece')"></div>
             <p style="color: #8892b0; font-size: 10px; margin: 10px 0 4px 0; text-align: left;">Niveaux créés par le développeur, à essayer librement :</p>
             <button class="btn-modal-action" id="btn-voir-fin" onclick="afficherEcranFin()" style="display:none; background-color:#ffcc00; color:#0b0f19;">🏆 VOIR LA FIN</button>
             <button class="btn-modal-action" id="btn-voir-credits" onclick="afficherCredits()" style="display:none; background-color:#00ffcc; color:#0b0f19;">🎬 CRÉDITS</button>
@@ -871,6 +874,7 @@
             <button id="btn-histoire-toggle" class="btn-hud-icone" onclick="basculerModeHistoire()" title="Mode Histoire / Normal">📖</button>
             <button id="btn-test-histoire" class="btn-hud-icone" onclick="ouvrirTestHistoire()" title="Tester toutes les missions de l'histoire" style="display:none;">🧪</button>
             <button id="btn-creatif-toggle" class="btn-hud-icone" onclick="basculerModeCreatif()" title="Mode Créatif / Inventaire">🎒</button>
+            <button id="btn-son-toggle" class="btn-hud-icone" onclick="basculerSon()" title="Son du jeu (M)">🔊</button>
             <button id="btn-musique-toggle" class="btn-hud-icone" onclick="ouvrirMusique()" title="Musique">🎵</button>
             <button id="btn-parametres" class="btn-hud-icone" onclick="ouvrirParametres()" title="Paramètres">⚙️</button>
         </div>
@@ -1439,7 +1443,7 @@
         function changerLangue(langue) {
             marquerLangue(langueActuelle); marquerLangue(langue);
             langueActuelle = langue;
-            lsSet("cyber_hack_langue", langue);
+            lsSet("cyber_hack_langue", langue); try { majBoutonSon(); } catch (e) {}
             appliquerTraductions();
         }
 
@@ -1457,6 +1461,7 @@
 
         // --- Écran Titre ---
         function fermerEcranTitre() {
+            son("start");
             document.getElementById("ecran-titre").style.display = "none";
         }
         function ouvrirEcranTitre() {
@@ -1952,8 +1957,8 @@
             stop: ["STOP", "STOP"], valider: ["VALIDER", "SUBMIT"], binaire: ["Valeur à obtenir : ", "Target value: "]
         };
         const BASE_BTN_PLUS = "text-align:left; font-size:12px;";
-        function okPlus(c) { c.msg(tx(UI_TACHE.ok), "#00ffcc"); setTimeout(function() { c.succes(); }, 450); }
-        function fautePlus(c, s) { c.ajouter(-s); c.msg(tx(UI_TACHE.faux) + " : −" + s + " s"); }
+        function okPlus(c) { son("ok"); c.msg(tx(UI_TACHE.ok), "#00ffcc"); setTimeout(function() { c.succes(); }, 450); }
+        function fautePlus(c, s) { son("faux"); c.ajouter(-s); c.msg(tx(UI_TACHE.faux) + " : −" + s + " s"); }
         function surligner(b, couleur) { b.style.backgroundColor = couleur; }
 
         Object.assign(TACHES, {
@@ -2212,12 +2217,12 @@
                 ajouter: function(d) { reste = Math.max(1, reste + d); majChrono(); },
                 succes: function() {
                     if (fini) return; fini = true; clearInterval(tacheMinuteur);
-                    g("ecran-tache").style.display = "none"; tacheActive = false; callbackSucces();
+                    g("ecran-tache").style.display = "none"; tacheActive = false; son("tache_ok"); callbackSucces();
                 },
                 echec: function(m) {
                     if (fini) return; fini = true; clearInterval(tacheMinuteur);
                     grille.style.pointerEvents = "none";
-                    statut.innerText = m + " " + tx(UI_TACHE.retry); statut.style.color = "#ffaa00";
+                    statut.innerText = m + " " + tx(UI_TACHE.retry); statut.style.color = "#ffaa00"; son("erreur");
                     setTimeout(function() { if (jeton === tacheJeton) lancerTachePiratage(callbackSucces, type, zone, donnees); }, 1500);
                 }
             };
@@ -2244,14 +2249,14 @@
         // V5 : fenêtre des nouveautés, affichée une seule fois par version
         window.addEventListener("load", function() {
             let vue = null; try { vue = localStorage.getItem("cyber_hack_version_vue"); } catch (e) {}
-            if (vue === "8.0") return;
-            try { localStorage.setItem("cyber_hack_version_vue", "8.0"); } catch (e) {}
+            if (vue === "8.2") return;
+            try { localStorage.setItem("cyber_hack_version_vue", "8.2"); } catch (e) {}
             setTimeout(function() {
                 afficherAlerte(tx([
-                    "🆕 V8.0 — Mise à jour !\n\n🧩 Écran titre compact : boutons regroupés par deux\n🎨 12 nouvelles couleurs de blocs\n📜 Détails dans le Journal des mises à jour",
-                    "🆕 V8.0 — Update!\n\n🧩 Compact title screen: buttons grouped in pairs\n🎨 12 new block colors\n📜 Details in the Update Log",
-                    "🆕 V8.0 — Update!\n\n🧩 Kompakter Titelbildschirm: Knöpfe paarweise gruppiert\n🎨 12 neue Blockfarben\n📜 Details im Update-Journal",
-                    "🆕 V8.0 — アップデート!\n\n🧩 コンパクトなタイトル画面:ボタンを2つずつ配置\n🎨 新しいブロックカラー12色\n📜 詳細はアップデート履歴へ"
+                    "🆕 V8.2 — Mise à jour !\n\n🔊 Sons du jeu : saut, pièces, checkpoints, blocs, victoire, succès…\n💀 Chaque skin meurt à sa façon : 12 animations et sons de mort différents (change de skin pour les voir)\n🔇 Bouton 🔊 (ou touche M) pour couper les sons du jeu sans toucher à ta musique\n🏅 4 nouveaux succès (dont un secret)\n📜 Détails dans le Journal des mises à jour\n\n🧩 Écran titre compact : boutons par deux\n🎨 12 nouvelles couleurs de blocs\n🏅 Récompenses de succès selon la difficulté (jusqu'à 10 000 🪙)\n🎃 Skins Halloween (octobre uniquement) + menus de skins à deux niveaux",
+                    "🆕 V8.2 — Update!\n\n🔊 Game sounds: jump, coins, checkpoints, blocks, victory, achievements…\n💀 Every skin dies its own way: 12 different death animations and sounds (change skin to see them)\n🔇 🔊 button (or M key) to mute game sounds without touching your music\n🏅 4 new achievements (one is secret)\n📜 Details in the Update Log\n\n🧩 Compact title screen: buttons in pairs\n🎨 12 new block colors\n🏅 Achievement rewards by difficulty (up to 10,000 🪙)\n🎃 Halloween skins (October only) + two-level skin menus",
+                    "🆕 V8.2 — Update!\n\n🔊 Spielsounds: Sprung, Münzen, Checkpoints, Blöcke, Sieg, Erfolge…\n💀 Jeder Skin stirbt auf seine Art: 12 verschiedene Todesanimationen und -sounds (Skin wechseln zum Ansehen)\n🔇 🔊-Knopf (oder Taste M) schaltet Spielsounds stumm, ohne deine Musik zu berühren\n🏅 4 neue Erfolge (einer davon geheim)\n📜 Details im Update-Journal\n\n🧩 Kompakter Titelbildschirm: Knöpfe paarweise\n🎨 12 neue Blockfarben\n🏅 Erfolgsbelohnungen nach Schwierigkeit (bis 10.000 🪙)\n🎃 Halloween-Skins (nur Oktober) + zweistufige Skin-Menüs",
+                    "🆕 V8.2 — アップデート!\n\n🔊 ゲームサウンド:ジャンプ、コイン、チェックポイント、ブロック、勝利、実績…\n💀 スキンごとに違う死に方:死亡アニメーションと効果音が12種類(スキンを変えて見てみよう)\n🔇 🔊ボタン(またはMキー)で音楽はそのままゲーム音だけ消せる\n🏅 新しい実績4つ(1つは秘密)\n📜 詳細はアップデート履歴へ\n\n🧩 コンパクトなタイトル画面:ボタンを2つずつ\n🎨 新ブロックカラー12色\n🏅 実績の報酬が難易度で変化(最大10,000 🪙)\n🎃 ハロウィンスキン(10月限定)+ 2段階スキンメニュー"
                 ]));
             }, 700);
         });
@@ -2710,11 +2715,11 @@
             "Aurore Rose": ["Dawn Pink", "Morgenrosa", "ドーンピンク"], "Minuit Bleu": ["Midnight Blue", "Mitternachtsblau", "ミッドナイトブルー"]
         });
         const JOURNAL_MAJ = [
-            { v: "7.6 → 8.0", titre: ["GROSSE V8 : écran titre compact", "BIG V8: compact title screen", "GROSSES V8: kompakter Titelbildschirm", "大型V8:コンパクトなタイトル画面"], t: [
-                "🧩 Écran titre réorganisé : les boutons sont regroupés par deux, le titre et la version sont de nouveau visibles sur une seule page\n🎨 12 nouvelles couleurs de blocs",
-                "🧩 Title screen reorganized: buttons grouped in pairs, title and version visible again on a single page\n🎨 12 new block colors",
-                "🧩 Titelbildschirm neu geordnet: Knöpfe paarweise gruppiert, Titel und Version wieder auf einer Seite sichtbar\n🎨 12 neue Blockfarben",
-                "🧩 タイトル画面を整理:ボタンを2つずつ並べ、タイトルとバージョンが1ページで見える\n🎨 新しいブロックカラー12色"] },
+            { v: "7.6 → 8.2", titre: ["Sons du jeu et morts personnalisées", "Game sounds and custom deaths", "Spielsounds und individuelle Tode", "ゲーム音と個性的な死亡演出"], t: [
+                "🔊 Tous les sons du jeu, fabriqués en direct (aucun fichier) : saut et double saut, pièces (x1, x5, x10 et jackpot x100), checkpoint, trampolines, gelée, boost, dash, téléporteurs, portail, interrupteur, portes, clés, orbes, plateformes fragiles, tourelles, fragments, murs de zone, changement de zone, victoire, succès, boutique, pause, mode création…\n💀 12 animations de mort ET sons de mort, choisis selon ton skin actuel : robot (erreur système), fantôme, feu, squelette (os qui s'entrechoquent), bulles, ange (harpe), glitch, chat (miaou), fumée (ninja), slime, étoiles… et le classique, qui pioche au hasard parmi explosion, trombone triste, « oof » et arcade\n💬 De temps en temps, un petit message de mort apparaît (YOU DIED, WASTED, 404, F…)\n🔇 Bouton 🔊 en haut (ou touche M, ou dans les paramètres) : coupe les sons du jeu sans toucher à ta musique, qui reste à part. Un réglage de volume des sons est aussi dans les paramètres\n🎮 Un code secret pour les anciens…\n🏅 4 nouveaux succès : Mode silencieux, Mourir avec style, Cérémonie funèbre, et un secret\n🧩 Écran titre réorganisé : boutons regroupés par deux, titre et version de nouveau visibles sur une seule page\n🎨 12 nouvelles couleurs de blocs\n🏅 Récompenses de succès selon la difficulté : de 50 🪙 (faciles) jusqu'à 10 000 🪙 (Centurion)\n🎃 Skins Halloween (18, de Commun à Spectre) : achetables uniquement en octobre, à garder pour toujours. Fonctionne avec /shopfree\n🗂️ Skins rangés en menus à deux niveaux : Skins / Halloween → raretés → skins\n🏅 2 nouveaux succès : Trick or Treat et Maître des cauchemars",
+                "🔊 Every game sound, synthesized live (no files): jump and double jump, coins (x1, x5, x10 and x100 jackpot), checkpoint, trampolines, jelly, boost, dash, teleporters, portal, switch, doors, keys, orbs, fragile platforms, turrets, fragments, zone walls, zone change, victory, achievements, shop, pause, creative mode…\n💀 12 death animations AND death sounds, picked from your current skin: robot (system error), ghost, fire, skeleton (rattling bones), bubbles, angel (harp), glitch, cat (meow), smoke (ninja), slime, stars… and the classic one, which randomly picks between explosion, sad trombone, “oof” and arcade\n💬 Now and then a little death message pops up (YOU DIED, WASTED, 404, F…)\n🔇 🔊 button at the top (or the M key, or in settings): mutes game sounds without touching your music, which stays separate. A sound volume slider is in settings too\n🎮 A secret code for the veterans…\n🏅 4 new achievements: Silent Mode, Dying in Style, Funeral Ceremony, and a secret\n🧩 Title screen reorganized: buttons grouped in pairs, title and version visible again on one page\n🎨 12 new block colors\n🏅 Achievement rewards scale with difficulty: from 50 🪙 (easy) up to 10,000 🪙 (Centurion)\n🎃 Halloween skins (18, Common to Spectral): only buyable in October, yours forever once unlocked. Works with /shopfree\n🗂️ Skins organised in two-level menus: Skins / Halloween → rarities → skins\n🏅 2 new achievements: Trick or Treat and Master of Nightmares",
+                "🔊 Alle Spielsounds, live erzeugt (keine Dateien): Sprung und Doppelsprung, Münzen (x1, x5, x10 und Jackpot x100), Checkpoint, Trampoline, Gelee, Boost, Dash, Teleporter, Portal, Schalter, Türen, Schlüssel, Orbs, zerbrechliche Plattformen, Geschütztürme, Fragmente, Zonenmauern, Zonenwechsel, Sieg, Erfolge, Shop, Pause, Kreativmodus…\n💀 12 Todesanimationen UND Todessounds, passend zu deinem aktuellen Skin: Roboter (Systemfehler), Geist, Feuer, Skelett (klappernde Knochen), Blasen, Engel (Harfe), Glitch, Katze (Miau), Rauch (Ninja), Schleim, Sterne… und der Klassiker, der zufällig zwischen Explosion, traurige Posaune, „Oof“ und Arcade wählt\n💬 Ab und zu erscheint eine kleine Todesmeldung (YOU DIED, WASTED, 404, F…)\n🔇 🔊-Knopf oben (oder Taste M, oder in den Einstellungen): schaltet Spielsounds stumm, ohne deine Musik zu berühren, die getrennt bleibt. Ein Lautstärkeregler für Sounds ist ebenfalls in den Einstellungen\n🎮 Ein Geheimcode für die Veteranen…\n🏅 4 neue Erfolge: Stiller Modus, Mit Stil sterben, Trauerfeier und ein geheimer\n🧩 Titelbildschirm neu geordnet: Knöpfe paarweise gruppiert, Titel und Version wieder auf einer Seite sichtbar\n🎨 12 neue Blockfarben\n🏅 Erfolgsbelohnungen nach Schwierigkeit: von 50 🪙 (leicht) bis 10.000 🪙 (Zenturio)\n🎃 Halloween-Skins (18, von Gewöhnlich bis Spektral): nur im Oktober kaufbar, danach für immer deins. Funktioniert mit /shopfree\n🗂️ Skins in zweistufigen Menüs: Skins / Halloween → Seltenheiten → Skins\n🏅 2 neue Erfolge: Süßes oder Saures und Meister der Albträume",
+                "🔊 すべてのゲーム音をその場で合成(ファイル不要):ジャンプ/ダブルジャンプ、コイン(x1/x5/x10/ジャックポットx100)、チェックポイント、トランポリン、ゼリー、ブースト、ダッシュ、テレポーター、ポータル、スイッチ、ドア、鍵、オーブ、もろい足場、タレット、断片、ゾーンの壁、ゾーン移動、勝利、実績、ショップ、ポーズ、作成モード…\n💀 今のスキンに合わせた死亡アニメーションと効果音が12種類:ロボット(システムエラー)、幽霊、炎、骸骨(骨のカタカタ音)、泡、天使(ハープ)、グリッチ、猫(ニャー)、煙(忍者)、スライム、星…。通常スキンは爆発/悲しいトロンボーン/「oof」/アーケードからランダム\n💬 ときどき小さな死亡メッセージが出る(YOU DIED、WASTED、404、F…)\n🔇 上部の🔊ボタン(Mキー、または設定):音楽はそのままゲーム音だけ消せる。設定には効果音の音量スライダーもある\n🎮 ベテラン向けの秘密のコマンド…\n🏅 新しい実績4つ:サイレントモード、おしゃれな最期、葬送の儀、そして秘密の1つ\n🧩 タイトル画面を整理:ボタンを2つずつ並べ、タイトルとバージョンが1ページで見える\n🎨 新しいブロックカラー12色\n🏅 実績の報酬は難易度に応じて変化:50 🪙(簡単)から10,000 🪙(百人隊長)まで\n🎃 ハロウィンスキン(18種、コモン〜スペクトル):10月のみ購入可能、取得後は永久。/shopfreeにも対応\n🗂️ スキンを2段階メニューに整理:スキン/ハロウィン → レア度 → スキン\n🏅 新実績2つ:トリック・オア・トリート、悪夢の支配者"] },
             { v: "7.5 → 7.6", titre: ["Musique aléatoire et liste des pistes", "Shuffle and track list", "Zufallswiedergabe und Titelliste", "シャッフルと曲リスト"], t: [
                 "🔀 Lecture aléatoire (case dans la fenêtre 🎵, activée par défaut) : à la fin d'une piste, une autre piste de ta playlist est choisie au hasard, et la première piste lancée l'est aussi. Disponible pour les playlists YouTube et SoundCloud\n⏭ Bouton « piste aléatoire » pour changer tout de suite\n📃 Fenêtre « liste des pistes » : toutes les musiques de la playlist, avec recherche, et un clic pour jouer celle que tu veux\n⚠️ Spotify, Deezer et Apple Music ne laissent pas le jeu piloter leur lecteur intégré : pas d'aléatoire ni de liste pour eux\n🏅 2 nouveaux succès : Mix aléatoire, Programmateur",
                 "🔀 Shuffle (checkbox in the 🎵 window, on by default): when a track ends, another track from your playlist is picked at random, and so is the first one. Available for YouTube and SoundCloud playlists\n⏭ “Random track” button to switch right away\n📃 “Track list” window: every song of the playlist, with search, and one click to play the one you want\n⚠️ Spotify, Deezer and Apple Music don't let the game control their embedded player: no shuffle or list for them\n🏅 2 new achievements: Random Mix, Programmer",
@@ -2920,12 +2925,21 @@
             { id: "initie", n: ["Initié", "Insider", "Eingeweihter", "内部の人"], d: ["Ouvre la console admin (/admin).", "Open the admin console (/admin).", "Öffne die Admin-Konsole (/admin).", "管理コンソール(/admin)を開く。"] },
             { id: "dj", n: ["DJ", "DJ", "DJ", "DJ"], d: ["Lance ta propre musique pendant le jeu.", "Play your own music while gaming.", "Spiele deine eigene Musik beim Spielen.", "ゲーム中に自分の音楽を流す。"] },
             { id: "melomane", n: ["Mélomane", "Music Lover", "Musikliebhaber", "音楽好き"], d: ["Utilise 3 sources de musique différentes.", "Use 3 different music sources.", "Nutze 3 verschiedene Musikquellen.", "3種類の音楽ソースを使う。"] },
+            { id: "muet", n: ["Mode silencieux", "Silent Mode", "Stiller Modus", "サイレントモード"], d: ["Coupe les sons du jeu (la musique reste).", "Mute the game sounds (music stays on).", "Schalte die Spielsounds aus (die Musik bleibt).", "ゲーム音をオフにする(音楽はそのまま)。"] },
+            { id: "styles5", n: ["Mourir avec style", "Dying in Style", "Mit Stil sterben", "おしゃれな最期"], d: ["Découvre 5 animations de mort différentes (change de skin !).", "Discover 5 different death animations (change your skin!).", "Entdecke 5 verschiedene Todesanimationen (wechsle deinen Skin!).", "5種類の死亡アニメーションを見る(スキンを変えてみよう!)。"] },
+            { id: "styles12", n: ["Cérémonie funèbre", "Funeral Ceremony", "Trauerfeier", "葬送の儀"], d: ["Découvre les 12 animations de mort.", "Discover all 12 death animations.", "Entdecke alle 12 Todesanimationen.", "12種類すべての死亡アニメーションを見る。"] },
+            { id: "konami", n: ["Code légendaire", "Legendary Code", "Legendärer Code", "伝説のコマンド"], d: ["Entre le code que tous les anciens connaissent : ↑ ↑ ↓ ↓ ← → ← → B A.", "Enter the code every veteran knows: ↑ ↑ ↓ ↓ ← → ← → B A.", "Gib den Code ein, den jeder Veteran kennt: ↑ ↑ ↓ ↓ ← → ← → B A.", "ベテランなら誰でも知るコマンドを入力:↑ ↑ ↓ ↓ ← → ← → B A。"] },
             { id: "mix", n: ["Mix aléatoire", "Random Mix", "Zufalls-Mix", "ランダムミックス"], d: ["Laisse le mode aléatoire choisir une piste, ou passe à une piste aléatoire.", "Let shuffle pick a track, or skip to a random one.", "Lass den Zufallsmodus einen Titel wählen oder wechsle zu einem zufälligen.", "シャッフルで曲を選ばせるか、ランダムな曲にスキップする。"] },
             { id: "piste_choisie", n: ["Programmateur", "Programmer", "Programmgestalter", "選曲担当"], d: ["Choisis toi-même une piste dans la liste de ta playlist.", "Pick a track yourself from your playlist's list.", "Wähle selbst einen Titel aus der Liste deiner Playlist.", "プレイリストの一覧から曲を自分で選ぶ。"] },
             { id: "succes50", n: ["Collectionneur de trophées", "Trophy Collector", "Trophäensammler", "トロフィーコレクター"], d: ["Débloque 50 succès.", "Unlock 50 achievements.", "Schalte 50 Erfolge frei.", "実績を50個解除する。"] },
             { id: "succes75", n: ["Légende vivante", "Living Legend", "Lebende Legende", "生ける伝説"], d: ["Débloque 75 succès.", "Unlock 75 achievements.", "Schalte 75 Erfolge frei.", "実績を75個解除する。"] },
-            { id: "succes100", n: ["Centurion", "Centurion", "Zenturio", "百人隊長"], d: ["Débloque 100 succès.", "Unlock 100 achievements.", "Schalte 100 Erfolge frei.", "実績を100個解除する。"] }
+            { id: "succes100", n: ["Centurion", "Centurion", "Zenturio", "百人隊長"], d: ["Débloque 100 succès.", "Unlock 100 achievements.", "Schalte 100 Erfolge frei.", "実績を100個解除する。"] },
+            { id: "halloween1", n: ["Trick or Treat", "Trick or Treat", "Süßes oder Saures", "トリック・オア・トリート"], d: ["Possède un skin Halloween.", "Own a Halloween skin.", "Besitze einen Halloween-Skin.", "ハロウィンスキンを1つ持つ。"] },
+            { id: "halloween_tous", n: ["Maître des cauchemars", "Master of Nightmares", "Meister der Albträume", "悪夢の支配者"], d: ["Possède tous les skins Halloween.", "Own every Halloween skin.", "Besitze alle Halloween-Skins.", "ハロウィンスキンを全部集める。"] }
         ];
+        // V8.2 : récompense (en 🪙) selon la difficulté du succès. Par défaut : 100.
+        const REC_SUCCES = {piece1: 50, mort1: 50, coup_oeil: 50, lecteur: 50, manuel: 50, look: 50, pause: 50, dev: 50, vide: 50, muet: 50, histoire_on: 50, hardcore_on: 50, initie: 50, pieces1000: 200, morts50: 200, fin_niveau: 200, zone3: 200, sans_mort: 200, defi_jour: 200, record: 200, mur_fondu: 200, polyglotte: 200, styles5: 200, melomane: 200, fashion: 200, defi3: 200, niveaux5: 200, cartes10: 200, sauts500: 200, blocs500: 200, temps1h: 200, morts100: 200, succes30: 200, mission: 200, double_saut: 200, konami: 350, acharne: 350, collection: 350, zone4: 350, skin_rare: 350, hardcore: 350, dressing: 350, speed: 350, serie3: 350, missions10: 350, histoire_fin: 350, temps5h: 350, dash100: 350, defi7: 350, sauts5000: 350, blocs5000: 350, pieces5000: 350, morts500: 350, cartes25: 350, niveaux20: 350, serie5: 750, missions25: 750, styles12: 750, dash500: 750, defi30: 750, temps10h: 750, pieces20000: 750, morts1000: 750, sauts20000: 750, blocs20000: 750, cartes50: 750, succes50: 1500, boutique_mobs: 2000, boutique_blocs: 3000, pieces50000: 3000, succes75: 4000, boutique_skins: 5000, succes100: 10000, halloween1: 300, halloween_tous: 4000};
+        function recompenseSucces(id) { return REC_SUCCES[id] || 100; }
         let succesObtenus = {}, compteursVie = {};
         try { succesObtenus = JSON.parse(localStorage.getItem("cyber_hack_succes")) || {}; } catch (e) { succesObtenus = {}; }
         try { compteursVie = JSON.parse(localStorage.getItem("cyber_hack_compteurs")) || {}; } catch (e) { compteursVie = {}; }
@@ -2933,8 +2947,10 @@
             if (succesObtenus[id]) return;
             succesObtenus[id] = true; lsSet("cyber_hack_succes", JSON.stringify(succesObtenus));
             let su = SUCCES.find(x => x.id === id);
-            if (su) toast("🏅 " + tx(su.n) + "  +100 🪙");
-            try { mettreAJourBanque(100); } catch (e) {}
+            let gain = recompenseSucces(id);
+            if (su) toast("🏅 " + tx(su.n) + "  +" + gain + " 🪙");
+            son("succes");
+            try { mettreAJourBanque(gain); } catch (e) {}
             let nbS = nbSuccesObtenus();
             if (nbS === 15) toast(tx(["⚡ Compétence débloquée : Dash (Maj ou K)", "⚡ Skill unlocked: Dash (Shift or K)", "⚡ Fähigkeit freigeschaltet: Dash (Umschalt oder K)", "⚡ スキル解放:ダッシュ(ShiftまたはK)"]));
             if (nbS >= 10) debloquerSucces("succes10");
@@ -2998,7 +3014,7 @@
                 let ic = document.createElement("span"); ic.style.fontSize = "18px"; ic.innerText = ok ? "🏅" : "🔒";
                 let tb = document.createElement("div");
                 let t1 = document.createElement("div"); t1.style.cssText = "color:" + (ok ? "#00ff66" : "#c5cde3") + "; font-size:13px; font-weight:bold;"; t1.innerText = tx(x.n);
-                let t2 = document.createElement("div"); t2.style.cssText = "color:#8892b0; font-size:11px;"; t2.innerText = tx(x.d);
+                let t2 = document.createElement("div"); t2.style.cssText = "color:#8892b0; font-size:11px;"; t2.innerText = tx(x.d) + "  ·  🪙 " + recompenseSucces(x.id);
                 tb.append(t1, t2); l.append(ic, tb); c.appendChild(l);
             });
             document.getElementById("fenetre-succes").style.display = "flex";
@@ -3041,7 +3057,7 @@
             if (joystickDirection !== 0) d = joystickDirection;
             dashDir = d !== 0 ? d : dernierSens;
             dashTimer = 9; dashCd = 55;
-            debloquerSucces("dash"); compterLeger("dashs", 1);
+            debloquerSucces("dash"); compterLeger("dashs", 1); son("dash");
         }
         // Graine : la génération procédurale devient reproductible
         let graineActive = null, defiActif = null;
@@ -3144,7 +3160,7 @@
                     el.style.cssText = "position:absolute; left:0; top:0; width:10px; height:10px; border-radius:50%; background:#ff5500; box-shadow:0 0 8px #ff5500; pointer-events:none;";
                     monde.appendChild(el);
                     projectiles.push({ x: dir > 0 ? b.x + b.width : b.x - 10, y: b.y + 5, vx: dir * 3.2, vie: 170, el: el });
-                    b.cdT = 110;
+                    b.cdT = 110; son("tir");
                 }
             }
             for (let i = projectiles.length - 1; i >= 0; i--) {
@@ -3163,6 +3179,7 @@
         function formaterTemps(t) { return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); }
         function suffixeRecord(nom) { let r = lireRecords()[nom]; return r ? "  ·  ⏱️ " + formaterTemps(r.t) + " 💀" + r.m : ""; }
         function enregistrerRecordNiveau() {
+            son("victoire");
             if (protecteurCmd || bouclierActif || !niveauCourantNom) return;
             debloquerSucces("fin_niveau"); compter("niveaux", 1);
             let t = stats.tempsSecondes, m = stats.morts, recs = lireRecords(), r = recs[niveauCourantNom];
@@ -3890,7 +3907,7 @@
         function verifierCompletionBoutique() {
             let tout =
                 typesDeBlocs.every(b => b.acquis) &&
-                listeSkins.every(s => s.acquis || s.succesRequis) &&
+                listeSkins.every(s => s.acquis || s.succesRequis || s.halloween) &&
                 mobsBoutique.every(m => m.acquis);
             let btn = document.getElementById("btn-voir-fin");
             if (btn) btn.style.display = tout ? "block" : "none";
@@ -3905,8 +3922,10 @@
             if (!compteursVie.shopfree) {
                 if (typesDeBlocs.every(b => b.acquis)) debloquerSucces("boutique_blocs");
                 if (mobsBoutique.every(m => m.acquis)) debloquerSucces("boutique_mobs");
-                if (listeSkins.every(s => s.acquis || s.succesRequis)) debloquerSucces("boutique_skins");
+                if (listeSkins.every(s => s.acquis || s.succesRequis || s.halloween)) debloquerSucces("boutique_skins");
             }
+            if (listeSkins.some(s => s.halloween && s.acquis)) debloquerSucces("halloween1");
+            if (listeSkins.filter(s => s.halloween).every(s => s.acquis)) debloquerSucces("halloween_tous");
             if (listeSkins.some(s => s.acquis && /\((Légendaire|Mythique|Ultra Rare|Divin|Suprême|Infernal|Spectre)\)$/.test(s.nom))) debloquerSucces("skin_rare");
             try { majTitresSkins(); } catch (e) {}
         }
@@ -3921,7 +3940,7 @@
         }
 
         function basculerModeCreatif() {
-            modeConstructionActif = !modeConstructionActif;
+            modeConstructionActif = !modeConstructionActif; son("creatif");
             document.body.classList.toggle("mode-creatif", modeConstructionActif);
             let displayVal = modeConstructionActif ? "block" : "none";
             panneauInventaire.style.display = displayVal;
@@ -4703,7 +4722,7 @@
             item.onclick = function() {
                 if (!b.acquis) {
                     if (piecesGlobales >= b.prix) {
-                        mettreAJourBanque(-b.prix);
+                        mettreAJourBanque(-b.prix); son("achat");
                         b.acquis = true;
                         achatsBlocs[b.nom] = true;
                         sauvegarderAchatsBlocs();
@@ -4712,7 +4731,7 @@
                         if (l) l.remove();
                         item.title = b.nom + (b.info ? " — " + b.info : "");
                     } else {
-                        afficherAlerte(traductions[langueActuelle].alertePrix(b.prix));
+                        son("erreur"); afficherAlerte(traductions[langueActuelle].alertePrix(b.prix));
                         return;
                     }
                 }
@@ -4764,7 +4783,7 @@
             item.onclick = function() {
                 if (!m.acquis) {
                     if (piecesGlobales >= m.prix) {
-                        mettreAJourBanque(-m.prix);
+                        mettreAJourBanque(-m.prix); son("achat");
                         m.acquis = true;
                         achatsMobs[m.nom] = true;
                         sauvegarderAchatsMobs();
@@ -4773,7 +4792,7 @@
                         if (l) l.remove();
                         item.title = m.nom + (m.info ? " — " + m.info : "");
                     } else {
-                        afficherAlerte(traductions[langueActuelle].alertePrix(m.prix));
+                        son("erreur"); afficherAlerte(traductions[langueActuelle].alertePrix(m.prix));
                         return;
                     }
                 }
@@ -4795,6 +4814,7 @@
                 achatsBlocs[b.nom] = true;
             });
             listeSkins.forEach(s => {
+                if (s.halloween && !estOctobre()) return; // skins Halloween : seulement en octobre
                 s.acquis = true;
                 achatsSkins[s.nom] = true;
             });
@@ -4806,7 +4826,8 @@
             sauvegarderAchatsSkins();
             sauvegarderAchatsMobs();
             verifierCompletionBoutique();
-            document.querySelectorAll("#panneau-inventaire .badge-lock, #panneau-skins .badge-lock").forEach(l => l.remove());
+            document.querySelectorAll("#panneau-inventaire .badge-lock").forEach(l => l.remove());
+            listeSkins.forEach(sk => { if (sk.acquis && sk.el) { let l = sk.el.querySelector(".badge-lock"); if (l) l.remove(); } });
             afficherAlerte(tx(["🔓 Boutique entièrement débloquée ! Ces déblocages sont permanents (sauf Hard Reset).", "🔓 Shop fully unlocked! These unlocks are permanent (except Hard Reset).", "🔓 Shop komplett freigeschaltet! Diese Freischaltungen sind dauerhaft (außer Hard Reset).", "🔓 ショップを全解放!解放は恒久的(ハードリセットを除く)。"]));
         }
 
@@ -5069,34 +5090,86 @@
         // V7.5 : skin Trophée supplémentaire (80 succès)
         listeSkins.push({ nom: "Hacker Diamant (Spectre)", fond: "linear-gradient(135deg,#b9f2ff,#6ad4ff 50%,#ffffff)", prix: 0, succesRequis: 80,
             html: '<div style="display: flex; gap: 3px; position: absolute; top: 4px;"><div style="width: 3px; height: 3px; background: #0b3d5c; transform: rotate(45deg); box-shadow: 0 0 6px #0b3d5c;"></div><div style="width: 3px; height: 3px; background: #0b3d5c; transform: rotate(45deg); box-shadow: 0 0 6px #0b3d5c;"></div></div><div style="position: absolute; bottom: 3px; width: 8px; height: 3px; border-bottom: 2px solid #0b3d5c; border-radius: 50%;"></div><div class="sk-pulse" style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:2px;box-shadow:0 0 9px 2px #6ad4ff;"></div>' });
+        // ===== V8.2 : SKINS HALLOWEEN (achetables uniquement en octobre ; gardés pour toujours une fois obtenus) =====
+        function estOctobre() { return new Date().getMonth() === 9; }
+        function htmlSkinH(c, bouche, deco) {
+            let oeil = '<div style="width:3px;height:3px;background:' + c + ';box-shadow:0 0 6px ' + c + ';border-radius:50%;"></div>';
+            return '<div style="display:flex;gap:3px;position:absolute;top:4px;">' + oeil + oeil + '</div>' +
+                '<div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:8px;height:2px;background:' + bouche + ';"></div>' +
+                (deco ? '<div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1;">' + deco + '</div>' : '');
+        }
+        [
+            ["Citrouille Souriante (Commun)", "#ff7a00", 300, "#2a1200", "#2a1200", "🎃"],
+            ["Toile d'Araignée (Commun)", "#cfd3da", 280, "#222", "#222", "🕸️"],
+            ["Bonbon Maudit (Commun)", "#ff4fa3", 350, "#fff", "#5a0030", "🍬"],
+            ["Squelette Rieur (Peu Commun)", "#e8e8dc", 700, "#000", "#000", "💀"],
+            ["Chat Noir (Peu Commun)", "#15151a", 750, "#ffe600", "#ffe600", "🐈‍⬛"],
+            ["Chauve-Souris (Peu Commun)", "#3b2a5a", 800, "#ff3355", "#ff3355", "🦇"],
+            ["Fantôme du Manoir (Rare)", "#dfe9ff", 1800, "#1a2a55", "#1a2a55", "👻"],
+            ["Potion Toxique (Rare)", "#52ff2e", 1900, "#0b2a00", "#0b2a00", "🧪"],
+            ["Momie Bandée (Rare)", "#d9c8a0", 1700, "#8b0000", "#6b5a30", "🩹"],
+            ["Vampire Écarlate (Épique)", "#8b0018", 4200, "#ffffff", "#ffffff", "🧛"],
+            ["Loup-Garou Lunaire (Épique)", "#4a3b2a", 4500, "#ffd24d", "#ffd24d", "🐺"],
+            ["Zombie Glitché (Épique)", "#3f7a3f", 4800, "#d6ff00", "#1a2a1a", "🧟"],
+            ["Cavalier sans Tête (Légendaire)", "linear-gradient(180deg,#1a1000,#4a2a00)", 10000, "#ff7a00", "#ff7a00", "🔥"],
+            ["Reine des Ombres (Légendaire)", "linear-gradient(180deg,#2b0a3d,#0d0014)", 11000, "#d070ff", "#d070ff", "👑"],
+            ["Faucheuse Éternelle (Mythique)", "linear-gradient(180deg,#0a0a0a,#2a2a35)", 28000, "#00ffcc", "#00ffcc", "⚰️"],
+            ["Citrouille Démon (Mythique)", "linear-gradient(135deg,#ff3d00,#8b0000)", 30000, "#ffee00", "#ffee00", "😈"],
+            ["Seigneur des Cauchemars (Infernal)", "linear-gradient(180deg,#5a0000,#000)", 48000, "#ff0000", "#ff0000", "🩸"],
+            ["Hantise du 31 Octobre (Spectre)", "linear-gradient(180deg,#0b0f2a,#000)", 66666, "#ff7a00", "#ff7a00", "☠️"]
+        ].forEach(function(d) {
+            listeSkins.push({ nom: d[0], fond: d[1], prix: d[2], halloween: true, html: htmlSkinH(d[3], d[4], d[5]) });
+        });
         // ---- Skins rangés par rareté (menus déroulants, comme l'inventaire créatif) ----
         const ORDRE_RARETES = ["Commun", "Peu Commun", "Rare", "Épique", "Légendaire", "Mythique", "Ultra Rare", "Divin", "Suprême", "Infernal", "Spectre"];
-        const groupesSkins = {};
-        ORDRE_RARETES.forEach(function(rar) {
+        function lireOuv(cle, defaut) { let o = defaut; try { let v = localStorage.getItem(cle); if (v !== null) o = (v === "1"); } catch (e) {} return o; }
+        function fabriquerMaitre(cle, couleur) {
             let det = document.createElement("details"); det.className = "groupe-inv";
-            let ouv = (rar === "Commun");
-            try { let v = localStorage.getItem("cyber_hack_grpskin_" + rar); if (v !== null) ouv = (v === "1"); } catch (e) {}
-            det.open = ouv;
+            det.open = lireOuv("cyber_hack_grpmaitre_" + cle, false);
             let sm = document.createElement("summary");
-            sm.style.cssText = "cursor:pointer; color:#ff0055; font-size:9px; padding:4px 0; border-bottom:1px dashed rgba(255,0,85,0.45); text-align:left;";
-            det.addEventListener("toggle", function() { try { localStorage.setItem("cyber_hack_grpskin_" + rar, det.open ? "1" : "0"); } catch (e) {} });
-            let contenu = document.createElement("div");
-            contenu.style.cssText = "display:flex; flex-wrap:wrap; justify-content:center; padding:4px 0;";
+            sm.style.cssText = "cursor:pointer; color:" + couleur + "; font-size:10px; font-weight:bold; padding:5px 0; border-bottom:1px solid " + couleur + "; text-align:left;";
+            det.addEventListener("toggle", function() { try { localStorage.setItem("cyber_hack_grpmaitre_" + cle, det.open ? "1" : "0"); } catch (e) {} });
+            let contenu = document.createElement("div"); contenu.style.cssText = "padding-left:4px;";
             det.append(sm, contenu); panneauSkins.appendChild(det);
-            contenu.resume = sm; contenu.det = det; groupesSkins[rar] = contenu;
-        });
+            return { det: det, resume: sm, contenu: contenu };
+        }
+        function fabriquerGroupes(maitre, prefixe, couleur) {
+            let res = {};
+            ORDRE_RARETES.forEach(function(rar) {
+                let det = document.createElement("details"); det.className = "groupe-inv";
+                det.open = lireOuv(prefixe + rar, rar === "Commun");
+                let sm = document.createElement("summary");
+                sm.style.cssText = "cursor:pointer; color:" + couleur + "; font-size:9px; padding:4px 0; border-bottom:1px dashed " + couleur + "; text-align:left;";
+                det.addEventListener("toggle", function() { try { localStorage.setItem(prefixe + rar, det.open ? "1" : "0"); } catch (e) {} });
+                let contenu = document.createElement("div");
+                contenu.style.cssText = "display:flex; flex-wrap:wrap; justify-content:center; padding:4px 0;";
+                det.append(sm, contenu); maitre.contenu.appendChild(det);
+                contenu.resume = sm; contenu.det = det; res[rar] = contenu;
+            });
+            return res;
+        }
+        const maitreBase = fabriquerMaitre("base", "#00ffcc");
+        const maitreHallo = fabriquerMaitre("halloween", "#ff7a00");
+        const groupesSkins = fabriquerGroupes(maitreBase, "cyber_hack_grpskin_", "#ff0055");
+        const groupesHallo = fabriquerGroupes(maitreHallo, "cyber_hack_grpskinH_", "#ff7a00");
         function groupeSkinPour(skin) {
-            let m = skin.nom.match(/\(([^)]+)\)$/), r = m ? m[1] : "Commun";
-            return groupesSkins[r] || groupesSkins["Commun"];
+            let m = skin.nom.match(/\(([^)]+)\)$/), r = m ? m[1] : "Commun", G = skin.halloween ? groupesHallo : groupesSkins;
+            return G[r] || G["Commun"];
         }
         function nomRareteTx(r) { let i = ({ fr: 0, en: 1, de: 2, ja: 3 })[langueActuelle]; return (i && I18N_RARETES[r]) ? I18N_RARETES[r][i - 1] : r; }
         function majTitresSkins() {
-            ORDRE_RARETES.forEach(function(r) {
-                let c = groupesSkins[r]; if (!c) return;
-                let nb = c.querySelectorAll(".skin-item").length, lock = c.querySelectorAll(".badge-lock").length;
-                c.det.style.display = nb ? "" : "none";
-                c.resume.innerText = "🎭 " + nomRareteTx(r) + " (" + nb + ")" + (lock ? "  🔒" + lock : "");
+            [[groupesSkins, "🎭"], [groupesHallo, "🎃"]].forEach(function(p) {
+                ORDRE_RARETES.forEach(function(r) {
+                    let c = p[0][r]; if (!c) return;
+                    let nb = c.querySelectorAll(".skin-item").length, lock = c.querySelectorAll(".badge-lock").length;
+                    c.det.style.display = nb ? "" : "none";
+                    c.resume.innerText = p[1] + " " + nomRareteTx(r) + " (" + nb + ")" + (lock ? "  🔒" + lock : "");
+                });
             });
+            let base = listeSkins.filter(function(x) { return !x.halloween; }), ha = listeSkins.filter(function(x) { return x.halloween; });
+            maitreBase.resume.innerText = tx(["🎭 SKINS", "🎭 SKINS", "🎭 SKINS", "🎭 スキン"]) + "  " + base.filter(function(x) { return x.acquis; }).length + "/" + base.length;
+            maitreHallo.resume.innerText = tx(["🎃 HALLOWEEN", "🎃 HALLOWEEN", "🎃 HALLOWEEN", "🎃 ハロウィン"]) + "  " + ha.filter(function(x) { return x.acquis; }).length + "/" + ha.length +
+                (estOctobre() ? "  🕯️" : tx(["  (octobre)", "  (October)", "  (Oktober)", "  (10月)"]));
         }
         listeSkins.forEach((skin) => {
             // Débloqué si prix = 0 (skin de départ) OU si déjà acheté et sauvegardé
@@ -5114,10 +5187,11 @@
                 divSkin.appendChild(badgeCadenas);
             }
             divSkin.onclick = function() {
+                if (!skin.acquis && skin.halloween && !estOctobre()) { son("erreur"); toast(tx(["🎃 Skin Halloween : achetable uniquement en octobre. Reviens l'année prochaine !", "🎃 Halloween skin: only available in October. Come back next year!", "🎃 Halloween-Skin: nur im Oktober erhältlich. Komm nächstes Jahr wieder!", "🎃 ハロウィンスキンは10月限定です。来年また来てね!"])); return; }
                 if (!skin.acquis && skin.succesRequis) { toast(tx(["🏅 Débloqué avec " + skin.succesRequis + " succès", "🏅 Unlocked with " + skin.succesRequis + " achievements", "🏅 Freigeschaltet mit " + skin.succesRequis + " Erfolgen", "🏅 実績" + skin.succesRequis + "個で解放"])); return; }
                 if (!skin.acquis) {
                     if (piecesGlobales >= skin.prix) {
-                        mettreAJourBanque(-skin.prix);
+                        mettreAJourBanque(-skin.prix); son("achat");
                         skin.acquis = true;
                         achatsSkins[skin.nom] = true;
                         sauvegarderAchatsSkins();
@@ -5126,14 +5200,14 @@
                         if (l) l.remove();
                         divSkin.title = skin.nom;
                     } else {
-                        afficherAlerte(traductions[langueActuelle].alerteSkin(skin.prix));
+                        son("erreur"); afficherAlerte(traductions[langueActuelle].alerteSkin(skin.prix));
                         return;
                     }
                 }
                 if (skin.acquis) {
                     joueur.element.style.background = skin.fond;
                     joueur.element.innerHTML = skin.html;
-                    lsSet("cyber_hack_skin_actif", skin.nom); debloquerSucces("look");
+                    lsSet("cyber_hack_skin_actif", skin.nom); skinCourant = skin; son("skin"); debloquerSucces("look");
                 }
             };
             skin.el = divSkin;
@@ -5675,7 +5749,7 @@
                 let opacite = (mursZone[z].opacite === undefined ? 1 : mursZone[z].opacite) - 0.012;
                 mursZone[z].opacite = opacite;
                 if (opacite <= 0) {
-                    debloquerSucces("mur_fondu");
+                    son("mur"); debloquerSucces("mur_fondu");
                     mursZone[z].forEach(b => { if (b.elementDom) b.elementDom.remove(); });
                     blocsMonde = blocsMonde.filter(b => !mursZone[z].includes(b));
                     mursZone[z] = [];
@@ -5920,7 +5994,7 @@
             creerBlocMondeDirect(gx, gy, elementActif.type, elementActif.couleur, symboleDuTypeActif(), elementActif.valeurPiece);
             glisseAModifie = true;
             traitAjoutes.push(blocsMonde[blocsMonde.length - 1]);
-            debloquerSucces("architecte"); compterLeger("blocs", 1);
+            debloquerSucces("architecte"); compterLeger("blocs", 1); son("pose");
             if (elementActif.type === "spawn") placerSpawnBloc(blocsMonde[blocsMonde.length - 1]);
         }
 
@@ -5930,7 +6004,7 @@
             if (blocs.length > 0) {
                 blocs.forEach(b => { if (b.elementDom) b.elementDom.remove(); });
                 blocsMonde = blocsMonde.filter(b => !blocs.includes(b));
-                traitSupprimes.push(...blocs);
+                traitSupprimes.push(...blocs); son("efface");
                 glisseAModifie = true;
             }
             let mobs = mobsMonde.filter(m =>
@@ -6152,6 +6226,7 @@
                 tenterSaut(e.repeat);
             }
             if ((e.key === "Shift" || e.key === "k" || e.key === "K") && !champ && !e.repeat) tenterDash();
+            if ((e.key === "m" || e.key === "M") && !champ && !e.repeat) basculerSon();
             if ((e.key === "p" || e.key === "P") && !champ && !e.repeat && !modeConstructionActif) { basculerPause(); if (jeuEnPause) debloquerSucces("pause"); }
             if (e.key === "e" || e.key === "E") {
                 basculerModeCreatif();
@@ -6208,7 +6283,7 @@
 
         function respawnJoueur() {
             stats.morts++;
-            compter("morts", 1); if (stats.morts >= 20) debloquerSucces("acharne");
+            jouerMort(); compter("morts", 1); if (stats.morts >= 20) debloquerSucces("acharne");
             if (modeHardcore && !hardcoreEnAttente) { hardcoreEnAttente = true; setTimeout(recommencerHardcore, 0); }
             viderProjectiles();
             afficherMorts();
@@ -6233,8 +6308,8 @@
 
         function majAuraSaut() { joueur.element.style.boxShadow = joueur.sautExtra > 0 ? "0 0 10px 3px #3fa9ff" : ""; }
         function tenterSaut(repetition) {
-            if (peutSauter()) { joueur.vy = joueur.jumpForce; joueur.isGrounded = false; compterLeger("sauts", 1); }
-            else if (!repetition && joueur.sautExtra > 0) { joueur.sautExtra--; joueur.vy = joueur.jumpForce * 0.95; joueur.isGrounded = false; majAuraSaut(); debloquerSucces("double_saut"); }
+            if (peutSauter()) { joueur.vy = joueur.jumpForce; joueur.isGrounded = false; compterLeger("sauts", 1); son("saut"); }
+            else if (!repetition && joueur.sautExtra > 0) { joueur.sautExtra--; joueur.vy = joueur.jumpForce * 0.95; joueur.isGrounded = false; majAuraSaut(); son("saut2"); debloquerSucces("double_saut"); }
         }
         function peutSauter() {
             if (joueur.isGrounded) return true;
@@ -6259,11 +6334,11 @@
         }
         function basculerPortes() {
             if (portesOuvertes && blocsProchesDuJoueur().some(b => b.type === "porte" && joueur.x < b.x + b.width && joueur.x + joueur.width > b.x && joueur.y < b.y + b.height && joueur.y + joueur.height > b.y)) return; // jamais coincé dans une porte
-            portesOuvertes = !portesOuvertes; majPortes(); debloquerSucces("interrupteur");
+            portesOuvertes = !portesOuvertes; majPortes(); son(portesOuvertes ? "porte_ouvre" : "porte_ferme"); debloquerSucces("interrupteur");
             toast(portesOuvertes ? tx(["🔓 Portes ouvertes", "🔓 Doors open", "🔓 Türen offen", "🔓 ドア開放"]) : tx(["🔒 Portes fermées", "🔒 Doors closed", "🔒 Türen geschlossen", "🔒 ドア閉鎖"]));
         }
         function basculerPause() {
-            jeuEnPause = !jeuEnPause;
+            jeuEnPause = !jeuEnPause; son(jeuEnPause ? "pause" : "reprise");
             touches.q = false; touches.d = false; joystickDirection = 0;
             let o = document.getElementById("overlay-pause");
             if (!o) {
@@ -6296,7 +6371,7 @@
             } else if (mur.compte !== undefined) {
                 mur.compte--;
                 if (mur.elementDom) mur.elementDom.style.transform = "translateX(" + ((mur.compte % 4 < 2) ? -1 : 1) + "px)";
-                if (mur.compte <= 0) { debloquerSucces("fragile"); mur.cache = true; mur.retour = 180; if (mur.elementDom) { mur.elementDom.style.opacity = 0.15; mur.elementDom.style.transform = ""; } }
+                if (mur.compte <= 0) { son("fragile"); debloquerSucces("fragile"); mur.cache = true; mur.retour = 180; if (mur.elementDom) { mur.elementDom.style.opacity = 0.15; mur.elementDom.style.transform = ""; } }
             }
         }
         function reinitialiserFragiles() {
@@ -6362,6 +6437,8 @@
                     if (!modeNiveauPersonnaliseActif && !modeTestCreation) debloquerSucces("zone4");
                 }
 
+                if (indexZoneActuelle > _zoneSon && _zoneSon >= 0) son("zone");
+                _zoneSon = indexZoneActuelle;
                 if (indexZoneActuelle >= 1 && !modeNiveauPersonnaliseActif && !modeTestCreation) { debloquerSucces("zone2"); if (indexZoneActuelle >= 2) debloquerSucces("zone3"); }
                 if (modeHistoireActif) {
                     zoneHistoireActuelle = indexZoneActuelle;
@@ -6460,7 +6537,7 @@
 
                     if (mob.mode === "tireur") {
                         if (mob.cdT > 0) mob.cdT--;
-                        else if (projectiles.length < 12 && Math.abs(joueur.x - mob.x) < 300 && Math.abs(joueur.y - mob.y) < 140) { lancerProjectile(mob.x + 14, mob.y + 9, joueur.x < mob.x ? -1 : 1, "tireur"); mob.cdT = 130; }
+                        else if (projectiles.length < 12 && Math.abs(joueur.x - mob.x) < 300 && Math.abs(joueur.y - mob.y) < 140) { lancerProjectile(mob.x + 14, mob.y + 9, joueur.x < mob.x ? -1 : 1, "tireur"); mob.cdT = 130; son("tir2"); }
                     }
                     if (mobVisible) mob.elementDom.style.transform = "translate3d(" + mob.x + "px," + mob.y + "px,0)";
 
@@ -6494,7 +6571,7 @@
                             stats.piecesRecuperees = 0;
                             recalculerTotalPieces();
                         } else {
-                            debloquerSucces("fin_proc"); compter("cartes", 1); if (modeHistoireActif) debloquerSucces("histoire_fin"); if (stats.tempsSecondes < 150 && !protecteurCmd && !bouclierActif) debloquerSucces("speed"); if (modeHardcore) debloquerSucces("hardcore"); terminerDefi(); if (stats.morts === 0 && !protecteurCmd) {
+                            son("victoire"); debloquerSucces("fin_proc"); compter("cartes", 1); if (modeHistoireActif) debloquerSucces("histoire_fin"); if (stats.tempsSecondes < 150 && !protecteurCmd && !bouclierActif) debloquerSucces("speed"); if (modeHardcore) debloquerSucces("hardcore"); terminerDefi(); if (stats.morts === 0 && !protecteurCmd) {
                                 debloquerSucces("sans_mort");
                                 compteursVie.serie = (compteursVie.serie || 0) + 1; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie));
                                 if (compteursVie.serie >= 3) debloquerSucces("serie3");
@@ -6506,7 +6583,7 @@
                     if (mur.type === "fragile") gererFragile(mur);
                     if (mur.type === "portail" && !(joueur.portailCd > 0) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         joueur.x = joueur.spawnX; joueur.y = joueur.spawnY; joueur.vx = 0; joueur.vy = 0; joueur.portailCd = 45;
-                        debloquerSucces("portail"); toast(tx(["🌌 Retour au point de sauvegarde", "🌌 Back to the checkpoint", "🌌 Zurück zum Checkpoint", "🌌 チェックポイントへ戻る"]));
+                        son("portail"); debloquerSucces("portail"); toast(tx(["🌌 Retour au point de sauvegarde", "🌌 Back to the checkpoint", "🌌 Zurück zum Checkpoint", "🌌 チェックポイントへ戻る"]));
                     }
                     if (mur.type === "vent" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         enVent = true; debloquerSucces("vent"); // appliqué une seule fois par image, après la boucle
@@ -6514,7 +6591,7 @@
                     if (mur.type === "piece" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         mur.ramasse = true;
                         stats.piecesRecuperees++;
-                        compter("pieces", mur.valeur || 1);
+                        compter("pieces", mur.valeur || 1); son(mur.valeur >= 100 ? "jackpot" : mur.valeur >= 10 ? "piece3" : mur.valeur >= 5 ? "piece2" : "piece");
                         mettreAJourBanque(mur.valeur);
                         hudPieces.innerText = `🪙 ${stats.piecesRecuperees} / ${stats.totalPieces}`;
                         if (mur.elementDom) mur.elementDom.style.display = "none";
@@ -6522,7 +6599,7 @@
                     if (mur.type === "fragment" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         mur.ramasse = true;
                         if (mur.elementDom) mur.elementDom.style.display = "none";
-                        let z = zoneHistoireActuelle, epreuve = epreuvesHistoire[z];
+                        son("fragment"); let z = zoneHistoireActuelle, epreuve = epreuvesHistoire[z];
                         if (modeHistoireActif && !modeNiveauPersonnaliseActif && z >= 0 && !missionsFaites[z]) {
                             progressionZones[z]++;
                             if (progressionZones[z] >= epreuve.cible) {
@@ -6546,22 +6623,22 @@
                     }
                     if ((mur.type === "tp_a" || mur.type === "tp_b") && !(joueur.portailCd > 0) && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
                         let cible = blocsMonde.find(b => b.type === (mur.type === "tp_a" ? "tp_b" : "tp_a"));
-                        if (cible) { joueur.x = cible.x; joueur.y = cible.y; joueur.vy = 0; joueur.portailCd = 45; debloquerSucces("teleport"); }
+                        if (cible) { joueur.x = cible.x; joueur.y = cible.y; joueur.vy = 0; joueur.portailCd = 45; son("tp"); debloquerSucces("teleport"); }
                     }
                     if (mur.type === "cle" && !mur.ramasse && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
-                        mur.ramasse = true; clesJoueur++; if (mur.elementDom) mur.elementDom.style.display = "none"; majAuraCle(); debloquerSucces("cle"); toast("🔑 x" + clesJoueur);
+                        mur.ramasse = true; clesJoueur++; if (mur.elementDom) mur.elementDom.style.display = "none"; majAuraCle(); son("cle"); debloquerSucces("cle"); toast("🔑 x" + clesJoueur);
                     }
                     if (mur.type === "porte_cle" && !mur.ouverte && clesJoueur > 0 && joueur.x < mur.x + mur.width + 3 && joueur.x + joueur.width > mur.x - 3 && joueur.y < mur.y + mur.height + 3 && joueur.y + joueur.height > mur.y - 3) {
-                        mur.ouverte = true; clesJoueur--; if (mur.elementDom) mur.elementDom.style.opacity = 0.12; majAuraCle(); debloquerSucces("porte_cle"); toast("🔓");
+                        mur.ouverte = true; clesJoueur--; if (mur.elementDom) mur.elementDom.style.opacity = 0.12; majAuraCle(); son("porte_cle"); debloquerSucces("porte_cle"); toast("🔓");
                     }
                     if (mur.type === "bouton_tempo" && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
-                        debloquerSucces("bouton_tempo"); portesOuvertes = true; boutonTimer = 360; majPortes();
+                        son("bouton"); debloquerSucces("bouton_tempo"); portesOuvertes = true; boutonTimer = 360; majPortes();
                     }
                     if (mur.type === "orbe_bouclier" || mur.type === "orbe_vitesse") {
                         if (mur.reviensA && frameCompteur >= mur.reviensA) { mur.reviensA = 0; if (mur.elementDom) mur.elementDom.style.display = "flex"; }
                         if (!mur.reviensA && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
-                            if (mur.type === "orbe_bouclier") { joueur.invincible = 360; debloquerSucces("orbe_bouclier"); }
-                            else { vitesseBoost = 300; debloquerSucces("orbe_vitesse"); }
+                            if (mur.type === "orbe_bouclier") { joueur.invincible = 360; son("bouclier"); debloquerSucces("orbe_bouclier"); }
+                            else { vitesseBoost = 300; son("vitesse"); debloquerSucces("orbe_vitesse"); }
                             mur.reviensA = frameCompteur + 240; if (mur.elementDom) mur.elementDom.style.display = "none";
                         }
                     }
@@ -6572,7 +6649,7 @@
                     if (mur.type === "orbe") {
                         if (mur.reviensA && frameCompteur >= mur.reviensA) { mur.reviensA = 0; if (mur.elementDom) mur.elementDom.style.display = "flex"; }
                         if (!mur.reviensA && joueur.x < mur.x + mur.width && joueur.x + joueur.width > mur.x && joueur.y < mur.y + mur.height && joueur.y + joueur.height > mur.y) {
-                            joueur.sautExtra = 1; majAuraSaut(); mur.reviensA = frameCompteur + 180; if (mur.elementDom) mur.elementDom.style.display = "none";
+                            joueur.sautExtra = 1; majAuraSaut(); son("orbe"); mur.reviensA = frameCompteur + 180; if (mur.elementDom) mur.elementDom.style.display = "none";
                         }
                     }
                     if (mur.type === "pulsant" && phasePulse && !estProtege() && joueur.x < mur.x + mur.width - 3 && joueur.x + joueur.width > mur.x + 3 && joueur.y < mur.y + mur.height - 3 && joueur.y + joueur.height > mur.y + 3) { debloquerSucces("laser"); respawnJoueur(); }
@@ -6584,7 +6661,7 @@
                         if (joueur.spawnX !== mur.x || joueur.spawnY !== mur.y - joueur.height) {
                             joueur.spawnX = mur.x;
                             joueur.spawnY = mur.y - joueur.height;
-                            debloquerSucces("checkpoint");
+                            son("checkpoint"); debloquerSucces("checkpoint");
                             if (mur.elementDom) mur.elementDom.innerText = "✅";
                             toast(tx(["🏁 Point de sauvegarde !", "🏁 Checkpoint saved!", "🏁 Checkpoint gespeichert!", "🏁 チェックポイント保存!"]));
                         }
@@ -6603,21 +6680,21 @@
                                 joueur.isGrounded = true;
 
                                 if (mur.type === "trampoline") {
-                                    debloquerSucces("trampo");
+                                    son("trampo"); debloquerSucces("trampo");
                                     joueur.vy = joueur.jumpForce * 1.4;
                                     joueur.isGrounded = false;
                                 }
                                 if (mur.type === "boost") {
                                     let dirBoost = moveDir !== 0 ? moveDir : 1;
-                                    boostDir = dirBoost; boostTimer = 16; debloquerSucces("boost");
+                                    boostDir = dirBoost; boostTimer = 16; son("boost"); debloquerSucces("boost");
                                 }
                                 if (mur.type === "glace") {
                                     debloquerSucces("glace");
                                     surDeLaGlace = true;
                                 }
-                                if (mur.type === "trampoline_max") { joueur.vy = joueur.jumpForce * 1.9; joueur.isGrounded = false; debloquerSucces("super_trampo"); }
+                                if (mur.type === "trampoline_max") { joueur.vy = joueur.jumpForce * 1.9; joueur.isGrounded = false; son("trampo_max"); debloquerSucces("super_trampo"); }
                                 if (mur.type === "boue") { surBoue = true; debloquerSucces("boue"); }
-                                if (mur.type === "gelee") { joueur.vy = joueur.jumpForce * 0.75; joueur.isGrounded = false; debloquerSucces("gelee"); }
+                                if (mur.type === "gelee") { joueur.vy = joueur.jumpForce * 0.75; joueur.isGrounded = false; son("gelee"); debloquerSucces("gelee"); }
                                 if (mur.type === "mobile_h") { joueur.sur = mur; debloquerSucces("autostop"); }
                                 if (mur.type === "mobile_v") { joueur.sur = mur; debloquerSucces("ascenseur"); }
                                 if (mur.type === "convoyeur_g") { pousseeConv = -1.6; debloquerSucces("convoyeur"); }
@@ -6990,6 +7067,228 @@
             evts.forEach(function(e) { document.addEventListener(e, go, true); });
         });
 
+        // ===== V8.1 : SONS =====
+        // Tous les sons sont fabriqués en direct avec WebAudio (aucun fichier). Ils sont totalement séparés de la
+        // musique (le lecteur 🎵) : couper les sons du jeu ne touche jamais à la musique.
+        // (var et non let : certains succès se débloquent au chargement, avant que ce bloc ne soit lu)
+        Object.assign(I18N_DOM, {
+            "Son du jeu (M)": ["Game sounds (M)", "Spielsounds (M)", "ゲーム音(M)"],
+            "Couper / remettre les sons du jeu": ["Mute / unmute game sounds", "Spielsounds aus / an", "ゲーム音のオン/オフ"],
+            "La musique de ta playlist n'est pas touchée.": ["Your playlist music is not affected.", "Die Musik deiner Playlist bleibt unberührt.", "プレイリストの音楽は影響を受けません。"],
+            "🔉 Volume des sons": ["🔉 Sound volume", "🔉 Lautstärke der Sounds", "🔉 効果音の音量"]
+        });
+        var sonActif = lsGet("cyber_hack_son") !== "0";
+        var volSon = parseFloat(lsGet("cyber_hack_son_vol")); if (isNaN(volSon)) volSon = 0.5;
+        var ctxSon = null, gainSon = null, bruitBuf = null, _derniersSons = {}, _zoneSon = -1, _partActives = 0;
+        var skinCourant = listeSkins[0];
+        function ctxAudio() {
+            if (!ctxSon) {
+                try {
+                    let AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+                    ctxSon = new AC(); gainSon = ctxSon.createGain(); gainSon.gain.value = volSon; gainSon.connect(ctxSon.destination);
+                } catch (e) { return null; }
+            }
+            if (ctxSon.state === "suspended") { try { ctxSon.resume(); } catch (e) {} }
+            return ctxSon;
+        }
+        ["click", "keydown", "touchend", "mouseup"].forEach(function(ev) { document.addEventListener(ev, function() { ctxAudio(); }, true); });
+        function ton(o) {
+            let c = ctxSon, t = c.currentTime + (o.t || 0), osc = c.createOscillator(), g = c.createGain(), fin = g;
+            osc.type = o.type || "square"; osc.frequency.setValueAtTime(o.f, t);
+            if (o.f2) osc.frequency.exponentialRampToValueAtTime(Math.max(1, o.f2), t + o.d);
+            if (o.vib) { let lfo = c.createOscillator(), lg = c.createGain(); lfo.frequency.value = o.vib[0]; lg.gain.value = o.vib[1]; lfo.connect(lg); lg.connect(osc.frequency); lfo.start(t); lfo.stop(t + o.d + 0.05); }
+            let v = o.v === undefined ? 0.15 : o.v;
+            g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + (o.a || 0.006)); g.gain.exponentialRampToValueAtTime(0.0001, t + o.d);
+            osc.connect(g);
+            if (o.lp) { let fl = c.createBiquadFilter(); fl.type = "lowpass"; fl.frequency.value = o.lp; g.connect(fl); fin = fl; }
+            fin.connect(gainSon); osc.start(t); osc.stop(t + o.d + 0.05);
+        }
+        function bruit(o) {
+            let c = ctxSon, t = c.currentTime + (o.t || 0);
+            if (!bruitBuf) { bruitBuf = c.createBuffer(1, c.sampleRate, c.sampleRate); let d = bruitBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+            let src = c.createBufferSource(); src.buffer = bruitBuf; src.loop = true;
+            let fl = c.createBiquadFilter(); fl.type = o.type || "lowpass"; fl.frequency.setValueAtTime(o.f || 1000, t); fl.Q.value = o.q || 1;
+            if (o.f2) fl.frequency.exponentialRampToValueAtTime(Math.max(1, o.f2), t + o.d);
+            let g = c.createGain(), v = o.v === undefined ? 0.15 : o.v;
+            g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + o.d);
+            src.connect(fl); fl.connect(g); g.connect(gainSon); src.start(t); src.stop(t + o.d + 0.05);
+        }
+        function arpege(notes, o) { notes.forEach(function(f, i) { ton({ f: f, d: o.d, type: o.type || "triangle", v: o.v === undefined ? 0.14 : o.v, t: (o.t || 0) + i * o.pas }); }); }
+        var SONS = {
+            saut: function() { ton({ f: 280, f2: 560, d: 0.13, type: "square", v: 0.09 }); },
+            saut2: function() { ton({ f: 420, f2: 900, d: 0.12, type: "triangle", v: 0.16 }); ton({ f: 900, f2: 1300, d: 0.08, type: "sine", v: 0.1, t: 0.05 }); },
+            piece: function() { ton({ f: 988, d: 0.07, type: "square", v: 0.08 }); ton({ f: 1319, d: 0.25, type: "square", v: 0.08, t: 0.07 }); },
+            piece2: function() { arpege([988, 1319, 1568], { d: 0.12, type: "square", v: 0.08, pas: 0.06 }); },
+            piece3: function() { arpege([988, 1319, 1568, 1976], { d: 0.14, type: "square", v: 0.08, pas: 0.055 }); },
+            jackpot: function() { arpege([523, 659, 784, 1047, 1319, 1568, 2093], { d: 0.2, v: 0.14, pas: 0.06 }); bruit({ type: "highpass", f: 6000, d: 0.5, v: 0.05, t: 0.3 }); },
+            checkpoint: function() { arpege([523, 659, 784], { d: 0.14, v: 0.16, pas: 0.09 }); ton({ f: 1047, d: 0.3, type: "triangle", v: 0.14, t: 0.27 }); },
+            trampo: function() { ton({ f: 160, f2: 620, d: 0.22, type: "sine", v: 0.3 }); ton({ f: 620, f2: 300, d: 0.12, type: "sine", v: 0.15, t: 0.2 }); },
+            trampo_max: function() { ton({ f: 120, f2: 1100, d: 0.35, type: "sine", v: 0.3 }); ton({ f: 60, f2: 200, d: 0.2, type: "triangle", v: 0.2 }); },
+            gelee: function() { ton({ f: 340, f2: 140, d: 0.22, type: "sine", v: 0.28, vib: [28, 50] }); },
+            boost: function() { ton({ f: 200, f2: 1400, d: 0.22, type: "sawtooth", v: 0.07 }); bruit({ type: "highpass", f: 2000, f2: 6000, d: 0.2, v: 0.06 }); },
+            dash: function() { bruit({ type: "bandpass", f: 3200, f2: 700, q: 1.2, d: 0.18, v: 0.22 }); },
+            tp: function() { arpege([400, 800, 1600, 800, 400], { d: 0.07, type: "sine", v: 0.15, pas: 0.05 }); },
+            portail: function() { ton({ f: 900, f2: 90, d: 0.55, type: "sine", v: 0.22, vib: [14, 30] }); },
+            porte_ouvre: function() { ton({ f: 180, f2: 420, d: 0.12, type: "square", v: 0.07 }); ton({ f: 420, f2: 840, d: 0.12, type: "square", v: 0.06, t: 0.1 }); },
+            porte_ferme: function() { ton({ f: 600, f2: 200, d: 0.12, type: "square", v: 0.07 }); bruit({ type: "lowpass", f: 400, d: 0.15, v: 0.25, t: 0.1 }); },
+            cle: function() { ton({ f: 1397, d: 0.08, type: "triangle", v: 0.15 }); ton({ f: 2093, d: 0.3, type: "triangle", v: 0.15, t: 0.08 }); },
+            porte_cle: function() { arpege([784, 740, 622, 440, 415, 659, 831, 1047], { d: 0.1, v: 0.14, pas: 0.075 }); }, // petit clin d'œil au jingle « secret découvert »
+            bouton: function() { ton({ f: 300, d: 0.04, type: "square", v: 0.1 }); ton({ f: 500, d: 0.06, type: "square", v: 0.1, t: 0.05 }); },
+            orbe: function() { ton({ f: 700, f2: 1500, d: 0.18, type: "sine", v: 0.18 }); ton({ f: 1500, d: 0.15, type: "triangle", v: 0.1, t: 0.12 }); },
+            bouclier: function() { ton({ f: 300, f2: 900, d: 0.4, type: "sine", v: 0.2, vib: [10, 40] }); },
+            vitesse: function() { ton({ f: 300, f2: 1800, d: 0.25, type: "sawtooth", v: 0.07 }); },
+            fragile: function() { [800, 600, 420].forEach(function(f, i) { bruit({ type: "bandpass", f: f, q: 2, d: 0.07, v: 0.25, t: i * 0.08 }); }); },
+            tir: function() { ton({ f: 900, f2: 180, d: 0.12, type: "square", v: 0.08 }); },
+            tir2: function() { ton({ f: 700, f2: 150, d: 0.16, type: "sawtooth", v: 0.07 }); },
+            succes: function() { arpege([523, 659, 784, 1047], { d: 0.14, v: 0.16, pas: 0.08 }); ton({ f: 1568, d: 0.4, type: "sine", v: 0.1, t: 0.34 }); },
+            victoire: function() { arpege([392, 494, 587, 784], { d: 0.16, type: "square", v: 0.07, pas: 0.1 }); [784, 987, 1175].forEach(function(f) { ton({ f: f, d: 0.55, type: "square", v: 0.06, t: 0.4 }); }); },
+            achat: function() { bruit({ type: "highpass", f: 5000, d: 0.12, v: 0.1 }); ton({ f: 1800, d: 0.06, type: "square", v: 0.08, t: 0.02 }); ton({ f: 2400, d: 0.3, type: "square", v: 0.08, t: 0.08 }); },
+            erreur: function() { ton({ f: 160, f2: 110, d: 0.18, type: "sawtooth", v: 0.12 }); ton({ f: 160, f2: 100, d: 0.2, type: "sawtooth", v: 0.12, t: 0.2 }); },
+            pose: function() { ton({ f: 480, f2: 320, d: 0.05, type: "triangle", v: 0.14 }); },
+            efface: function() { bruit({ type: "bandpass", f: 1200, q: 1, d: 0.06, v: 0.12 }); },
+            pause: function() { ton({ f: 600, f2: 400, d: 0.12, type: "square", v: 0.07 }); },
+            reprise: function() { ton({ f: 400, f2: 640, d: 0.12, type: "square", v: 0.07 }); },
+            creatif: function() { ton({ f: 300, f2: 900, d: 0.2, type: "triangle", v: 0.14 }); },
+            tache_ok: function() { arpege([659, 784, 988, 1319], { d: 0.12, v: 0.14, pas: 0.08 }); },
+            ok: function() { ton({ f: 880, d: 0.06, type: "square", v: 0.07 }); },
+            faux: function() { ton({ f: 200, f2: 150, d: 0.12, type: "sawtooth", v: 0.1 }); },
+            fragment: function() { ton({ f: 1200, f2: 2000, d: 0.15, type: "sine", v: 0.16 }); ton({ f: 1600, d: 0.12, type: "triangle", v: 0.1, t: 0.07 }); },
+            mur: function() { bruit({ type: "lowpass", f: 900, f2: 90, d: 0.9, v: 0.3 }); [1500, 2000, 2600].forEach(function(f, i) { ton({ f: f, d: 0.15, type: "sine", v: 0.08, t: 0.3 + i * 0.1 }); }); },
+            zone: function() { ton({ f: 110, f2: 220, d: 0.5, type: "sine", v: 0.3 }); ton({ f: 220, f2: 330, d: 0.5, type: "triangle", v: 0.14, t: 0.25 }); },
+            start: function() { arpege([262, 330, 392, 523], { d: 0.12, type: "square", v: 0.07, pas: 0.08 }); },
+            clic: function() { ton({ f: 1200, d: 0.015, type: "square", v: 0.03 }); },
+            skin: function() { bruit({ type: "bandpass", f: 3000, f2: 6000, q: 2, d: 0.12, v: 0.12 }); ton({ f: 800, f2: 1200, d: 0.1, type: "sine", v: 0.1 }); },
+            konami: function() { arpege([659, 784, 1319, 1047, 1175, 1568], { d: 0.1, type: "square", v: 0.07, pas: 0.08 }); },
+            // --- morts (une par style d'animation) ---
+            mort_boum: function() {
+                let r = RND(4);
+                if (r === 0) { let t = 0; [[233, 0.22], [220, 0.22], [208, 0.22], [196, 0.7]].forEach(function(n, i) { ton({ f: n[0], d: n[1], type: "sawtooth", v: 0.12, t: t, lp: 1400, vib: i === 3 ? [6, 6] : null }); t += n[1]; }); } // trombone triste
+                else if (r === 1) { ton({ f: 330, f2: 190, d: 0.16, type: "sawtooth", v: 0.16, lp: 1800 }); bruit({ type: "bandpass", f: 700, q: 3, d: 0.14, v: 0.12 }); } // « oof »
+                else if (r === 2) { ton({ f: 500, f2: 1000, d: 0.1, type: "square", v: 0.09 }); [900, 700, 500, 350, 200].forEach(function(f, i) { ton({ f: f, d: 0.1, type: "square", v: 0.09, t: 0.12 + i * 0.09 }); }); } // arcade
+                else { bruit({ type: "lowpass", f: 2400, f2: 150, d: 0.4, v: 0.32 }); ton({ f: 300, f2: 50, d: 0.4, type: "square", v: 0.12 }); } // explosion
+            },
+            mort_robot: function() { ton({ f: 880, d: 0.1, type: "square", v: 0.09 }); ton({ f: 660, d: 0.1, type: "square", v: 0.09, t: 0.12 }); ton({ f: 440, d: 0.22, type: "square", v: 0.09, t: 0.24 }); bruit({ type: "bandpass", f: 1500, q: 2, d: 0.3, v: 0.1, t: 0.3 }); }, // erreur système
+            mort_fantome: function() { ton({ f: 300, f2: 900, d: 0.9, type: "sine", v: 0.2, vib: [7, 25] }); ton({ f: 305, f2: 910, d: 0.9, type: "sine", v: 0.1 }); },
+            mort_feu: function() { bruit({ type: "lowpass", f: 600, f2: 2500, d: 0.5, v: 0.3 }); bruit({ type: "bandpass", f: 200, q: 1, d: 0.6, v: 0.2 }); ton({ f: 70, d: 0.5, type: "sine", v: 0.2 }); },
+            mort_os: function() { for (let i = 0; i < 7; i++) bruit({ type: "bandpass", f: 1500 + RND(1500), q: 6, d: 0.04, v: 0.3, t: i * 0.05 + Math.random() * 0.02 }); },
+            mort_bulles: function() { for (let i = 0; i < 4; i++) ton({ f: 400 + RND(300), f2: 900 + RND(500), d: 0.07, type: "sine", v: 0.2, t: i * 0.07 }); },
+            mort_ange: function() { arpege([523, 659, 784, 1047, 1319, 1568, 2093], { d: 0.35, type: "sine", v: 0.1, pas: 0.06 }); },
+            mort_glitch: function() { for (let i = 0; i < 8; i++) ton({ f: 100 + RND(2000), d: 0.04, type: i % 2 ? "square" : "sawtooth", v: 0.1, t: i * 0.04 }); bruit({ type: "highpass", f: 4000, d: 0.15, v: 0.1 }); },
+            mort_chat: function() { ton({ f: 600, f2: 900, d: 0.12, type: "sawtooth", v: 0.1, lp: 1800 }); ton({ f: 900, f2: 450, d: 0.3, type: "sawtooth", v: 0.1, t: 0.12, lp: 1800 }); }, // miaou
+            mort_fumee: function() { bruit({ type: "lowpass", f: 800, f2: 200, d: 0.25, v: 0.28 }); ton({ f: 140, f2: 60, d: 0.2, type: "sine", v: 0.2 }); },
+            mort_slime: function() { ton({ f: 260, f2: 70, d: 0.3, type: "sine", v: 0.3, vib: [22, 45] }); bruit({ type: "lowpass", f: 500, d: 0.15, v: 0.15 }); },
+            mort_etoiles: function() { arpege([2093, 1760, 1568, 1319, 1047], { d: 0.2, type: "triangle", v: 0.1, pas: 0.07 }); }
+        };
+        var MINI_SON = { clic: 25, pose: 35, efface: 35, saut: 80, succes: 150, tir: 120, tir2: 120 };
+        function son(nom) {
+            try {
+                if (!sonActif || document.hidden) return;
+                let f = SONS[nom]; if (!f) return;
+                let c = ctxAudio(); if (!c || c.state !== "running") return;
+                let t = performance.now(), mini = MINI_SON[nom] || 40;
+                if (_derniersSons[nom] && t - _derniersSons[nom] < mini) return;
+                _derniersSons[nom] = t; f();
+            } catch (e) {}
+        }
+        function majBoutonSon() {
+            let b = document.getElementById("btn-son-toggle"); if (b) b.innerText = sonActif ? "🔊" : "🔇";
+            let b2 = document.getElementById("btn-son"); if (b2) b2.innerText = (sonActif ? "🔊 " : "🔇 ") + tx(["SONS DU JEU : ", "GAME SOUNDS: ", "SPIELSOUNDS: ", "ゲーム音:"]) + (sonActif ? "ON" : "OFF");
+        }
+        function basculerSon() {
+            sonActif = !sonActif; lsSet("cyber_hack_son", sonActif ? "1" : "0"); majBoutonSon();
+            if (sonActif) son("ok"); else debloquerSucces("muet");
+            toast(sonActif ? tx(["🔊 Sons du jeu activés", "🔊 Game sounds on", "🔊 Spielsounds an", "🔊 ゲーム音ON"]) : tx(["🔇 Sons du jeu coupés (la musique continue)", "🔇 Game sounds off (music keeps playing)", "🔇 Spielsounds aus (die Musik läuft weiter)", "🔇 ゲーム音OFF(音楽は継続)"]));
+        }
+        function reglerVolumeSon(v) { volSon = Math.max(0, Math.min(1, v / 100)); if (gainSon) gainSon.gain.value = volSon; lsSet("cyber_hack_son_vol", String(volSon)); }
+        window.addEventListener("load", function() { let r = document.getElementById("volume-son"); if (r) r.value = Math.round(volSon * 100); majBoutonSon(); });
+        // Code secret
+        var _konami = [], _KON = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"].join();
+        document.addEventListener("keydown", function(e) {
+            if (e.repeat) return;
+            _konami.push(e.key.length === 1 ? e.key.toLowerCase() : e.key); if (_konami.length > 10) _konami.shift();
+            if (_konami.join() === _KON) { _konami = []; son("konami"); debloquerSucces("konami"); toast("🎮 ↑↑↓↓←→←→ B A  —  +30 lives"); }
+        });
+
+        // ===== V8.1 : ANIMATIONS DE MORT (selon le skin porté) =====
+        const STYLES_MORT = [
+            [/squelette|pirate/i, "os"], [/chat/i, "chat"], [/ninja|samoura|camouflage|z[èe]bre/i, "fumee"],
+            [/robot|\bbot\b|chevalier|steel|circuit|matrice/i, "robot"], [/ange|aurora|aurore/i, "ange"],
+            [/fant[ôo]me|spectre|n[ée]ant|phantom|void|ombre/i, "fantome"], [/dragon|diable|demon|magma|ph[ée]nix|lava|solar|flare|infernal/i, "feu"],
+            [/aquarium|ocean|bleu ciel|frost|ice core|glace/i, "bulles"], [/toxic|slime|bubblegum|candy|gel[ée]e/i, "slime"],
+            [/galaxy|quantum|quantique|roi|royal|king|gold|dor[ée]|soleil|cristal|prisme|diamant|arc-en-ciel|platine|troph[ée]e/i, "etoiles"],
+            [/glitch|hologramme|n[ée]on|hacker|cyber|matrix/i, "glitch"]
+        ];
+        const TOUS_STYLES_MORT = ["boum", "robot", "fantome", "feu", "os", "bulles", "ange", "glitch", "chat", "fumee", "slime", "etoiles"];
+        function styleMortDe(nom) { nom = String(nom || "").replace(/\s*\([^)]*\)\s*$/, ""); /* sans la rareté : « (Spectre) » n'est pas un fantôme */ for (let i = 0; i < STYLES_MORT.length; i++) if (STYLES_MORT[i][0].test(nom)) return STYLES_MORT[i][1]; return "boum"; }
+        function couleurSkin(sk) { let m = sk && String(sk.fond).match(/#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b/); return m ? m[0] : "#ffffff"; }
+        function particule(x, y, o) {
+            if (_partActives > 70) return;
+            let d = document.createElement("div");
+            let base = "position:absolute; left:0; top:0; pointer-events:none; z-index:80; will-change:transform,opacity;";
+            if (o.txt) { d.innerText = o.txt; d.style.cssText = base + "font-size:" + (o.taille || 12) + "px; line-height:1; color:" + (o.couleur || "#fff") + "; font-weight:bold; font-family:'Courier New',monospace; text-shadow:0 0 4px #000; white-space:nowrap;"; }
+            else d.style.cssText = base + "width:" + o.taille + "px; height:" + (o.h || o.taille) + "px;" + (o.bord ? "border:1px solid " + o.bord + ";" : "background:" + o.couleur + ";") + (o.rond ? "border-radius:50%;" : "");
+            if (!d.animate) return;
+            monde.appendChild(d); _partActives++;
+            let dx = o.dx || 0, dy = o.dy || 0, rot = o.rot || 0;
+            let a = d.animate([
+                { transform: "translate3d(" + x + "px," + y + "px,0) rotate(0deg) scale(1)", opacity: 1, offset: 0 },
+                { transform: "translate3d(" + (x + dx * 0.6) + "px," + (y + dy * 0.7) + "px,0) rotate(" + (rot * 0.6) + "deg) scale(1)", opacity: 1, offset: 0.5 },
+                { transform: "translate3d(" + (x + dx) + "px," + (y + dy + (o.grav || 0)) + "px,0) rotate(" + rot + "deg) scale(" + (o.fin === undefined ? 1 : o.fin) + ")", opacity: 0, offset: 1 }
+            ], { duration: o.d || 700, easing: o.easing || "ease-out", delay: o.delay || 0, fill: "both" });
+            a.onfinish = function() { d.remove(); _partActives--; };
+        }
+        const QUIPS_MORT = ["YOU DIED", "WASTED", "F", "404", "GG", "Segfault", "rm -rf /me", "HP: 0", "Skill issue", "Respawn.exe", "Access denied", "Ctrl+Z ?", "It's a feature", "Press F", "💀"];
+        function effetMort(x, y, type, col) {
+            let cx = x + 6, cy = y + 6, R = function(a, b) { return a + Math.random() * (b - a); };
+            let rad = function(n, fn) { for (let i = 0; i < n; i++) fn(i, i / n * Math.PI * 2); };
+            if (type === "boum") rad(14, function(i, a) { particule(cx, cy, { taille: 4 + RND(3), couleur: col, dx: Math.cos(a) * R(25, 60), dy: Math.sin(a) * R(25, 60) - 10, grav: 40, rot: R(-360, 360) }); });
+            else if (type === "robot") {
+                rad(8, function(i, a) { particule(cx, cy, { taille: 4 + RND(3), couleur: i % 2 ? "#9aa5b8" : "#ff8800", dx: Math.cos(a) * R(25, 55), dy: Math.sin(a) * R(25, 55) - 10, grav: 35, rot: R(-360, 360), d: 800 }); });
+                ["⚙️", "🔩", "⚙️"].forEach(function(t) { particule(cx, cy, { txt: t, taille: 12, dx: R(-40, 40), dy: R(-50, -15), grav: 40, rot: R(-180, 180), d: 900 }); });
+            } else if (type === "fantome") {
+                particule(cx - 4, cy, { txt: "👻", taille: 16, dx: R(-10, 10), dy: -75, d: 1200 });
+                for (let i = 0; i < 4; i++) particule(cx, cy, { taille: 6, rond: true, couleur: "rgba(255,255,255,0.5)", dx: R(-25, 25), dy: R(-50, -20), d: 1000, delay: i * 80 });
+            } else if (type === "feu") {
+                for (let i = 0; i < 7; i++) particule(cx, cy, { txt: "🔥", taille: 11, dx: R(-30, 30), dy: R(-60, -20), d: 800, delay: i * 30 });
+                rad(8, function(i, a) { particule(cx, cy, { taille: 4, couleur: i % 2 ? "#ff5a00" : "#ffd23f", dx: Math.cos(a) * R(20, 50), dy: Math.sin(a) * R(20, 50) - 20, grav: -10 }); });
+            } else if (type === "os") {
+                for (let i = 0; i < 3; i++) particule(cx, cy, { txt: "🦴", taille: 12, dx: R(-40, 40), dy: R(-40, -10), grav: 50, rot: R(-300, 300), d: 900 });
+                rad(8, function(i, a) { particule(cx, cy, { taille: 4, couleur: "#f4f1e8", dx: Math.cos(a) * R(15, 45), dy: Math.sin(a) * R(15, 45) - 15, grav: 50, rot: R(-200, 200) }); });
+            } else if (type === "bulles") {
+                for (let i = 0; i < 9; i++) particule(cx, cy + 4, { taille: 4 + RND(5), rond: true, bord: "#ffffff", dx: R(-25, 25), dy: R(-65, -25), d: 900 + RND(400), delay: i * 40 });
+            } else if (type === "ange") {
+                particule(cx - 4, cy, { txt: "😇", taille: 16, dx: 0, dy: -85, d: 1300 });
+                for (let i = 0; i < 5; i++) particule(cx, cy, { txt: "✨", taille: 10, dx: R(-30, 30), dy: R(-60, -15), d: 1000, delay: i * 70 });
+            } else if (type === "glitch") {
+                for (let i = 0; i < 9; i++) particule(cx - 6, cy + R(-8, 8), { taille: 8 + RND(8), h: 2 + RND(2), couleur: i % 2 ? "#00ffff" : "#ff00ff", dx: R(-35, 35), dy: 0, d: 450, easing: "steps(4)", delay: i * 20 });
+            } else if (type === "chat") {
+                particule(cx - 4, cy, { txt: "😿", taille: 16, dx: 0, dy: -50, d: 1000 });
+                for (let i = 0; i < 3; i++) particule(cx, cy + 6, { txt: "🐾", taille: 9, dx: R(-30, 30), dy: R(-10, 4), d: 800, delay: i * 90 });
+            } else if (type === "fumee") {
+                for (let i = 0; i < 7; i++) particule(cx - 4, cy - 2, { taille: 10 + RND(8), rond: true, couleur: "rgba(190,190,200,0.6)", dx: R(-22, 22), dy: R(-30, -5), d: 700, fin: 2, delay: i * 25 });
+            } else if (type === "slime") {
+                rad(10, function(i, a) { particule(cx, cy, { taille: 5 + RND(4), rond: true, couleur: col, dx: Math.cos(a) * R(15, 45), dy: Math.sin(a) * R(5, 25) + 5, grav: 30, d: 800 }); });
+            } else if (type === "etoiles") {
+                rad(8, function(i, a) { particule(cx, cy, { txt: i % 2 ? "⭐" : "✨", taille: 11, dx: Math.cos(a) * R(25, 55), dy: Math.sin(a) * R(25, 55) - 10, grav: 10, rot: R(-180, 180), d: 900 }); });
+            }
+            if (Math.random() < 0.2) particule(cx - 14, cy - 16, { txt: QUIPS_MORT[RND(QUIPS_MORT.length)], taille: 11, couleur: "#ffffff", dx: 0, dy: -34, d: 1200 });
+        }
+        function jouerMort() {
+            try {
+                let type = styleMortDe(skinCourant ? skinCourant.nom : ""), y = Math.min(joueur.y, arene.clientHeight - 30);
+                effetMort(joueur.x, y, type, couleurSkin(skinCourant));
+                son("mort_" + type);
+                let cle = "mort_" + type;
+                if (!compteursVie[cle]) {
+                    compteursVie[cle] = 1; lsSet("cyber_hack_compteurs", JSON.stringify(compteursVie));
+                    let nb = TOUS_STYLES_MORT.filter(function(t) { return compteursVie["mort_" + t]; }).length;
+                    if (nb >= 5) debloquerSucces("styles5");
+                    if (nb >= TOUS_STYLES_MORT.length) debloquerSucces("styles12");
+                }
+            } catch (e) {}
+        }
+        // ===== FIN V8.1 =====
+
         // Remise à zéro totale : banque, blocs, skins et langue (appelée par le
         // bouton "SUPPRIMER TOUTES LES SAUVEGARDES" du panneau Paramètres)
         function reinitialisationTotaleJeu() {
@@ -7032,7 +7331,7 @@
         stats.chronoActif = true; try { majTitresSkins(); } catch (e) {} majCompetences(); majSkinsSucces(); majBoutonHardcore();
         try { // V7.4 : on remet le skin choisi avant le rechargement
             let nomSkin = lsGet("cyber_hack_skin_actif"), sk = nomSkin && listeSkins.find(x => x.nom === nomSkin);
-            if (sk && sk.acquis) { joueur.element.style.background = sk.fond; joueur.element.innerHTML = sk.html; }
+            if (sk && sk.acquis) { joueur.element.style.background = sk.fond; joueur.element.innerHTML = sk.html; skinCourant = sk; }
         } catch (e) {}
         positionnerPanneaux();
         appliquerTraductions();   // traduction immédiate, sans attendre l'événement load
