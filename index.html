@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CYBER_HACK // PROTOCOL — V8.2</title><!-- build V8.2 : récompenses de succès, skins Halloween, menus à deux niveaux -->
+    <title>CYBER_HACK // PROTOCOL — V8.3</title><!-- build V8.3 : correctifs musique (volume, liste complète, mes playlists) -->
     <style>
         :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         html { background-color: #0b0f19; scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -678,7 +678,7 @@
             <button class="btn-mode-choix" style="border-color:#8892b0; color:#c5cde3; box-shadow:0 0 12px rgba(136,146,176,0.25);" onclick="ouvrirParametres()">⚙️ PARAMÈTRES &amp; LANGUE</button>
         </div>
 
-        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:14px; letter-spacing:3px;">V8.2</p>
+        <p id="version-jeu" style="color:#4a5570; font-size:11px; margin-top:14px; letter-spacing:3px;">V8.3</p>
     </div>
 
     <!-- Fenêtre : toutes les touches et leur fonction (écran titre) -->
@@ -2249,14 +2249,14 @@
         // V5 : fenêtre des nouveautés, affichée une seule fois par version
         window.addEventListener("load", function() {
             let vue = null; try { vue = localStorage.getItem("cyber_hack_version_vue"); } catch (e) {}
-            if (vue === "8.2") return;
-            try { localStorage.setItem("cyber_hack_version_vue", "8.2"); } catch (e) {}
+            if (vue === "8.3") return;
+            try { localStorage.setItem("cyber_hack_version_vue", "8.3"); } catch (e) {}
             setTimeout(function() {
                 afficherAlerte(tx([
-                    "🆕 V8.2 — Mise à jour !\n\n🔊 Sons du jeu : saut, pièces, checkpoints, blocs, victoire, succès…\n💀 Chaque skin meurt à sa façon : 12 animations et sons de mort différents (change de skin pour les voir)\n🔇 Bouton 🔊 (ou touche M) pour couper les sons du jeu sans toucher à ta musique\n🏅 4 nouveaux succès (dont un secret)\n📜 Détails dans le Journal des mises à jour\n\n🧩 Écran titre compact : boutons par deux\n🎨 12 nouvelles couleurs de blocs\n🏅 Récompenses de succès selon la difficulté (jusqu'à 10 000 🪙)\n🎃 Skins Halloween (octobre uniquement) + menus de skins à deux niveaux",
-                    "🆕 V8.2 — Update!\n\n🔊 Game sounds: jump, coins, checkpoints, blocks, victory, achievements…\n💀 Every skin dies its own way: 12 different death animations and sounds (change skin to see them)\n🔇 🔊 button (or M key) to mute game sounds without touching your music\n🏅 4 new achievements (one is secret)\n📜 Details in the Update Log\n\n🧩 Compact title screen: buttons in pairs\n🎨 12 new block colors\n🏅 Achievement rewards by difficulty (up to 10,000 🪙)\n🎃 Halloween skins (October only) + two-level skin menus",
-                    "🆕 V8.2 — Update!\n\n🔊 Spielsounds: Sprung, Münzen, Checkpoints, Blöcke, Sieg, Erfolge…\n💀 Jeder Skin stirbt auf seine Art: 12 verschiedene Todesanimationen und -sounds (Skin wechseln zum Ansehen)\n🔇 🔊-Knopf (oder Taste M) schaltet Spielsounds stumm, ohne deine Musik zu berühren\n🏅 4 neue Erfolge (einer davon geheim)\n📜 Details im Update-Journal\n\n🧩 Kompakter Titelbildschirm: Knöpfe paarweise\n🎨 12 neue Blockfarben\n🏅 Erfolgsbelohnungen nach Schwierigkeit (bis 10.000 🪙)\n🎃 Halloween-Skins (nur Oktober) + zweistufige Skin-Menüs",
-                    "🆕 V8.2 — アップデート!\n\n🔊 ゲームサウンド:ジャンプ、コイン、チェックポイント、ブロック、勝利、実績…\n💀 スキンごとに違う死に方:死亡アニメーションと効果音が12種類(スキンを変えて見てみよう)\n🔇 🔊ボタン(またはMキー)で音楽はそのままゲーム音だけ消せる\n🏅 新しい実績4つ(1つは秘密)\n📜 詳細はアップデート履歴へ\n\n🧩 コンパクトなタイトル画面:ボタンを2つずつ\n🎨 新ブロックカラー12色\n🏅 実績の報酬が難易度で変化(最大10,000 🪙)\n🎃 ハロウィンスキン(10月限定)+ 2段階スキンメニュー"
+                    "🆕 V8.3 — Mise à jour !\n\n🔊 Sons du jeu : saut, pièces, checkpoints, blocs, victoire, succès…\n💀 Chaque skin meurt à sa façon : 12 animations et sons de mort différents (change de skin pour les voir)\n🔇 Bouton 🔊 (ou touche M) pour couper les sons du jeu sans toucher à ta musique\n🏅 4 nouveaux succès (dont un secret)\n📜 Détails dans le Journal des mises à jour\n\n🧩 Écran titre compact : boutons par deux\n🎨 12 nouvelles couleurs de blocs\n🏅 Récompenses de succès selon la difficulté (jusqu'à 10 000 🪙)\n🎃 Skins Halloween (octobre uniquement) + menus de skins à deux niveaux\n🎵 Musique : volume réparé, liste des pistes complète, mes playlists enregistrées",
+                    "🆕 V8.3 — Update!\n\n🔊 Game sounds: jump, coins, checkpoints, blocks, victory, achievements…\n💀 Every skin dies its own way: 12 different death animations and sounds (change skin to see them)\n🔇 🔊 button (or M key) to mute game sounds without touching your music\n🏅 4 new achievements (one is secret)\n📜 Details in the Update Log\n\n🧩 Compact title screen: buttons in pairs\n🎨 12 new block colors\n🏅 Achievement rewards by difficulty (up to 10,000 🪙)\n🎃 Halloween skins (October only) + two-level skin menus\n🎵 Music: volume fixed, complete track list, saved playlists",
+                    "🆕 V8.3 — Update!\n\n🔊 Spielsounds: Sprung, Münzen, Checkpoints, Blöcke, Sieg, Erfolge…\n💀 Jeder Skin stirbt auf seine Art: 12 verschiedene Todesanimationen und -sounds (Skin wechseln zum Ansehen)\n🔇 🔊-Knopf (oder Taste M) schaltet Spielsounds stumm, ohne deine Musik zu berühren\n🏅 4 neue Erfolge (einer davon geheim)\n📜 Details im Update-Journal\n\n🧩 Kompakter Titelbildschirm: Knöpfe paarweise\n🎨 12 neue Blockfarben\n🏅 Erfolgsbelohnungen nach Schwierigkeit (bis 10.000 🪙)\n🎃 Halloween-Skins (nur Oktober) + zweistufige Skin-Menüs\n🎵 Musik: Lautstärke repariert, vollständige Titelliste, gespeicherte Playlists",
+                    "🆕 V8.3 — アップデート!\n\n🔊 ゲームサウンド:ジャンプ、コイン、チェックポイント、ブロック、勝利、実績…\n💀 スキンごとに違う死に方:死亡アニメーションと効果音が12種類(スキンを変えて見てみよう)\n🔇 🔊ボタン(またはMキー)で音楽はそのままゲーム音だけ消せる\n🏅 新しい実績4つ(1つは秘密)\n📜 詳細はアップデート履歴へ\n\n🧩 コンパクトなタイトル画面:ボタンを2つずつ\n🎨 新ブロックカラー12色\n🏅 実績の報酬が難易度で変化(最大10,000 🪙)\n🎃 ハロウィンスキン(10月限定)+ 2段階スキンメニュー\n🎵 音楽:音量修正、曲リスト完全表示、プレイリスト保存"
                 ]));
             }, 700);
         });
@@ -2715,11 +2715,11 @@
             "Aurore Rose": ["Dawn Pink", "Morgenrosa", "ドーンピンク"], "Minuit Bleu": ["Midnight Blue", "Mitternachtsblau", "ミッドナイトブルー"]
         });
         const JOURNAL_MAJ = [
-            { v: "7.6 → 8.2", titre: ["Sons du jeu et morts personnalisées", "Game sounds and custom deaths", "Spielsounds und individuelle Tode", "ゲーム音と個性的な死亡演出"], t: [
-                "🔊 Tous les sons du jeu, fabriqués en direct (aucun fichier) : saut et double saut, pièces (x1, x5, x10 et jackpot x100), checkpoint, trampolines, gelée, boost, dash, téléporteurs, portail, interrupteur, portes, clés, orbes, plateformes fragiles, tourelles, fragments, murs de zone, changement de zone, victoire, succès, boutique, pause, mode création…\n💀 12 animations de mort ET sons de mort, choisis selon ton skin actuel : robot (erreur système), fantôme, feu, squelette (os qui s'entrechoquent), bulles, ange (harpe), glitch, chat (miaou), fumée (ninja), slime, étoiles… et le classique, qui pioche au hasard parmi explosion, trombone triste, « oof » et arcade\n💬 De temps en temps, un petit message de mort apparaît (YOU DIED, WASTED, 404, F…)\n🔇 Bouton 🔊 en haut (ou touche M, ou dans les paramètres) : coupe les sons du jeu sans toucher à ta musique, qui reste à part. Un réglage de volume des sons est aussi dans les paramètres\n🎮 Un code secret pour les anciens…\n🏅 4 nouveaux succès : Mode silencieux, Mourir avec style, Cérémonie funèbre, et un secret\n🧩 Écran titre réorganisé : boutons regroupés par deux, titre et version de nouveau visibles sur une seule page\n🎨 12 nouvelles couleurs de blocs\n🏅 Récompenses de succès selon la difficulté : de 50 🪙 (faciles) jusqu'à 10 000 🪙 (Centurion)\n🎃 Skins Halloween (18, de Commun à Spectre) : achetables uniquement en octobre, à garder pour toujours. Fonctionne avec /shopfree\n🗂️ Skins rangés en menus à deux niveaux : Skins / Halloween → raretés → skins\n🏅 2 nouveaux succès : Trick or Treat et Maître des cauchemars",
-                "🔊 Every game sound, synthesized live (no files): jump and double jump, coins (x1, x5, x10 and x100 jackpot), checkpoint, trampolines, jelly, boost, dash, teleporters, portal, switch, doors, keys, orbs, fragile platforms, turrets, fragments, zone walls, zone change, victory, achievements, shop, pause, creative mode…\n💀 12 death animations AND death sounds, picked from your current skin: robot (system error), ghost, fire, skeleton (rattling bones), bubbles, angel (harp), glitch, cat (meow), smoke (ninja), slime, stars… and the classic one, which randomly picks between explosion, sad trombone, “oof” and arcade\n💬 Now and then a little death message pops up (YOU DIED, WASTED, 404, F…)\n🔇 🔊 button at the top (or the M key, or in settings): mutes game sounds without touching your music, which stays separate. A sound volume slider is in settings too\n🎮 A secret code for the veterans…\n🏅 4 new achievements: Silent Mode, Dying in Style, Funeral Ceremony, and a secret\n🧩 Title screen reorganized: buttons grouped in pairs, title and version visible again on one page\n🎨 12 new block colors\n🏅 Achievement rewards scale with difficulty: from 50 🪙 (easy) up to 10,000 🪙 (Centurion)\n🎃 Halloween skins (18, Common to Spectral): only buyable in October, yours forever once unlocked. Works with /shopfree\n🗂️ Skins organised in two-level menus: Skins / Halloween → rarities → skins\n🏅 2 new achievements: Trick or Treat and Master of Nightmares",
-                "🔊 Alle Spielsounds, live erzeugt (keine Dateien): Sprung und Doppelsprung, Münzen (x1, x5, x10 und Jackpot x100), Checkpoint, Trampoline, Gelee, Boost, Dash, Teleporter, Portal, Schalter, Türen, Schlüssel, Orbs, zerbrechliche Plattformen, Geschütztürme, Fragmente, Zonenmauern, Zonenwechsel, Sieg, Erfolge, Shop, Pause, Kreativmodus…\n💀 12 Todesanimationen UND Todessounds, passend zu deinem aktuellen Skin: Roboter (Systemfehler), Geist, Feuer, Skelett (klappernde Knochen), Blasen, Engel (Harfe), Glitch, Katze (Miau), Rauch (Ninja), Schleim, Sterne… und der Klassiker, der zufällig zwischen Explosion, traurige Posaune, „Oof“ und Arcade wählt\n💬 Ab und zu erscheint eine kleine Todesmeldung (YOU DIED, WASTED, 404, F…)\n🔇 🔊-Knopf oben (oder Taste M, oder in den Einstellungen): schaltet Spielsounds stumm, ohne deine Musik zu berühren, die getrennt bleibt. Ein Lautstärkeregler für Sounds ist ebenfalls in den Einstellungen\n🎮 Ein Geheimcode für die Veteranen…\n🏅 4 neue Erfolge: Stiller Modus, Mit Stil sterben, Trauerfeier und ein geheimer\n🧩 Titelbildschirm neu geordnet: Knöpfe paarweise gruppiert, Titel und Version wieder auf einer Seite sichtbar\n🎨 12 neue Blockfarben\n🏅 Erfolgsbelohnungen nach Schwierigkeit: von 50 🪙 (leicht) bis 10.000 🪙 (Zenturio)\n🎃 Halloween-Skins (18, von Gewöhnlich bis Spektral): nur im Oktober kaufbar, danach für immer deins. Funktioniert mit /shopfree\n🗂️ Skins in zweistufigen Menüs: Skins / Halloween → Seltenheiten → Skins\n🏅 2 neue Erfolge: Süßes oder Saures und Meister der Albträume",
-                "🔊 すべてのゲーム音をその場で合成(ファイル不要):ジャンプ/ダブルジャンプ、コイン(x1/x5/x10/ジャックポットx100)、チェックポイント、トランポリン、ゼリー、ブースト、ダッシュ、テレポーター、ポータル、スイッチ、ドア、鍵、オーブ、もろい足場、タレット、断片、ゾーンの壁、ゾーン移動、勝利、実績、ショップ、ポーズ、作成モード…\n💀 今のスキンに合わせた死亡アニメーションと効果音が12種類:ロボット(システムエラー)、幽霊、炎、骸骨(骨のカタカタ音)、泡、天使(ハープ)、グリッチ、猫(ニャー)、煙(忍者)、スライム、星…。通常スキンは爆発/悲しいトロンボーン/「oof」/アーケードからランダム\n💬 ときどき小さな死亡メッセージが出る(YOU DIED、WASTED、404、F…)\n🔇 上部の🔊ボタン(Mキー、または設定):音楽はそのままゲーム音だけ消せる。設定には効果音の音量スライダーもある\n🎮 ベテラン向けの秘密のコマンド…\n🏅 新しい実績4つ:サイレントモード、おしゃれな最期、葬送の儀、そして秘密の1つ\n🧩 タイトル画面を整理:ボタンを2つずつ並べ、タイトルとバージョンが1ページで見える\n🎨 新しいブロックカラー12色\n🏅 実績の報酬は難易度に応じて変化:50 🪙(簡単)から10,000 🪙(百人隊長)まで\n🎃 ハロウィンスキン(18種、コモン〜スペクトル):10月のみ購入可能、取得後は永久。/shopfreeにも対応\n🗂️ スキンを2段階メニューに整理:スキン/ハロウィン → レア度 → スキン\n🏅 新実績2つ:トリック・オア・トリート、悪夢の支配者"] },
+            { v: "7.6 → 8.3", titre: ["Sons du jeu et morts personnalisées", "Game sounds and custom deaths", "Spielsounds und individuelle Tode", "ゲーム音と個性的な死亡演出"], t: [
+                "🔊 Tous les sons du jeu, fabriqués en direct (aucun fichier) : saut et double saut, pièces (x1, x5, x10 et jackpot x100), checkpoint, trampolines, gelée, boost, dash, téléporteurs, portail, interrupteur, portes, clés, orbes, plateformes fragiles, tourelles, fragments, murs de zone, changement de zone, victoire, succès, boutique, pause, mode création…\n💀 12 animations de mort ET sons de mort, choisis selon ton skin actuel : robot (erreur système), fantôme, feu, squelette (os qui s'entrechoquent), bulles, ange (harpe), glitch, chat (miaou), fumée (ninja), slime, étoiles… et le classique, qui pioche au hasard parmi explosion, trombone triste, « oof » et arcade\n💬 De temps en temps, un petit message de mort apparaît (YOU DIED, WASTED, 404, F…)\n🔇 Bouton 🔊 en haut (ou touche M, ou dans les paramètres) : coupe les sons du jeu sans toucher à ta musique, qui reste à part. Un réglage de volume des sons est aussi dans les paramètres\n🎮 Un code secret pour les anciens…\n🏅 4 nouveaux succès : Mode silencieux, Mourir avec style, Cérémonie funèbre, et un secret\n🧩 Écran titre réorganisé : boutons regroupés par deux, titre et version de nouveau visibles sur une seule page\n🎨 12 nouvelles couleurs de blocs\n🏅 Récompenses de succès selon la difficulté : de 50 🪙 (faciles) jusqu'à 10 000 🪙 (Centurion)\n🎃 Skins Halloween (18, de Commun à Spectre) : achetables uniquement en octobre, à garder pour toujours. Fonctionne avec /shopfree\n🗂️ Skins rangés en menus à deux niveaux : Skins / Halloween → raretés → skins\n🏅 2 nouveaux succès : Trick or Treat et Maître des cauchemars\n🎵 Musique : le curseur de volume marche maintenant pour YouTube, SoundCloud et les fichiers audio (Spotify/Deezer/Apple Music : volume dans leur lecteur)\n📃 Liste des pistes : toutes les pistes (même au-delà de 200 sur YouTube), recherche sur l'ensemble des titres, progression du chargement\n📚 Mes playlists : enregistre tes liens avec un nom et relance-les d'un clic",
+                "🔊 Every game sound, synthesized live (no files): jump and double jump, coins (x1, x5, x10 and x100 jackpot), checkpoint, trampolines, jelly, boost, dash, teleporters, portal, switch, doors, keys, orbs, fragile platforms, turrets, fragments, zone walls, zone change, victory, achievements, shop, pause, creative mode…\n💀 12 death animations AND death sounds, picked from your current skin: robot (system error), ghost, fire, skeleton (rattling bones), bubbles, angel (harp), glitch, cat (meow), smoke (ninja), slime, stars… and the classic one, which randomly picks between explosion, sad trombone, “oof” and arcade\n💬 Now and then a little death message pops up (YOU DIED, WASTED, 404, F…)\n🔇 🔊 button at the top (or the M key, or in settings): mutes game sounds without touching your music, which stays separate. A sound volume slider is in settings too\n🎮 A secret code for the veterans…\n🏅 4 new achievements: Silent Mode, Dying in Style, Funeral Ceremony, and a secret\n🧩 Title screen reorganized: buttons grouped in pairs, title and version visible again on one page\n🎨 12 new block colors\n🏅 Achievement rewards scale with difficulty: from 50 🪙 (easy) up to 10,000 🪙 (Centurion)\n🎃 Halloween skins (18, Common to Spectral): only buyable in October, yours forever once unlocked. Works with /shopfree\n🗂️ Skins organised in two-level menus: Skins / Halloween → rarities → skins\n🏅 2 new achievements: Trick or Treat and Master of Nightmares\n🎵 Music: the volume slider now works for YouTube, SoundCloud and audio files (Spotify/Deezer/Apple Music: use their own player)\n📃 Track list: every track (even beyond 200 on YouTube), search across all titles, loading progress\n📚 My playlists: save your links with a name and relaunch them in one click",
+                "🔊 Alle Spielsounds, live erzeugt (keine Dateien): Sprung und Doppelsprung, Münzen (x1, x5, x10 und Jackpot x100), Checkpoint, Trampoline, Gelee, Boost, Dash, Teleporter, Portal, Schalter, Türen, Schlüssel, Orbs, zerbrechliche Plattformen, Geschütztürme, Fragmente, Zonenmauern, Zonenwechsel, Sieg, Erfolge, Shop, Pause, Kreativmodus…\n💀 12 Todesanimationen UND Todessounds, passend zu deinem aktuellen Skin: Roboter (Systemfehler), Geist, Feuer, Skelett (klappernde Knochen), Blasen, Engel (Harfe), Glitch, Katze (Miau), Rauch (Ninja), Schleim, Sterne… und der Klassiker, der zufällig zwischen Explosion, traurige Posaune, „Oof“ und Arcade wählt\n💬 Ab und zu erscheint eine kleine Todesmeldung (YOU DIED, WASTED, 404, F…)\n🔇 🔊-Knopf oben (oder Taste M, oder in den Einstellungen): schaltet Spielsounds stumm, ohne deine Musik zu berühren, die getrennt bleibt. Ein Lautstärkeregler für Sounds ist ebenfalls in den Einstellungen\n🎮 Ein Geheimcode für die Veteranen…\n🏅 4 neue Erfolge: Stiller Modus, Mit Stil sterben, Trauerfeier und ein geheimer\n🧩 Titelbildschirm neu geordnet: Knöpfe paarweise gruppiert, Titel und Version wieder auf einer Seite sichtbar\n🎨 12 neue Blockfarben\n🏅 Erfolgsbelohnungen nach Schwierigkeit: von 50 🪙 (leicht) bis 10.000 🪙 (Zenturio)\n🎃 Halloween-Skins (18, von Gewöhnlich bis Spektral): nur im Oktober kaufbar, danach für immer deins. Funktioniert mit /shopfree\n🗂️ Skins in zweistufigen Menüs: Skins / Halloween → Seltenheiten → Skins\n🏅 2 neue Erfolge: Süßes oder Saures und Meister der Albträume\n🎵 Musik: Der Lautstärkeregler funktioniert jetzt bei YouTube, SoundCloud und Audiodateien (Spotify/Deezer/Apple Music: im eigenen Player)\n📃 Titelliste: alle Titel (auch über 200 bei YouTube), Suche über alle Titel, Ladefortschritt\n📚 Meine Playlists: Links mit Namen speichern und mit einem Klick starten",
+                "🔊 すべてのゲーム音をその場で合成(ファイル不要):ジャンプ/ダブルジャンプ、コイン(x1/x5/x10/ジャックポットx100)、チェックポイント、トランポリン、ゼリー、ブースト、ダッシュ、テレポーター、ポータル、スイッチ、ドア、鍵、オーブ、もろい足場、タレット、断片、ゾーンの壁、ゾーン移動、勝利、実績、ショップ、ポーズ、作成モード…\n💀 今のスキンに合わせた死亡アニメーションと効果音が12種類:ロボット(システムエラー)、幽霊、炎、骸骨(骨のカタカタ音)、泡、天使(ハープ)、グリッチ、猫(ニャー)、煙(忍者)、スライム、星…。通常スキンは爆発/悲しいトロンボーン/「oof」/アーケードからランダム\n💬 ときどき小さな死亡メッセージが出る(YOU DIED、WASTED、404、F…)\n🔇 上部の🔊ボタン(Mキー、または設定):音楽はそのままゲーム音だけ消せる。設定には効果音の音量スライダーもある\n🎮 ベテラン向けの秘密のコマンド…\n🏅 新しい実績4つ:サイレントモード、おしゃれな最期、葬送の儀、そして秘密の1つ\n🧩 タイトル画面を整理:ボタンを2つずつ並べ、タイトルとバージョンが1ページで見える\n🎨 新しいブロックカラー12色\n🏅 実績の報酬は難易度に応じて変化:50 🪙(簡単)から10,000 🪙(百人隊長)まで\n🎃 ハロウィンスキン(18種、コモン〜スペクトル):10月のみ購入可能、取得後は永久。/shopfreeにも対応\n🗂️ スキンを2段階メニューに整理:スキン/ハロウィン → レア度 → スキン\n🏅 新実績2つ:トリック・オア・トリート、悪夢の支配者\n🎵 音楽:音量スライダーがYouTube・SoundCloud・音声ファイルで動作(Spotify/Deezer/Apple Musicはプレイヤー側)\n📃 曲リスト:全曲を表示(YouTubeの200曲超も)、全タイトル検索、読み込み状況\n📚 マイプレイリスト:リンクに名前を付けて保存し、ワンクリックで再生"] },
             { v: "7.5 → 7.6", titre: ["Musique aléatoire et liste des pistes", "Shuffle and track list", "Zufallswiedergabe und Titelliste", "シャッフルと曲リスト"], t: [
                 "🔀 Lecture aléatoire (case dans la fenêtre 🎵, activée par défaut) : à la fin d'une piste, une autre piste de ta playlist est choisie au hasard, et la première piste lancée l'est aussi. Disponible pour les playlists YouTube et SoundCloud\n⏭ Bouton « piste aléatoire » pour changer tout de suite\n📃 Fenêtre « liste des pistes » : toutes les musiques de la playlist, avec recherche, et un clic pour jouer celle que tu veux\n⚠️ Spotify, Deezer et Apple Music ne laissent pas le jeu piloter leur lecteur intégré : pas d'aléatoire ni de liste pour eux\n🏅 2 nouveaux succès : Mix aléatoire, Programmateur",
                 "🔀 Shuffle (checkbox in the 🎵 window, on by default): when a track ends, another track from your playlist is picked at random, and so is the first one. Available for YouTube and SoundCloud playlists\n⏭ “Random track” button to switch right away\n📃 “Track list” window: every song of the playlist, with search, and one click to play the one you want\n⚠️ Spotify, Deezer and Apple Music don't let the game control their embedded player: no shuffle or list for them\n🏅 2 new achievements: Random Mix, Programmer",
@@ -6737,6 +6737,30 @@
         let lecteurMusique = { type: null, el: null, lien: "", h: 0, api: null };
         function lireReglagesMusique() { try { return JSON.parse(localStorage.getItem("cyber_hack_musique")) || {}; } catch (e) { return {}; } }
         function ecrireReglagesMusique(o) { lsSet("cyber_hack_musique", JSON.stringify(Object.assign(lireReglagesMusique(), o))); }
+        // ===== V8.3 : correctifs musique =====
+        function volMusique() { let v = lireReglagesMusique().volume; return (typeof v === "number") ? v : 0.6; }
+        function volumeDispo(type) { return type === "audio" || type === "youtube" || type === "soundcloud"; }
+        // YouTube ne donne que 200 pistes via son lecteur : on complète via des API publiques (au mieux, sans clé)
+        function etendreListeYT(listId) {
+            const hotes = ["https://pipedapi.kavin.rocks", "https://pipedapi.adminforge.de", "https://api.piped.private.coffee"];
+            const avecTimeout = function(u) { let c = new AbortController(), t = setTimeout(function() { c.abort(); }, 9000); return fetch(u, { signal: c.signal }).then(function(r) { clearTimeout(t); if (!r.ok) throw new Error("http"); return r.json(); }); };
+            const essayer = function(k) {
+                if (k >= hotes.length) return Promise.resolve(null);
+                let ids = [], titres = [], pages = 0;
+                const lire = function(j) {
+                    (j.relatedStreams || []).forEach(function(x) { let m = String(x.url || "").match(/[?&]v=([\w-]{11})/); if (m && ids.indexOf(m[1]) < 0) { ids.push(m[1]); if (x.title) titres[m[1]] = x.title; } });
+                    if (j.nextpage && ++pages < 40) return avecTimeout(hotes[k] + "/nextpage/playlists/" + encodeURIComponent(listId) + "?nextpage=" + encodeURIComponent(j.nextpage)).then(lire);
+                };
+                return avecTimeout(hotes[k] + "/playlists/" + encodeURIComponent(listId)).then(lire).then(function() { return ids.length ? { ids: ids, titres: titres } : null; }).catch(function() { return ids.length > 200 ? { ids: ids, titres: titres } : essayer(k + 1); });
+            };
+            return essayer(0);
+        }
+        function lirePlaylistsMusique() { let p = lireReglagesMusique().playlists; return Array.isArray(p) ? p : []; }
+        function nomAutoPlaylist(a, lien) {
+            let n = { youtube: "YouTube", soundcloud: "SoundCloud", spotify: "Spotify", deezer: "Deezer", apple: "Apple Music", audio: "Audio" }[a.type] || "Musique";
+            let m = String(lien).match(/([A-Za-z0-9_-]{5,})\/?(\?.*)?$/); let fin = (a.yt && a.yt.list) ? a.yt.list : (m ? m[1] : "");
+            return n + (fin ? " · " + String(fin).slice(-6) : "");
+        }
         function verifierSuccesCompteursV75(cle) {
             let v = compteursVie[cle] || 0;
             const T = { pieces: [[50000, "pieces50000"]], cartes: [[25, "cartes25"], [50, "cartes50"]], niveaux: [[20, "niveaux20"]], sauts: [[20000, "sauts20000"]], secondes: [[18000, "temps5h"]], morts: [[1000, "morts1000"]], dashs: [[500, "dash500"]], blocs: [[20000, "blocs20000"]], defis: [[3, "defi3"], [30, "defi30"]], missions: [[10, "missions10"], [25, "missions25"]] };
@@ -6853,6 +6877,9 @@
                     }
                 };
                 lecteurMusique.api = api;
+                lecteurMusique.setVol = function(v) { try { w.setVolume(Math.round(v * 100)); } catch (e) {} };
+                w.bind(SC.Widget.Events.READY, function() { lecteurMusique.setVol(volMusique()); });
+                w.bind(SC.Widget.Events.PLAY, function() { lecteurMusique.setVol(volMusique()); });
                 let initial = function() { if (demarre) return; demarre = true; if (shuffleActif()) api.aleatoire(); };
                 w.bind(SC.Widget.Events.READY, function() { setTimeout(initial, 500); });
                 w.bind(SC.Widget.Events.FINISH, function() { if (shuffleActif()) api.aleatoire(); });
@@ -6869,9 +6896,17 @@
                 else { opts.videoId = a.yt.v; pv.loop = 1; pv.playlist = a.yt.v; }
                 let pl = null, init = false;
                 let pret = function() { return pl && typeof pl.getPlaylist === "function"; };
+                let tousIds = null, memoIds = [], horsListe = false;
+                let idsActuels = function() { let l = (pret() && pl.getPlaylist()) || []; if (l.length) memoIds = l; return (tousIds && tousIds.length >= memoIds.length) ? tousIds : memoIds; };
+                let idCourant = function() {
+                    let ids = idsActuels(), i = -1;
+                    try { let vd = pl.getVideoData && pl.getVideoData(); if (vd && vd.video_id) i = ids.indexOf(vd.video_id); } catch (e) {}
+                    if (i < 0) { try { i = pl.getPlaylistIndex(); } catch (e) {} }
+                    return typeof i === "number" ? i : -1;
+                };
                 let api = {
                     pistes: function(maj) {
-                        let ids = (pret() && pl.getPlaylist()) || [];
+                        let ids = idsActuels();
                         let arr = ids.map(function(id, i) { return { titre: titresYT[id] || ("#" + (i + 1)), id: id }; });
                         setTimeout(function() {
                             let k = 0, jeton = ++jetonTitres;
@@ -6880,32 +6915,44 @@
                                 let i = k++;
                                 titreYouTube(ids[i]).then(function(t) { if (t && jeton === jetonTitres) maj(i, t); suivant(); });
                             }
-                            for (let x = 0; x < 5; x++) suivant();
+                            for (let x = 0; x < 12; x++) suivant();
                         }, 0);
                         return Promise.resolve(arr);
                     },
-                    courant: function() { return Promise.resolve(pret() ? pl.getPlaylistIndex() : -1); },
-                    jouer: function(i) { if (pret()) pl.playVideoAt(i); },
+                    courant: function() { return Promise.resolve(pret() ? idCourant() : -1); },
+                    jouer: function(i) {
+                        if (!pret()) return;
+                        let ids = idsActuels(), l = pl.getPlaylist() || [];
+                        if (i < l.length && l[i] === ids[i]) { horsListe = false; pl.playVideoAt(i); }
+                        else if (ids[i]) { horsListe = true; pl.loadVideoById(ids[i]); }
+                    },
+                    suivant: function() { let ids = idsActuels(); if (ids.length) api.jouer((idCourant() + 1) % ids.length); },
                     aleatoire: function() {
                         if (!pret()) return;
-                        let l = pl.getPlaylist(); if (!l || l.length < 2) { return; }
-                        let c = pl.getPlaylistIndex(), i; do { i = RND(l.length); } while (i === c);
-                        pl.playVideoAt(i); debloquerSucces("mix");
+                        let l = idsActuels(); if (!l || l.length < 2) { return; }
+                        let c = idCourant(), i; do { i = RND(l.length); } while (i === c);
+                        api.jouer(i); debloquerSucces("mix");
                     },
                     detruire: function() { try { pl.destroy(); } catch (e) {} }
                 };
                 let tenterInit = function() {
                     if (init || !pret()) return;
                     let l = pl.getPlaylist();
-                    if (l && l.length) { init = true; if (shuffleActif() && l.length > 1) api.aleatoire(); }
+                    if (l && l.length) {
+                        init = true; memoIds = l;
+                        if (l.length >= 150) etendreListeYT(a.yt.list).then(function(r) { if (r && r.ids.length > l.length && lecteurMusique.el === el) { tousIds = r.ids; Object.keys(r.titres).forEach(function(k) { titresYT[k] = r.titres[k]; }); } });
+                        if (shuffleActif() && l.length > 1) api.aleatoire();
+                    }
                 };
-                opts.events.onReady = function() { setTimeout(tenterInit, 1200); };
+                opts.events.onReady = function() { try { pl.setVolume(Math.round(volMusique() * 100)); } catch (e) {} setTimeout(tenterInit, 1200); };
                 opts.events.onStateChange = function(e) {
                     if (lecteurMusique.el !== el) return;
                     tenterInit();
-                    if (e.data === 0 && a.yt.list && shuffleActif()) api.aleatoire(); // piste terminée
+                    if (e.data === 1) { try { pl.setVolume(Math.round(volMusique() * 100)); } catch (x) {} }
+                    if (e.data === 0 && a.yt.list) { if (shuffleActif()) api.aleatoire(); else if (horsListe) api.suivant(); } // piste terminée
                 };
                 pl = new YT.Player(hote, opts);
+                lecteurMusique.setVol = function(v) { try { pl.setVolume(Math.round(v * 100)); } catch (e) {} };
                 if (a.yt.list) lecteurMusique.api = api;
             }).catch(function() {
                 if (lecteurMusique.el !== el) return;
@@ -6941,7 +6988,7 @@
                 iframeSecours(a, el);
             }
             c.appendChild(el);
-            lecteurMusique = { type: a.type, el: el, lien: String(brut).trim(), h: a.h, api: null };
+            lecteurMusique = { type: a.type, el: el, lien: String(brut).trim(), h: a.h, api: null, setVol: (a.type === "audio") ? function(v) { el.volume = v; } : null };
             if (a.type === "youtube") brancherYouTube(a, el);
             else if (a.type === "soundcloud") brancherSoundCloud(a, el);
             ecrireReglagesMusique({ lien: lecteurMusique.lien, auto: r.auto !== false });
@@ -6951,7 +6998,7 @@
             if (a.type === "youtube" || a.type === "soundcloud") { if (shuffleActif()) msg += "  🔀"; }
             else if (a.type !== "audio" && shuffleActif()) msg += "\n" + tx(["Spotify, Deezer et Apple Music ne laissent pas le jeu contrôler leur lecteur : pas d'aléatoire ni de liste de pistes ici (utilise le bouton aléatoire du lecteur, ou une playlist YouTube / SoundCloud).", "Spotify, Deezer and Apple Music don't let the game control their player: no shuffle or track list here (use the player's own shuffle button, or a YouTube / SoundCloud playlist).", "Spotify, Deezer und Apple Music lassen das Spiel ihren Player nicht steuern: hier gibt es weder Zufall noch Titelliste (nutze den Zufallsknopf des Players oder eine YouTube- / SoundCloud-Playlist).", "Spotify・Deezer・Apple Musicはゲームからの操作を許可していないため、シャッフルと曲リストは使えません(プレイヤー側のシャッフルか、YouTube / SoundCloudのプレイリストを使ってください)。"]);
             statutMusique(msg, true);
-            let vol = document.getElementById("volume-musique"); if (vol) vol.disabled = (a.type !== "audio");
+            let vol = document.getElementById("volume-musique"); if (vol) { vol.disabled = !volumeDispo(a.type); vol.value = Math.round(volMusique() * 100); }
             return true;
         }
         function nextMusique() {
@@ -6980,9 +7027,12 @@
             let rows = [];
             let marquer = function(c) { rows.forEach(function(r, i) { r.d.style.background = (i === c) ? "rgba(29,185,84,0.28)" : "transparent"; r.d.style.color = (i === c) ? "#ffffff" : "#ccd6f6"; }); };
             rech.addEventListener("keydown", function(e) { e.stopPropagation(); if (e.key === "Escape") fermerPistesMusique(); });
-            rech.addEventListener("input", function() { let q = rech.value.trim().toLowerCase(); rows.forEach(function(r) { r.d.style.display = (!q || r.txt.indexOf(q) >= 0) ? "" : "none"; }); });
-            boite.append(titre, rech, liste, bAle, bF); fond.appendChild(boite); document.body.appendChild(fond);
-            api.pistes(function(i, t) { if (rows[i]) { rows[i].d.innerText = (i + 1) + ". " + t; rows[i].txt = t.toLowerCase(); } }).then(function(arr) {
+            let filtrer = function() { let q = rech.value.trim().toLowerCase(); rows.forEach(function(r) { r.d.style.display = (!q || r.txt.indexOf(q) >= 0) ? "" : "none"; }); };
+            rech.addEventListener("input", filtrer);
+            let infoTitres = document.createElement("div"); infoTitres.style.cssText = "color:#6b7a99; font-size:10px; margin:-4px 0 6px 0;";
+            let majInfo = function() { let n = rows.length, ok = rows.filter(function(r) { return r.charge; }).length; infoTitres.innerText = n ? (ok >= n ? "✅ " + n + " " + tx(["pistes", "tracks", "Titel", "曲"]) : "⏳ " + tx(["Titres chargés", "Titles loaded", "Titel geladen", "読み込み済み"]) + " " + ok + "/" + n + " — " + tx(["la recherche trouvera toutes les pistes une fois le chargement fini", "search will cover every track once loading ends", "die Suche findet alle Titel, sobald das Laden fertig ist", "読み込み完了後、全曲を検索できます"])) : ""; };
+            boite.append(titre, rech, infoTitres, liste, bAle, bF); fond.appendChild(boite); document.body.appendChild(fond);
+            api.pistes(function(i, t) { if (rows[i]) { rows[i].d.innerText = (i + 1) + ". " + t; rows[i].txt = t.toLowerCase(); rows[i].charge = true; filtrer(); majInfo(); } }).then(function(arr) {
                 if (!document.getElementById("fenetre-pistes")) return;
                 liste.innerHTML = "";
                 if (!arr.length) { liste.innerText = tx(["Aucune piste trouvée (la playlist est peut-être privée ou de type « mix »).", "No track found (the playlist may be private or a “mix”).", "Keine Titel gefunden (die Playlist ist evtl. privat oder ein „Mix“).", "曲が見つかりません(非公開またはミックス型の可能性)。"]); return; }
@@ -6991,9 +7041,10 @@
                     d.style.cssText = "padding:7px 6px; border-bottom:1px solid #222c44; font-size:12px; color:#ccd6f6; cursor:pointer; border-radius:3px; line-height:1.35;";
                     d.innerText = (i + 1) + ". " + pi.titre;
                     d.onclick = function() { api.jouer(i); debloquerSucces("piste_choisie"); marquer(i); };
-                    rows.push({ d: d, txt: pi.titre.toLowerCase() }); liste.appendChild(d);
+                    rows.push({ d: d, txt: pi.titre.toLowerCase(), charge: !/^#\d+$/.test(pi.titre) }); liste.appendChild(d);
                 });
                 api.courant().then(function(c) { if (typeof c === "number") marquer(c); });
+                filtrer(); majInfo();
             });
             minuterieCourante = setInterval(function() {
                 if (!document.getElementById("fenetre-pistes")) { fermerPistesMusique(); return; }
@@ -7031,9 +7082,9 @@
             lab.append(chk, lt);
             let lv = document.createElement("label"); lv.style.cssText = "display:flex; gap:8px; align-items:center; color:#c5cde3; font-size:12px; margin:6px 0;";
             let vol = document.createElement("input"); vol.type = "range"; vol.id = "volume-musique"; vol.min = 0; vol.max = 100; vol.style.flex = "1";
-            vol.value = Math.round((typeof r.volume === "number" ? r.volume : 0.6) * 100); vol.disabled = !(lecteurMusique.type === "audio");
-            vol.oninput = function() { let v = vol.value / 100; ecrireReglagesMusique({ volume: v }); if (lecteurMusique.type === "audio") lecteurMusique.el.volume = v; };
-            let lvt = document.createElement("span"); lvt.innerText = "🔊 " + tx(["Volume (fichiers audio ; sinon règle-le dans le lecteur)", "Volume (audio files; otherwise use the player's own)", "Lautstärke (Audiodateien; sonst im Player einstellen)", "音量(音声ファイル用。他はプレイヤー側で調整)"]);
+            vol.value = Math.round(volMusique() * 100); vol.disabled = lecteurMusique.el ? !volumeDispo(lecteurMusique.type) : false;
+            vol.oninput = function() { let v = vol.value / 100; ecrireReglagesMusique({ volume: v }); if (lecteurMusique.setVol) lecteurMusique.setVol(v); };
+            let lvt = document.createElement("span"); lvt.innerText = "🔊 " + tx(["Volume de la musique (YouTube, SoundCloud, fichiers audio ; pour Spotify / Deezer / Apple Music, règle-le dans leur lecteur)", "Music volume (YouTube, SoundCloud, audio files; for Spotify / Deezer / Apple Music use their own player)", "Musiklautstärke (YouTube, SoundCloud, Audiodateien; bei Spotify / Deezer / Apple Music im jeweiligen Player)", "音楽の音量(YouTube・SoundCloud・音声ファイル。Spotify/Deezer/Apple Musicはプレイヤー側で調整)"]);
             lv.append(lvt, vol);
             let zone = document.createElement("div"); zone.id = "zone-lecteur-musique"; zone.style.cssText = "height:0; margin:8px 0; border-radius:8px;";
             let st = document.createElement("p"); st.id = "statut-musique"; st.style.cssText = "font-size:12px; min-height:16px; line-height:1.4; white-space:pre-line;";
@@ -7049,7 +7100,40 @@
             chkM.onchange = function() { ecrireReglagesMusique({ melange: chkM.checked }); };
             let lmt = document.createElement("span"); lmt.innerText = "🔀 " + tx(["Lecture aléatoire : au démarrage et à la fin de chaque piste, une piste de la playlist est choisie au hasard (playlists YouTube et SoundCloud)", "Shuffle: at start and whenever a track ends, a random track of the playlist is picked (YouTube and SoundCloud playlists)", "Zufallswiedergabe: Beim Start und nach jedem Titel wird zufällig ein Titel der Playlist gewählt (YouTube- und SoundCloud-Playlists)", "シャッフル再生:開始時と曲の終了時にプレイリストからランダムに選曲(YouTube・SoundCloudのプレイリスト)"]);
             lm.append(chkM, lmt);
-            boite.append(titre, aide, inp, bLancer, bStop, lm, rangee, lab, lv, zone, st, astuce, bF);
+            let blocP = document.createElement("div"); blocP.style.cssText = "margin:12px 0; padding:8px; border:1px dashed #1db954; border-radius:6px;";
+            let titreP = document.createElement("div"); titreP.style.cssText = "color:#1db954; font-size:12px; font-weight:bold; margin-bottom:6px;"; titreP.innerText = "📚 " + tx(["MES PLAYLISTS", "MY PLAYLISTS", "MEINE PLAYLISTS", "マイプレイリスト"]);
+            let ligneP = document.createElement("div"); ligneP.style.cssText = "display:flex; gap:6px;";
+            let nomP = document.createElement("input"); nomP.type = "text"; nomP.autocomplete = "off"; nomP.maxLength = 40; nomP.placeholder = tx(["Nom (facultatif)", "Name (optional)", "Name (optional)", "名前(任意)"]);
+            nomP.style.cssText = "flex:1; min-width:0; box-sizing:border-box; padding:7px; background:#0b0f19; color:#00ffcc; border:1px solid #1db954; border-radius:4px; font-family:'Courier New',monospace; font-size:12px;";
+            nomP.addEventListener("keydown", function(e) { e.stopPropagation(); });
+            let bSauve = document.createElement("button"); bSauve.className = "btn-modal-action"; bSauve.style.cssText = "margin:0; padding:7px 10px; font-size:12px; background:#0b0f19; color:#1db954; border:1px solid #1db954;"; bSauve.innerText = "💾 " + tx(["ENREGISTRER", "SAVE", "SPEICHERN", "保存"]);
+            let listeP = document.createElement("div"); listeP.style.cssText = "margin-top:6px; max-height:170px; overflow-y:auto;";
+            const afficherPlaylists = function() {
+                listeP.innerHTML = ""; let pls = lirePlaylistsMusique();
+                if (!pls.length) { listeP.innerText = tx(["Colle un lien ci-dessus puis appuie sur ENREGISTRER : tu pourras le relancer d'un clic.", "Paste a link above then press SAVE: you can relaunch it in one click.", "Link oben einfügen und SPEICHERN drücken: Du kannst ihn mit einem Klick starten.", "上にリンクを貼って保存を押すと、ワンクリックで再生できます。"]); listeP.style.cssText += "color:#6b7a99; font-size:11px;"; return; }
+                pls.forEach(function(p, i) {
+                    let l = document.createElement("div"); l.style.cssText = "display:flex; gap:4px; align-items:center; padding:4px 2px; border-bottom:1px solid #222c44;";
+                    let n = document.createElement("div"); n.style.cssText = "flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; font-size:12px; color:" + (lecteurMusique.lien === p.lien ? "#1db954" : "#ccd6f6") + ";";
+                    n.innerText = (lecteurMusique.lien === p.lien ? "▶ " : "") + p.nom; n.title = p.lien;
+                    const lancer = function() { inp.value = p.lien; lancerMusique(p.lien); afficherPlaylists(); };
+                    n.onclick = lancer;
+                    const bt = function(t, f) { let b = document.createElement("button"); b.style.cssText = "background:#0b0f19; color:#c5cde3; border:1px solid #3a4454; border-radius:4px; cursor:pointer; padding:3px 6px; font-size:12px;"; b.innerText = t; b.onclick = f; return b; };
+                    l.append(n, bt("▶", lancer),
+                        bt("✏️", function() { let nv = prompt(tx(["Nouveau nom :", "New name:", "Neuer Name:", "新しい名前:"]), p.nom); if (nv && nv.trim()) { let a2 = lirePlaylistsMusique(); a2[i].nom = nv.trim().slice(0, 40); ecrireReglagesMusique({ playlists: a2 }); afficherPlaylists(); } }),
+                        bt("🗑️", function() { if (!confirm(tx(["Supprimer « " + p.nom + " » ?", "Delete “" + p.nom + "”?", "„" + p.nom + "“ löschen?", "「" + p.nom + "」を削除しますか?"]))) return; let a2 = lirePlaylistsMusique(); a2.splice(i, 1); ecrireReglagesMusique({ playlists: a2 }); afficherPlaylists(); }));
+                    listeP.appendChild(l);
+                });
+            };
+            bSauve.onclick = function() {
+                let lien = inp.value.trim(), a = analyserLienMusique(lien);
+                if (!a || a.err) { statutMusique(tx(["Colle d'abord un lien valide (Spotify, SoundCloud, YouTube, Deezer, Apple Music ou fichier audio).", "Paste a valid link first (Spotify, SoundCloud, YouTube, Deezer, Apple Music or audio file).", "Füge zuerst einen gültigen Link ein (Spotify, SoundCloud, YouTube, Deezer, Apple Music oder Audiodatei).", "まず有効なリンクを貼ってください(Spotify、SoundCloud、YouTube、Deezer、Apple Music、音声ファイル)。"]), false); return; }
+                let pls = lirePlaylistsMusique(), nom = nomP.value.trim().slice(0, 40) || nomAutoPlaylist(a, lien), ex = pls.findIndex(function(p) { return p.lien === lien; });
+                if (ex >= 0) pls[ex].nom = nom; else { if (pls.length >= 50) { statutMusique(tx(["Maximum 50 playlists : supprime-en une d'abord.", "Maximum 50 playlists: delete one first.", "Maximal 50 Playlists: lösche zuerst eine.", "最大50個です。先に1つ削除してください。"]), false); return; } pls.push({ nom: nom, lien: lien }); }
+                ecrireReglagesMusique({ playlists: pls }); nomP.value = ""; afficherPlaylists();
+                statutMusique("💾 " + tx(["Playlist enregistrée : ", "Playlist saved: ", "Playlist gespeichert: ", "保存しました:"]) + nom, true);
+            };
+            ligneP.append(nomP, bSauve); blocP.append(titreP, ligneP, listeP); afficherPlaylists();
+            boite.append(titre, aide, inp, bLancer, bStop, blocP, lm, rangee, lab, lv, zone, st, astuce, bF);
             fond.appendChild(boite); document.body.appendChild(fond);
             placerLecteurMusique();
             if (!lecteurMusique.el) inp.focus();
